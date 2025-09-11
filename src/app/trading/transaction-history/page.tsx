@@ -11,7 +11,7 @@ import { useLang } from "@/lang/useLang"
 import { getTokenInforByAddress } from "@/services/api/SolonaTokenService"
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
-import { ArrowLeftRight } from "lucide-react"
+import { ArrowLeftRight, Check } from "lucide-react"
 import SwapModal from "@/app/components/swap-modal"
 
 type Transaction = {
@@ -45,6 +45,7 @@ function TransactionHistoryContent() {
   const [realTimeTransactionsMy, setRealTimeTransactionsMy] = useState<any[]>([]);
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState<string>("");
+  const [copiedItems, setCopiedItems] = useState<{[key: string]: boolean}>({});
 
   const searchParams = useSearchParams();
   const address = searchParams?.get("address");
@@ -275,6 +276,18 @@ function TransactionHistoryContent() {
     setSelectedToken(tokenSymbol)
   }
 
+  const handleCopyAddress = async (text: string, itemKey: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedItems(prev => ({ ...prev, [itemKey]: true }));
+      setTimeout(() => {
+        setCopiedItems(prev => ({ ...prev, [itemKey]: false }));
+      }, 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
   const renderTransactionCard = (order: any, index: number) => {
     const { t } = useLang();
     return (
@@ -320,16 +333,26 @@ function TransactionHistoryContent() {
           <div className="flex items-center text-gray-500 dark:text-neutral-400">
             <span className="mr-1">{t("transactionHistory.address")}:</span>
             <span className="text-[#FFB300] dark:text-[#FFB300]">{truncateString(order.wallet, 9)}</span>
-            <button className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300">
-              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+            <button 
+              onClick={() => handleCopyAddress(order.wallet, `mobile-wallet-${index}`)} 
+              className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300 relative group"
+            >
+              {copiedItems[`mobile-wallet-${index}`] ? (
+                <Check className="w-3 h-3 text-theme-green-200" />
+              ) : (
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+              <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                {copiedItems[`mobile-wallet-${index}`] ? t('common.copy.copied') : t('common.copy.copyAddress')}
+              </span>
             </button>
           </div>
         </div>
@@ -352,9 +375,9 @@ function TransactionHistoryContent() {
                 <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[9%]">{t("transactionHistory.amount")}</th>
                 <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[12%]">{t("transactionHistory.total")}</th>
                 {/* <th className="xl:block hidden 2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium">{t("transactionHistory.source")}</th> */}
-                <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[12%]">{t("transactionHistory.transactionHash")}</th>
                 <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[11%]">{t("transactionHistory.status")}</th>
                 <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[12%]">{t("transactionHistory.address")}</th>
+                <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[12%]">{t("transactionHistory.transactionHash")}</th>
               </tr>
             </thead>
             <tbody>
@@ -378,38 +401,54 @@ function TransactionHistoryContent() {
                   {/* <td className="2xl:px-4 xl:block hidden px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium truncate">
                     {order.program}
                   </td> */}
-                  <td className="2xl:px-4 px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium truncate">
-                    {truncateString(order.tx, 10)}<button onClick={() => {
-                      navigator.clipboard.writeText(order.tx)
-                    }} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300">
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  </td>
                   <td className="2xl:px-4 px-1 text-green-500 dark:text-green-400 2xl:text-xs text-[9px] py-2 font-medium truncate">
                     {t("transactionHistory.completed")}
                   </td>
-                  <td className="2xl:px-4 px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium flex items-center truncate">
+                  <td className="2xl:px-4 px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium flex items-center">
                     <span className="text-[#FFB300] dark:text-[#FFB300]">{truncateString(order.wallet, 9)}</span>
-                    <button onClick={() => {
-                      navigator.clipboard.writeText(order.wallet)
-                    }} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300">
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                    <button 
+                      onClick={() => handleCopyAddress(order.wallet, `all-wallet-${index}`)} 
+                      className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300 relative group"
+                    >
+                      {copiedItems[`all-wallet-${index}`] ? (
+                        <Check className="w-3 h-3 text-theme-green-200" />
+                      ) : (
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                      <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                        {copiedItems[`all-wallet-${index}`] ? t('common.copy.copied') : t('common.copy.copyAddress')}
+                      </span>
+                    </button>
+                  </td>
+                  <td className="2xl:px-4 px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium">
+                    {truncateString(order.tx, 10)}<button 
+                      onClick={() => handleCopyAddress(order.tx, `all-tx-${index}`)} 
+                      className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300 relative group"
+                    >
+                      {copiedItems[`all-tx-${index}`] ? (
+                        <Check className="w-3 h-3 text-theme-green-200" />
+                      ) : (
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                      <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                        {copiedItems[`all-tx-${index}`] ? t('common.copy.copied') : t('common.copy.copyAddress')}
+                      </span>
                     </button>
                   </td>
                 </tr>
@@ -467,38 +506,54 @@ function TransactionHistoryContent() {
                   {/* <td className="2xl:px-4 xl:block hidden px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium truncate">
                     {order.program}
                   </td> */}
-                  <td className="2xl:px-4 px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium truncate">
-                    {truncateString(order.tx, 10)}<button onClick={() => {
-                      navigator.clipboard.writeText(order.tx)
-                    }} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300">
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                  <td className="2xl:px-4 px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium">
+                    {truncateString(order.tx, 10)}<button 
+                      onClick={() => handleCopyAddress(order.tx, `my-tx-${index}`)} 
+                      className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300 relative group"
+                    >
+                      {copiedItems[`my-tx-${index}`] ? (
+                        <Check className="w-3 h-3 text-theme-green-200" />
+                      ) : (
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                      <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                        {copiedItems[`my-tx-${index}`] ? t('common.copy.copied') : t('common.copy.copyAddress')}
+                      </span>
                     </button>
                   </td>
                   <td className="2xl:px-4 px-1 text-green-500 dark:text-green-400 2xl:text-xs text-[9px] py-2 font-medium truncate">
                     {t("transactionHistory.completed")}
                   </td>
-                  <td className="2xl:px-4 px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium flex items-center truncate">
+                  <td className="2xl:px-4 px-1 text-gray-600 dark:text-neutral-300 2xl:text-xs text-[10px] py-2 font-medium flex items-center">
                     <span className="text-[#FFB300] dark:text-[#FFB300]">{truncateString(order.wallet, 9)}</span>
-                    <button onClick={() => {
-                      navigator.clipboard.writeText(order.wallet)
-                    }} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300">
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                    <button 
+                      onClick={() => handleCopyAddress(order.wallet, `my-wallet-${index}`)} 
+                      className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300 relative group"
+                    >
+                      {copiedItems[`my-wallet-${index}`] ? (
+                        <Check className="w-3 h-3 text-theme-green-200" />
+                      ) : (
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                      <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                        {copiedItems[`my-wallet-${index}`] ? t('common.copy.copied') : t('common.copy.copyAddress')}
+                      </span>
                     </button>
                   </td>
                 </tr>
@@ -537,20 +592,28 @@ function TransactionHistoryContent() {
               {holders?.accounts.map((holder: any, index: number) => {
                 return (
                   <tr key={index} className={`hover:bg-gray-100 dark:hover:bg-neutral-800/30 border-b border-gray-100 dark:border-neutral-800/50 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-[#1A1A1A]' : 'bg-white dark:bg-[#0F0F0F]'}`}>
-                    <td className="px-4 text-gray-600 dark:text-neutral-300 text-xs py-2 font-medium flex items-center truncate">
+                    <td className="px-4 text-gray-600 dark:text-neutral-300 text-xs py-2 font-medium flex items-center">
                       <span className="text-[#FFB300] dark:text-[#FFB300]">{truncateString(holder.wallet, 9)}</span>
-                      <button onClick={() => {
-                        navigator.clipboard.writeText(holder.wallet)
-                      }} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300">
-                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
+                      <button 
+                        onClick={() => handleCopyAddress(holder.wallet, `holder-${index}`)} 
+                        className="ml-1 text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300 relative group"
+                      >
+                        {copiedItems[`holder-${index}`] ? (
+                          <Check className="w-3 h-3 text-theme-green-200" />
+                        ) : (
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                        <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                          {copiedItems[`holder-${index}`] ? t('common.copy.copied') : t('common.copy.copyAddress')}
+                        </span>
                       </button>
                     </td>
                     <td className="px-4 text-gray-600 dark:text-neutral-300 text-xs py-2 font-medium truncate">
