@@ -268,7 +268,7 @@ export default function TradingPanel({
     }, [tradeAmount, mode, percentage, isDirectAmountInput])
 
     return (
-        <div className="h-full flex flex-col py-3 pl-2">
+        <div className="h-full flex flex-col py-3 px-2">
             {/* Mode Tabs */}
             <div className="flex group bg-gray-100 dark:bg-theme-neutral-1000 rounded-md 2xl:h-[35px] h-[30px] mb-1">
                 <button
