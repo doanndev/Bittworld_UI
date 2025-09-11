@@ -10,7 +10,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   return (
     <div className={`flex `}>
       {!message.sender.isCurrentUser && (
-        <div className="flex gap-2 items-center justify-center mb-0.5">
+        <div className="flex gap-2 items-center mb-0.5 flex-nowrap">
           {/* <img
             src={message.sender.avatar || "/token.png"}
             alt={message.sender.name}
@@ -20,10 +20,10 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           /> */}
           {/* {currentLang?.flag ? <img src={currentLang?.flag} alt={currentLang?.name} className="w-[15px] h-[15px] rounded-full object-cover" /> : <img src="https://flagcdn.com/w40/gb.png" alt="token" className="w-[15px] h-[15px] rounded-full object-cover" />} */}
           
-          <div className="font-medium text-sm  text-theme-primary-500 dark:text-theme-primary-300 min-w-[50px]">
+          <div className="font-medium text-sm text-theme-primary-500 dark:text-theme-primary-300 whitespace-nowrap flex-shrink-0">
             {message.sender.name} :
           </div>
-          <span className="text-sm text-gray-800 dark:text-white">{message.text}</span>
+          <span className="text-sm text-gray-800 dark:text-white break-words">{message.text}</span>
         </div>
       )}
     </div>
