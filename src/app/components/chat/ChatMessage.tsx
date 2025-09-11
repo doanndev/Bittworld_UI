@@ -20,7 +20,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           /> */}
           {/* {currentLang?.flag ? <img src={currentLang?.flag} alt={currentLang?.name} className="w-[15px] h-[15px] rounded-full object-cover" /> : <img src="https://flagcdn.com/w40/gb.png" alt="token" className="w-[15px] h-[15px] rounded-full object-cover" />} */}
           
-          <div className="font-medium text-sm  text-theme-primary-500 dark:text-theme-primary-300">
+          <div className="font-medium text-sm  text-theme-primary-500 dark:text-theme-primary-300 min-w-[50px]">
             {message.sender.name} :
           </div>
           <span className="text-sm text-gray-800 dark:text-white">{message.text}</span>

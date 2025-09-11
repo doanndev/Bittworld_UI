@@ -56,7 +56,7 @@ const SwapInterface = React.memo(({
   const { t } = useLang()
 
   return (
-    <div className={`bg-[#000000] rounded-md ${classes.padding} h-fit flex-1`}>
+    <div className={`bg-white dark:bg-[#000000] rounded-md ${classes.padding} h-fit flex-1`}>
       <div className="text-center md:mb-6">
         <h2 className={`${classes.subtitle} font-bold text-theme-primary-500 mb-1`}>{t('swap.easySwaps')}</h2>
       </div>
@@ -64,15 +64,15 @@ const SwapInterface = React.memo(({
       <div className="flex flex-col gap-2">
         {/* From Section */}
         <div className="">
-          <div className="bg-[#1B1A1A] rounded-xl px-4 py-2 pt-3 flex flex-col justify-between gap-2">
+          <div className="bg-gray-100 dark:bg-[#1B1A1A] rounded-xl px-4 py-2 pt-3 flex flex-col justify-between gap-2">
             <div className="flex items-start justify-between gap-2 flex-col">
               <div className="flex items-center gap-2">
                 {getTokenIcon(fromToken)}
-                <span className={`font-semibold ${classes.bodyText}`}>{fromToken.toUpperCase()}</span>
+                <span className={`font-semibold ${classes.bodyText} text-gray-900 dark:text-white`}>{fromToken.toUpperCase()}</span>
               </div>
             </div>
             <div className="flex md:items-center justify-between gap-2 flex-col md:flex-row w-full">
-              <span className={`${classes.historyText} dark:text-white text-black`}>
+              <span className={`${classes.historyText} text-gray-600 dark:text-white`}>
                 {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">{fromToken === "solana" ? balance?.sol?.token_balance || "0" : balance?.usdt?.token_balance || "0"}</span>
               </span>
               <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ const SwapInterface = React.memo(({
                   type="text"
                   value={fromAmount}
                   onChange={(e) => handleFromAmountChange(e.target.value)}
-                  className={`${classes.inputText} w-full md:w-auto h-8 outline-none bg-gray-1000 border-none rounded-md text-right p-0 text-white pr-3 placeholder:text-gray-400 placeholder:text-sm`}
+                  className={`${classes.inputText} w-full md:w-auto h-8 outline-none bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-500 rounded-md text-right p-0 text-gray-900 dark:text-white pr-3 placeholder:text-gray-400 placeholder:text-sm`}
                   placeholder="0.00"
                 />
                 
@@ -88,7 +88,7 @@ const SwapInterface = React.memo(({
                   onClick={handleSetMaxAmount}
                   variant="outline"
                   size="sm"
-                  className="text-xs px-2 py-1 h-7 border-gray-600 text-gray-300 hover:bg-gray-700"
+                  className="text-xs px-2 py-1 h-7 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   {t('swap.max')}
                 </Button>
@@ -99,7 +99,7 @@ const SwapInterface = React.memo(({
 
         {/* Exchange Rate Display */}
         <div className="flex justify-center items-center gap-2">
-          <span className={`${classes.historyText} text-gray-400`}>
+          <span className={`${classes.historyText} text-gray-500 dark:text-gray-400`}>
             1 SOL = ${balance?.sol?.token_price_usd.toFixed(3) || "0.00"} USDT
           </span>
         </div>
@@ -110,7 +110,7 @@ const SwapInterface = React.memo(({
             onClick={handleSwapTokens}
             variant="ghost"
             size="icon"
-            className={`rounded-full bg-gray-700 hover:bg-gray-600 text-white w-7 h-7`}
+            className={`rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-white w-7 h-7`}
           >
             <ArrowUpDown className={`w-4 h-4`} />
           </Button>
@@ -118,26 +118,26 @@ const SwapInterface = React.memo(({
 
         {/* To Section */}
         <div className="space-y-2">
-          <div className="bg-[#1B1A1A] rounded-xl px-4 py-2">
+          <div className="bg-gray-100 dark:bg-[#1B1A1A] rounded-xl px-4 py-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {getTokenIcon(toToken)}
-                <span className={`font-semibold ${classes.bodyText}`}>{toToken.toUpperCase()}</span>
+                <span className={`font-semibold ${classes.bodyText} text-gray-900 dark:text-white`}>{toToken.toUpperCase()}</span>
               </div>
             </div>
             <div className="flex items-center justify-between mt-2">
-              <span className={`${classes.historyText} dark:text-white text-black`}>
+              <span className={`${classes.historyText} text-gray-600 dark:text-white`}>
                 {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">{toToken === "usdt" ? balance?.usdt?.token_balance || "0" : balance?.sol?.token_balance || "0"}</span>
               </span>
-              <span className={`${classes.inputText} font-semibold h-6`}>{toAmount || "0.00"}</span>
+              <span className={`${classes.inputText} font-semibold h-6 text-gray-900 dark:text-white`}>{toAmount || "0.00"}</span>
             </div>
           </div>
         </div>
 
         {/* Insufficient Balance Warning */}
         {insufficientBalance && (
-          <div className="mt-2 p-2 bg-red-500/10 border border-red-500/20 rounded-md">
-            <p className={`${classes.historyText} text-red-400 text-center`}>
+          <div className="mt-2 p-2 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-md">
+            <p className={`${classes.historyText} text-red-600 dark:text-red-400 text-center`}>
               {t('swap.insufficientBalance')}
             </p>
           </div>
@@ -175,25 +175,24 @@ const HistoryInterface = React.memo(({
 }) => {
   const { t } = useLang()
   return (
-    <div className={`bg-[#000000] rounded-md ${classes.padding} pr-0 flex-1 min-h-[43vh]`}>
-      <h2 className={`${classes.subtitle} font-semibold mb-6 text-center`}>{t('swap.swapHistory')}</h2>
+    <div className={`bg-white dark:bg-[#000000] rounded-md ${classes.padding} pr-0 flex-1 min-h-[43vh]`}>
+      <h2 className={`${classes.subtitle} font-semibold mb-6 text-center text-gray-900 dark:text-white`}>{t('swap.swapHistory')}</h2>
 
       {isHistoryLoading ? (
         <div className="flex justify-center items-center h-32">
-          <div className="text-gray-400">{t('common.loading')}</div>
+          <div className="text-gray-500 dark:text-gray-400">{t('common.loading')}</div>
         </div>
       ) : swapHistory.length === 0 ? (
         <div className="flex justify-center items-center h-32">
-          <div className="text-gray-400">{t('swap.noSwapHistory')}</div>
+          <div className="text-gray-500 dark:text-gray-400">{t('swap.noSwapHistory')}</div>
         </div>
       ) : (
         <div className="space-y-1">
           {/* Header */}
-          <div className="grid grid-cols-3 gap-4 text-sm text-gray-400 pb-2 border-b border-gray-700">
+          <div className="grid grid-cols-3 gap-4 text-sm text-gray-500 dark:text-gray-400 pb-2 border-b border-gray-200 dark:border-gray-700">
             <div className={classes.historyText}>{t('swap.time')}</div>
             <div className={classes.historyText}>{t('swap.buy')}</div>
             <div className={classes.historyText}>{t('swap.sell')}</div>
-
           </div>
 
           {/* History Items */}
@@ -201,16 +200,16 @@ const HistoryInterface = React.memo(({
             {swapHistory.map((item, index) => (
               <div
                 key={item.id}
-                className={`grid grid-cols-3 gap-4 py-3 px-2 rounded-lg ${classes.historyText} ${index % 2 === 0 ? "bg-[#1B1A1A]" : "bg-[#000000]"
+                className={`grid grid-cols-3 gap-4 py-3 px-2 rounded-lg ${classes.historyText} ${index % 2 === 0 ? "bg-gray-50 dark:bg-[#1B1A1A]" : "bg-white dark:bg-[#000000]"
                   }`}
               >
-                <div className="text-gray-300">
+                <div className="text-gray-600 dark:text-gray-300">
                   {item.time} {item.date}
                 </div>
-                <div className="text-white">
+                <div className="text-gray-900 dark:text-white">
                   {item.buyAmount} {item.buyToken}
                 </div>
-                <div className="text-white">
+                <div className="text-gray-900 dark:text-white">
                   {item.sellAmount} {item.sellToken}
                 </div>
               </div>
@@ -476,18 +475,18 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${classes.modal} outline-none overflow-y-auto bg-[#121619] max-h-auto md:max-h-[80vh] h-fit border-gray-700 text-white`} onPointerDownOutside={(e) => e.preventDefault()}>
+      <DialogContent className={`${classes.modal} outline-none overflow-y-auto bg-white dark:bg-[#121619] max-h-auto md:max-h-[80vh] h-fit border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white`} onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader className="flex flex-row items-center justify-between max-h-10">
-          <DialogTitle className={`${classes.title} font-bold text-white max-h-10`}>{t('swap.swap')}</DialogTitle>
+          <DialogTitle className={`${classes.title} font-bold text-gray-900 dark:text-white max-h-10`}>{t('swap.swap')}</DialogTitle>
         </DialogHeader>
 
         {/* Mobile Tabs */}
         {isMobile && (
-          <div className="flex bg-[#1B1A1A] rounded-lg p-1 mb-4 h-fit gap-2">
+          <div className="flex bg-gray-100 dark:bg-[#1B1A1A] rounded-lg p-1 mb-4 h-fit gap-2">
             <Button
               onClick={() => setActiveTab('swap')}
               variant={activeTab === 'swap' ? 'default' : 'ghost'}
-              className={`flex-1 ${activeTab === 'swap' ? 'bg-theme-primary-500 text-white' : 'text-gray-400'}`}
+              className={`flex-1 ${activeTab === 'swap' ? 'bg-theme-primary-500 text-white' : 'text-gray-600 dark:text-gray-400'}`}
             >
               <ArrowLeftRight className="w-4 h-4 mr-2" />
               {t('swap.swap')}
@@ -495,7 +494,7 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
             <Button
               onClick={() => setActiveTab('history')}
               variant={activeTab === 'history' ? 'default' : 'ghost'}
-              className={`flex-1 ${activeTab === 'history' ? 'bg-theme-primary-500 text-white' : 'text-gray-400'}`}
+              className={`flex-1 ${activeTab === 'history' ? 'bg-theme-primary-500 text-white' : 'text-gray-600 dark:text-gray-400'}`}
             >
               <History className="w-4 h-4 mr-2" />
               {t('swap.history')}
