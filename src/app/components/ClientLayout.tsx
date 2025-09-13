@@ -52,7 +52,7 @@ export default function ClientLayout({
             <main className="bg-white/80 dark:bg-[#000000a8] overflow-x-hidden flex-1">
               {children}
             </main>
-            {isAuthenticated && <Chat />}
+            {isAuthenticated && !pathname.includes('/trading') && <Chat />}
           <Toaster 
             position="top-center"
             toastOptions={{
