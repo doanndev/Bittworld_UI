@@ -333,7 +333,7 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
               </p>
             </div>
             <div className="text-center mb-2 relative">
-              <div className="flex items-center justify-center gap-2 ml-[9%]">
+              <div className="flex items-center justify-center gap-2 ml-[11%]">
                 <input
                   type="text"
                   inputMode="decimal"
@@ -363,7 +363,7 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
               </span>
             </div>
             <div className="text-center text-xs text-gray-500 mb-1 group-hover:text-gray-400 transition-colors duration-300">
-              {t('universal_account.available', { amount: getCurrentTokenBalance() })}
+              {t('universal_account.available', { amount: getCurrentTokenBalance() })} {selectedToken?.token_symbol}
               {availableTokens?.tokens && selectedToken && (() => {
                 const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
                 return tokenData?.token_balance_usd ? ` ($${tokenData.token_balance_usd.toFixed(2)})` : '';
