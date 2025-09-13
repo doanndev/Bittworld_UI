@@ -864,7 +864,10 @@
     },
     "actions": "Actions",
     "close": "Close",
-    "noData": "No data"
+    "noData": "No data",
+    "copyAddress": "Copy address",
+    "copied": "Copied!",
+    "redirecting": "Redirecting..."
   },
   "universal_account": {
     "google_auth_code": "Google Authenticator Code",
