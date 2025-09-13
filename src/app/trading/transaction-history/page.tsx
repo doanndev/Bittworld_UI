@@ -368,7 +368,7 @@ function TransactionHistoryContent() {
         <div className="hidden md:block">
           <table className="w-full text-sm table-fixed">
             <thead className="sticky top-[-1px] z-10 bg-white dark:bg-[#0F0F0F]">
-              <tr className="border-b border-gray-200 dark:border-neutral-800">
+              <tr className="border-b border-gray-200 dark:border-theme-neutral-1000 dark:bg-theme-neutral-800 bg-theme-neutral-200">
                 <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[14%]">{t("transactionHistory.time")}</th>
                 <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[7%]">{t("transactionHistory.type")}</th>
                 <th className="2xl:px-4 px-2 py-1.5 2xl:py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[11%]">{t("transactionHistory.price")}</th>
@@ -473,7 +473,7 @@ function TransactionHistoryContent() {
         <div className="hidden md:block">
           <table className="w-full text-sm table-fixed">
             <thead className="sticky top-[-1px] z-10 bg-white dark:bg-[#0F0F0F]">
-              <tr className="border-b border-gray-200 dark:border-neutral-800">
+              <tr className="border-b border-gray-200 dark:border-theme-neutral-1000 dark:bg-theme-neutral-800 bg-theme-neutral-200">
                 <th className="2xl:px-4 px-2 py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[15%]">{t("transactionHistory.time")}</th>
                 <th className="2xl:px-4 px-2 py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[7%]">{t("transactionHistory.type")}</th>
                 <th className="2xl:px-4 px-2 py-2 text-left 2xl:text-xs text-[10px] text-gray-700 dark:text-neutral-200 font-medium w-[11%]">{t("transactionHistory.price")}</th>
@@ -580,7 +580,7 @@ function TransactionHistoryContent() {
         <div className="hidden md:block">
           <table className="w-full text-sm table-fixed">
             <thead className="sticky top-[-1px] z-10 bg-white dark:bg-[#0F0F0F]">
-              <tr className="border-b border-gray-200 dark:border-neutral-800">
+              <tr className="border-b border-gray-200 dark:border-theme-neutral-1000 dark:bg-theme-neutral-800 bg-theme-neutral-200">
                 <th className="px-4 py-2 text-left text-gray-700 dark:text-neutral-200 font-medium w-[13%]">{t("transactionHistory.address")}</th>
                 <th className="px-4 py-2 text-left text-gray-700 dark:text-neutral-200 font-medium w-[12%]">{t("transactionHistory.amount")}</th>
                 <th className="px-4 py-2 text-left text-gray-700 dark:text-neutral-200 font-medium w-[14%]">{t("transactionHistory.quoteValue")}</th>
@@ -747,7 +747,7 @@ function TransactionHistoryContent() {
               </div>
               <table className="w-full text-sm table-fixed">
                 <thead className="sticky top-[-1px] z-10 bg-white dark:bg-theme-primary-500/70">
-                  <tr className="border-b border-gray-200 dark:border-neutral-800">
+                  <tr className="border-b border-gray-200 dark:border-theme-neutral-1000 dark:bg-theme-neutral-800 bg-theme-neutral-200">
                     <th className="px-4 py-2 text-left text-gray-700 dark:text-neutral-200 font-medium w-auto">{t("wallet.token")}</th>
                     <th className="px-4 py-2 text-left text-gray-700 dark:text-neutral-200 font-medium w-[15%]">{t("wallet.balance")}</th>
                     <th className="px-4 py-2 text-left text-gray-700 dark:text-neutral-200 font-medium w-[15%]">{t("wallet.price")}</th>
@@ -867,7 +867,7 @@ function TransactionHistoryContent() {
 
   return (
     <div className="shadow-inset dark:bg-theme-neutral-1000 rounded-md p-2 2xl:p-3 lg:overflow-hidden bg-white dark:bg-neutral-1000 flex flex-col w-full h-full ">
-      <div className="flex border-gray-200 dark:border-neutral-800 2xl:h-[30px] h-[24px] bg-gray-100  rounded-md dark:bg-[#333] overflow-x-auto md:overflow-x-hidden mb-1">
+      <div className="flex border-gray-200 dark:border-neutral-800 2xl:h-[30px] h-[24px]  rounded-md dark:bg-[#333] bg-theme-neutral-200 overflow-x-auto md:overflow-x-hidden mb-1">
         <button
           className={`flex-1 rounded-sm text-[9px] 2xl:text-sm cursor-pointer font-medium uppercase text-center ${activeTab === "all" ? "text-white bg-theme-primary-500" : "text-gray-500 dark:text-neutral-400"}`}
           onClick={() => setActiveTab("all")}
