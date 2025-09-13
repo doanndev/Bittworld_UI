@@ -93,6 +93,7 @@ export default function LiquidityPools() {
     const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false)
     const [boxLogos, setBoxLogos] = useState<string[]>([])
     const [isLoadingBoxLogos, setIsLoadingBoxLogos] = useState(false)
+    const [isDragOver, setIsDragOver] = useState(false)
 
     // Mutation để tạo pool
     const createPoolMutation = useMutation({
@@ -141,27 +142,60 @@ export default function LiquidityPools() {
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (file) {
-            // Validate file type
+            processImageFile(file)
+        }
+    }
 
-            if (!file.type.startsWith('image/')) {
-                toast.error(t('pools.uploadImageFile'))
-                return
-            }
+    const processImageFile = (file: File) => {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            toast.error(t('pools.uploadImageFile'))
+            return
+        }
 
-            // Validate file size (2MB limit)
-            if (file.size > 2 * 1024 * 1024) {
-                toast.error(t('pools.uploadImageSize'))
-                return
-            }
+        // Validate file size (2MB limit)
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error(t('pools.uploadImageSize'))
+            return
+        }
 
-            setCreateForm(prev => ({ ...prev, image: file }))
+        setCreateForm(prev => ({ ...prev, image: file }))
 
-            // Create preview
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                setImagePreview(e.target?.result as string)
-            }
-            reader.readAsDataURL(file)
+        // Create preview
+        const reader = new FileReader()
+        reader.onload = (e) => {
+            setImagePreview(e.target?.result as string)
+        }
+        reader.readAsDataURL(file)
+    }
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragOver(true)
+    }
+
+    const handleDragEnter = (e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragOver(true)
+    }
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragOver(false)
+    }
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragOver(false)
+
+        const files = e.dataTransfer.files
+        if (files && files.length > 0) {
+            const file = files[0]
+            processImageFile(file)
         }
     }
 
@@ -719,14 +753,42 @@ export default function LiquidityPools() {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex flex-col items-center justify-center pt-4 sm:pt-5 pb-5 sm:pb-6 bg-gray-100 dark:bg-gray-800 rounded-md cursor-pointer border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors" onClick={() => document.getElementById('pool-image')?.click()}>
-                                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 mb-3 sm:mb-4 text-gray-400 dark:text-gray-500" />
-                                    <p className="mb-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 text-center">
+                                <div 
+                                    className={`flex flex-col items-center justify-center pt-4 sm:pt-5 pb-5 sm:pb-6 bg-gray-100 dark:bg-gray-800 rounded-md cursor-pointer border-2 border-dashed transition-colors ${
+                                        isDragOver 
+                                            ? 'border-theme-primary-500 bg-theme-primary-50 dark:bg-theme-primary-900/20' 
+                                            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                                    }`}
+                                    onClick={() => document.getElementById('pool-image')?.click()}
+                                    onDragOver={handleDragOver}
+                                    onDragEnter={handleDragEnter}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={handleDrop}
+                                >
+                                    <Upload className={`w-6 h-6 sm:w-8 sm:h-8 mb-3 sm:mb-4 transition-colors ${
+                                        isDragOver 
+                                            ? 'text-theme-primary-500' 
+                                            : 'text-gray-400 dark:text-gray-500'
+                                    }`} />
+                                    <p className={`mb-2 text-xs sm:text-sm text-center transition-colors ${
+                                        isDragOver 
+                                            ? 'text-theme-primary-600 dark:text-theme-primary-400' 
+                                            : 'text-gray-600 dark:text-gray-400'
+                                    }`}>
                                         <span className="font-semibold">{t('pools.uploadImage')}</span> {t('pools.uploadDragDrop')}
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-500 text-center">
+                                    <p className={`text-xs text-center transition-colors ${
+                                        isDragOver 
+                                            ? 'text-theme-primary-500 dark:text-theme-primary-400' 
+                                            : 'text-gray-500 dark:text-gray-500'
+                                    }`}>
                                         {t('pools.uploadFormats')}
                                     </p>
+                                    {isDragOver && (
+                                        <p className="text-xs text-theme-primary-600 dark:text-theme-primary-400 font-medium mt-2">
+                                            {t('pools.dropImageHere') || 'Drop image here'}
+                                        </p>
+                                    )}
                                 </div>
                             )}
                             <div className="flex justify-center mt-4">

@@ -1238,6 +1238,7 @@
     "action": "Action",
     "uploadImage": "Click to upload",
     "uploadDragDrop": "or drag and drop",
+    "dropImageHere": "Drop image here",
     "uploadFormats": "PNG, JPG, WEBP up to 2MB",
     "uploadImageFile": "Please upload an image file",
     "uploadImageSize": "Image size should be less than 2MB",
