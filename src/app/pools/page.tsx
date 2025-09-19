@@ -85,7 +85,7 @@ export default function LiquidityPools() {
         name: "",
         description: "",
         image: null,
-        amount: 1000000,
+        amount: 500000,
         required: false
     })
     const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -231,7 +231,7 @@ export default function LiquidityPools() {
             return
         }
 
-        if (createForm.amount < 1000000) {
+        if (createForm.amount < 500000) {
             toast.error(t('pools.minAmountRequired'))
             return
         }
@@ -282,7 +282,7 @@ export default function LiquidityPools() {
     }
 
     const handleStakePool = async (poolId: number, stakeAmount: number) => {
-        if (stakeAmount < 1000000) {
+        if (stakeAmount < 500000) {
             toast.error(t('pools.minStakeRequired'))
             return
         }
@@ -305,7 +305,7 @@ export default function LiquidityPools() {
                 name: "",
                 description: "",
                 image: null,
-                amount: 1000000
+                amount: 500000
             })
             setImagePreview(null)
             setIsCreateModalOpen(false)
@@ -815,7 +815,7 @@ export default function LiquidityPools() {
 
                         <div className="space-y-2">
                             <Label htmlFor="pool-amount" className="text-gray-900 dark:text-white text-sm sm:text-base">
-                                {t('pools.amountLabel')} * (Min: 1,000,000)
+                                {t('pools.amountLabel')} * (Min: 500,000)
                             </Label>
                             <Input
                                 id="pool-amount"
