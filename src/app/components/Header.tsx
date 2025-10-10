@@ -391,7 +391,7 @@ const Header = () => {
                                 </div>
 
                                 {/* Mobile Navigation */}
-                                <nav className="flex flex-col p-4 space-y-3">
+                                <nav className="flex flex-col px-4 space-y-3">
                                     {listSidebar.map((item, index) => {
                                         const Icon = item.icon;
                                         const isExternalLink = item.href.startsWith('http');
@@ -402,12 +402,12 @@ const Header = () => {
                                                 target: "_blank", 
                                                 rel: "noopener noreferrer",
                                                 onClick: () => setIsMobileMenuOpen(false),
-                                                className: `hover:text-theme-primary-500 border-b border-white/50  text-theme-neutral-100 md:dark:text-theme-neutral-300 capitalize transition-colors text-lg py-2 flex items-center gap-3 ${pathname === item.href ? 'gradient-hover font-semibold' : ''}`
+                                                className: `hover:text-theme-primary-500 text-sm !mt-0 border-b border-white/50  text-theme-neutral-100 md:dark:text-theme-neutral-300 capitalize transition-colors py-2 flex items-center gap-3 ${pathname === item.href ? 'gradient-hover font-semibold' : ''}`
                                               }
                                             : { 
                                                 href: item.href,
                                                 onClick: () => setIsMobileMenuOpen(false),
-                                                className: `hover:text-theme-primary-500 text-theme-neutral-100 border-b border-white/50  md:dark:text-theme-neutral-300 capitalize transition-colors text-lg py-2 flex items-center gap-3 ${pathname === item.href ? 'gradient-hover font-semibold' : ''}`
+                                                className: `hover:text-theme-primary-500 text-sm !mt-0 text-theme-neutral-100 border-b border-white/50  md:dark:text-theme-neutral-300 capitalize transition-colors py-2 flex items-center gap-3 ${pathname === item.href ? 'gradient-hover font-semibold' : ''}`
                                               };
                                         
                                         return (
@@ -415,7 +415,7 @@ const Header = () => {
                                                 key={index}
                                                 {...props}
                                             >
-                                                <Icon className="h-5 w-5" />
+                                                <Icon className="h-4 w-4" />
                                                 {item.name}
                                             </Component>
                                         );
@@ -455,7 +455,7 @@ const Header = () => {
                                 <LangToggle className='!bg-transparent border-none !px-5' showArrow={true} onLanguageChange={() => setIsMobileMenuOpen(false)} />
 
                                 {/* Mobile Actions */}
-                                <div className="mt-auto p-4 space-y-4">
+                                <div className="p-4 space-y-4">
                                     <div className='flex items-center justify-evenly gap-4 mt-1 bg-theme-primary-500/40 rounded-md p-2'>
                                         <Moon
                                             className="cursor-pointer transition-colors "

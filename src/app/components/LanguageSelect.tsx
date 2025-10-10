@@ -29,7 +29,7 @@ export function LangToggle({ className, showArrow = false, onLanguageChange }: {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="w-full dark:bg-transparent bg-gray-100 dark:text-white text-theme-neutral-1000 xl:px-2 xl:max-h-auto max-h-[30px] px-1 flex justify-start gap-2 touch-manipulation"
+          className="w-full dark:bg-transparent bg-gray-100 dark:text-white text-theme-neutral-1000 xl:px-2 xl:max-h-auto h-[40px] px-1 flex justify-start gap-2 touch-manipulation"
           onClick={(e) => {
             console.log('Dropdown trigger clicked');
             e.stopPropagation();
@@ -44,8 +44,8 @@ export function LangToggle({ className, showArrow = false, onLanguageChange }: {
           {showArrow && <ChevronDown className="h-6 w-6 ml-auto" />}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" side={showArrow ? "bottom" : "bottom"} className={`${showArrow ? '!bg-theme-primary-500/40 border-t border-neutral-200 dark:border-transparent rounded-md box-shadow-none rounded-t-none !z-[60] md:!max-h-[80vh] !max-h-[50vh] !overflow-y-auto' : ''}`}>
-        <div className="flex flex-col pr-2 gap-1 overflow-x-hidden">
+      <DropdownMenuContent align="start" side={showArrow ? "bottom" : "bottom"} className={`${showArrow ? '!bg-[#0e4729] border-t mr-[5%] ml-[-5%] border-neutral-200 dark:border-transparent rounded-md box-shadow-none rounded-t-none !z-[60] md:!max-h-[80vh] !max-h-[50vh] !overflow-y-auto' : ''}`}>
+        <div className="flex flex-col pr-2 gap-1 overflow-x-hidden bg-theme-primary-500">
           {langConfig.listLangs.map((language) => (
             <DropdownMenuItem 
               key={language.id} 
