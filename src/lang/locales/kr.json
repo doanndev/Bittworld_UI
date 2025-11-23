@@ -1211,7 +1211,7 @@
     "chooseFromSystem": "시스템에서 선택",
     "descLabel": "설명",
     "descPlaceholder": "풀에 대해 설명하세요...",
-    "round": "3 회차",
+    "round": "10 회차",
     "lockNote": "모든 기여 코인은 풀 생성 시점부터 365일 동안 잠금됩니다.",
     "required": "풀에 동의 하시나요?",
     "creating": "생성 중...",

@@ -21,7 +21,7 @@ function HomeContent() {
       sessionStorage.setItem('refExpiration', expirationDate.toISOString());
     }
     
-    router.push('/trading?address=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN');
+    router.push('/pools');
   }, [router, searchParams]);
 
   return (

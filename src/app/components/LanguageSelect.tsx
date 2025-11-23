@@ -44,7 +44,7 @@ export function LangToggle({ className, showArrow = false, onLanguageChange }: {
           {showArrow && <ChevronDown className="h-6 w-6 ml-auto" />}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" side={showArrow ? "bottom" : "bottom"} className={`${showArrow ? '!bg-[#0e4729] border-t mr-[5%] ml-[-5%] border-neutral-200 dark:border-transparent rounded-md box-shadow-none rounded-t-none !z-[60] md:!max-h-[80vh] !max-h-[50vh] !overflow-y-auto' : ''}`}>
+      <DropdownMenuContent align="start" side={showArrow ? "bottom" : "bottom"} className={`${showArrow ? '!bg-[#0e4729] border-t border-neutral-200 dark:border-transparent rounded-md box-shadow-none rounded-t-none !z-[60] md:!max-h-[80vh] !max-h-[50vh] !overflow-y-auto' : ''}`}>
         <div className="flex flex-col pr-2 gap-1 overflow-x-hidden bg-theme-primary-500">
           {langConfig.listLangs.map((language) => (
             <DropdownMenuItem 

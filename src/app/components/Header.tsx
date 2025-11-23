@@ -367,7 +367,7 @@ const Header = () => {
                 {isMobileMenuOpen && (
                     <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-black">
                         <div className=" h-full bg-[#1c8f52] backdrop-blur-md ">
-                            <div className='dark:bg-theme-black-1/2 flex flex-col h-full'>
+                            <div className='dark:bg-theme-black-1/2 flex flex-col h-full overflow-y-auto'>
                                 <div className="flex items-center justify-between px-4 py-2 border-b border-gray-800">
                                     <Link href={defaultAddress} className="flex items-center">
                                         <img
@@ -402,12 +402,12 @@ const Header = () => {
                                                 target: "_blank", 
                                                 rel: "noopener noreferrer",
                                                 onClick: () => setIsMobileMenuOpen(false),
-                                                className: `hover:text-theme-primary-500 text-sm !mt-0 border-b border-white/50  text-theme-neutral-100 md:dark:text-theme-neutral-300 capitalize transition-colors py-2 flex items-center gap-3 ${pathname === item.href ? 'gradient-hover font-semibold' : ''}`
+                                                className: `hover:text-theme-primary-500 text-lg border-b border-white/50  text-theme-neutral-100 md:dark:text-theme-neutral-300 capitalize transition-colors py-2 flex items-center gap-3 ${pathname === item.href ? 'gradient-hover font-semibold' : ''}`
                                               }
                                             : { 
                                                 href: item.href,
                                                 onClick: () => setIsMobileMenuOpen(false),
-                                                className: `hover:text-theme-primary-500 text-sm !mt-0 text-theme-neutral-100 border-b border-white/50  md:dark:text-theme-neutral-300 capitalize transition-colors py-2 flex items-center gap-3 ${pathname === item.href ? 'gradient-hover font-semibold' : ''}`
+                                                className: `hover:text-theme-primary-500 text-lg text-theme-neutral-100 border-b border-white/50  md:dark:text-theme-neutral-300 capitalize transition-colors py-2 flex items-center gap-3 ${pathname === item.href ? 'gradient-hover font-semibold' : ''}`
                                               };
                                         
                                         return (
