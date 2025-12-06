@@ -7,9 +7,9 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLang } from '@/lang';
 import { useRouter } from "next/navigation";
-import ModalSignin from "../components/ModalSignin";
+import ModalSignin from "../../components/ModalSignin";
 import { toast } from 'react-hot-toast';
-import SwapModal from "../components/swap-modal";
+import SwapModal from "../../components/swap-modal";
 
 interface Token {
     token_address: string;
@@ -583,7 +583,7 @@ export default function WalletPage() {
                                                     <tbody>
                                                         {filteredTokens.map((token: Token, index: number) => (
                                                             <tr key={index} className="border-t border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                                                                <td className={tableCellStyles}  onClick={() => router.push(`/trading?address=${token.token_address}`)}>
+                                                                <td className={tableCellStyles}  onClick={() => router.push(`/pools?address=${token.token_address}`)}>
                                                                     <div className="flex items-center gap-2">
                                                                         {token.token_logo_url && (
                                                                             <img

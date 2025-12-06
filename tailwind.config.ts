@@ -146,7 +146,7 @@ const config: Config = {
         'linear-200': 'var(--tw-theme-neutral-900)',
       },
       fontFamily: {
-        sans: ['Pretendard', 'sans-serif'],
+        sans: ['Space Grotesk', 'sans-serif'],
       },
       fontWeight: {
         'normal': '400',

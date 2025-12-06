@@ -48,7 +48,7 @@ export default function CompleteProfile() {
 
     useEffect(() => {
         if (walletInfor?.wallet_nick_name) {
-            router.push("/trading?address=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN");
+            router.push("/pools");
         }
     }, [walletInfor, router]);
 
@@ -61,7 +61,7 @@ export default function CompleteProfile() {
         try {
             const res = await TelegramWalletService.changeName({...formData, name: formData.nick_name});
             refetch();
-            router.push("/trading?address=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN");
+            router.push("/pools");
             setToastMessage(t("tglogin.submitSuccess"));
             setShowToast(true);
         } catch (error: any) {

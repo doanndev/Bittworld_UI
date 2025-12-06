@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
+import { useTheme } from 'next-themes'
 import { ArrowLeft, Star, Users, TrendingUp, Calendar, Settings, Copy, Share2, MoreVertical, ChevronDown, X } from "lucide-react"
-import { Button } from "@/app/components/ui/button"
-import { FileInput } from "@/app/components/ui/file-input"
+import { Button } from "@/components/ui/button"
+import { FileInput } from "@/components/ui/file-input"
 import { toast } from 'react-hot-toast'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getBalanceInfo, getInforWallet } from "@/services/api/TelegramWalletService"
@@ -68,9 +69,16 @@ export default function PoolDetail() {
     const { isAuthenticated } = useAuth()
     const { t } = useLang()
     const queryClient = useQueryClient()
+    const { theme, resolvedTheme } = useTheme()
+    const [mountedTheme, setMountedTheme] = useState(false)
+    const isDark = resolvedTheme === 'dark' || (resolvedTheme === undefined && theme === 'dark')
     const [required, setRequired] = useState(false)
     const { price: bittPrice } = useBittPrice()
     console.log("bittPrice", bittPrice)
+
+    useEffect(() => {
+        setMountedTheme(true)
+    }, [])
 
     // State
     const [activeTab, setActiveTab] = useState<'overview' | 'members' | 'transactions' | 'rewards'>('overview')
@@ -384,7 +392,7 @@ export default function PoolDetail() {
     }
 
     return (
-        <div className="flex-1 bg-white dark:bg-black text-gray-900 dark:text-white">
+        <div className="flex-1 bg-transparent text-gray-900 dark:text-white mt-10">
             {/* Header - Responsive */}
             <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 mb-4 sm:mb-5">
                 <div className="px-3 sm:px-4 lg:px-8 py-3 sm:py-2">
@@ -462,52 +470,93 @@ export default function PoolDetail() {
             {/* Main Content */}
             <div className="px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
                 <div className="max-w-7xl mx-auto">
-                    {/* Pool Stats Cards - Responsive Grid */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                        <div className="bg-white dark:bg-gray-800 rounded-lg px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 dark:border-gray-700">
-                            <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="p-1.5 sm:p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                                    <TrendingUp className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
+                    {/* Pool Stats - Glassmorphism Card */}
+                    <div className="mb-6 sm:mb-8">
+                        <div 
+                            className="rounded-3xl px-4 sm:px-6 py-4 sm:py-6 backdrop-blur-xl"
+                            style={{
+                                background: mountedTheme && isDark
+                                    ? 'rgba(31, 193, 107, 0.15)'
+                                    : 'rgba(31, 193, 107, 0.12)',
+                                border: mountedTheme && isDark
+                                    ? '1px solid rgba(31, 193, 107, 0.25)'
+                                    : '1px solid rgba(31, 193, 107, 0.2)',
+                                boxShadow: mountedTheme && isDark
+                                    ? '0 8px 32px -4px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(31, 193, 107, 0.1) inset'
+                                    : '0 8px 32px -4px rgba(31, 193, 107, 0.15), 0 0 0 1px rgba(31, 193, 107, 0.08) inset',
+                            }}
+                        >
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-0">
+                                {/* Total Volume Section */}
+                                <div 
+                                    className="flex flex-col px-3 sm:px-4 py-2 sm:py-3 border-r last:border-r-0"
+                                    style={{
+                                        borderColor: mountedTheme && isDark
+                                            ? 'rgba(255, 255, 255, 0.1)'
+                                            : 'rgba(31, 193, 107, 0.15)'
+                                    }}
+                                >
+                                    <p className={`text-xs sm:text-sm mb-3 sm:mb-4 font-normal ${mountedTheme && isDark ? 'text-white/90' : 'text-gray-700'}`}>{t('pools.detailPage.totalVolume')}:</p>
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#1FC16B] rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                                            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                        </div>
+                                        <p className={`text-base sm:text-lg font-bold truncate ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>{formatNumber(poolDetail.totalVolume)}</p>
+                                    </div>
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">{t('pools.detailPage.totalVolume')}</p>
-                                    <p className="text-sm sm:text-base font-semibold truncate">{formatNumber(poolDetail.totalVolume)}</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-lg px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 dark:border-gray-700">
-                            <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="p-1.5 sm:p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                                    <Users className="w-4 h-4 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
+                                {/* Members Count Section */}
+                                <div 
+                                    className="flex flex-col px-3 sm:px-4 py-2 sm:py-3 border-r last:border-r-0"
+                                    style={{
+                                        borderColor: mountedTheme && isDark
+                                            ? 'rgba(255, 255, 255, 0.1)'
+                                            : 'rgba(31, 193, 107, 0.15)'
+                                    }}
+                                >
+                                    <p className={`text-xs sm:text-sm mb-3 sm:mb-4 font-normal ${mountedTheme && isDark ? 'text-white/90' : 'text-gray-700'}`}>{t('pools.detailPage.membersCount')}:</p>
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#1FC16B] rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                                            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                        </div>
+                                        <p className={`text-base sm:text-lg font-bold ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>{poolDetail.memberCount}</p>
+                                    </div>
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">{t('pools.detailPage.membersCount')}</p>
-                                    <p className="text-sm sm:text-base font-semibold">{poolDetail.memberCount}</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-lg px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 dark:border-gray-700">
-                            <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="p-1.5 sm:p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-                                    <Calendar className="w-4 h-4 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
+                                {/* Created Date Section */}
+                                <div 
+                                    className="flex flex-col px-3 sm:px-4 py-2 sm:py-3 border-r last:border-r-0"
+                                    style={{
+                                        borderColor: mountedTheme && isDark
+                                            ? 'rgba(255, 255, 255, 0.1)'
+                                            : 'rgba(31, 193, 107, 0.15)'
+                                    }}
+                                >
+                                    <p className={`text-xs sm:text-sm mb-3 sm:mb-4 font-normal ${mountedTheme && isDark ? 'text-white/90' : 'text-gray-700'}`}>{t('pools.detailPage.created')}:</p>
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#1FC16B] rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                                            <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                        </div>
+                                        <p className={`text-base sm:text-lg font-bold truncate ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>{formatDate(poolDetail.creationDate)}</p>
+                                    </div>
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">{t('pools.detailPage.created')}</p>
-                                    <p className="text-sm sm:text-base font-semibold truncate">{formatDate(poolDetail.creationDate)}</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-lg px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 dark:border-gray-700">
-                            <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="p-1.5 sm:p-2 bg-purple-800 rounded-lg">
-                                    <Star className="w-4 h-4 sm:w-6 sm:h-6 text-yellow-300" />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 capitalize truncate">{t('pools.detailPage.status')}</p>
-                                    <p className="text-sm sm:text-base font-semibold uppercase truncate">{t(`pools.detailPage.${poolDetail.status}`)}</p>
+                                {/* Status Section */}
+                                <div 
+                                    className="flex flex-col px-3 sm:px-4 py-2 sm:py-3 border-r last:border-r-0"
+                                    style={{
+                                        borderColor: mountedTheme && isDark
+                                            ? 'rgba(255, 255, 255, 0.1)'
+                                            : 'rgba(31, 193, 107, 0.15)'
+                                    }}
+                                >
+                                    <p className={`text-xs sm:text-sm mb-3 sm:mb-4 font-normal capitalize ${mountedTheme && isDark ? 'text-white/90' : 'text-gray-700'}`}>{t('pools.detailPage.status')}:</p>
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#1FC16B] rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                                            <Star className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                        </div>
+                                        <p className={`text-base sm:text-lg font-bold uppercase truncate ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>{t(`pools.detailPage.${poolDetail.status}`)}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -608,7 +657,20 @@ export default function PoolDetail() {
                             <div className="md:grid flex flex-col-reverse grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                                 {/* Pool Description */}
                                 <div className="lg:col-span-2">
-                                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+                                    <div 
+                                        className="rounded-3xl p-4 sm:p-6 backdrop-blur-xl"
+                                        style={{
+                                            background: mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+                                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                            border: mountedTheme && isDark
+                                                ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                : '1px solid rgba(156, 163, 175, 0.3)',
+                                            boxShadow: mountedTheme && isDark
+                                                ? '0 4px 12px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
+                                                : '0 4px 12px -4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
+                                        }}
+                                    >
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="text-base sm:text-lg font-semibold">{t('pools.detailPage.aboutPool')}</h3>
                                             {isCreator && (
@@ -776,7 +838,20 @@ export default function PoolDetail() {
 
                                 {/* Stake Section */}
                                 <div className="lg:col-span-1">
-                                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+                                    <div 
+                                        className="rounded-3xl p-4 sm:p-6 backdrop-blur-xl"
+                                        style={{
+                                            background: mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+                                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                            border: mountedTheme && isDark
+                                                ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                : '1px solid rgba(156, 163, 175, 0.3)',
+                                            boxShadow: mountedTheme && isDark
+                                                ? '0 4px 12px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
+                                                : '0 4px 12px -4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
+                                        }}
+                                    >
                                         <h3 className="text-base sm:text-lg font-semibold mb-4">{t('pools.detailPage.stakeInPool')}</h3>
 
                                         {!isCreator ? (

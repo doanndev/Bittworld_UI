@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+import { useTheme } from 'next-themes'
 import { useRouter } from "next/navigation"
-import { Search, Star, Settings, ChevronDown, Copy, Upload, X } from "lucide-react"
-import { Button } from "@/app/components/ui/button"
+import { Search, Star, Settings, ChevronDown, Copy, Upload, X, LayoutGrid, ListIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { toast } from 'react-hot-toast'
 import { truncateString } from "@/utils/format"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -38,6 +39,13 @@ type PoolFilterType = 'all' | 'created' | 'joined' | 'ranking'
 export default function LiquidityPools() {
     const router = useRouter();
     const { isAuthenticated } = useAuth();
+    const { theme, resolvedTheme } = useTheme();
+    const [mountedTheme, setMountedTheme] = useState(false);
+    const isDark = resolvedTheme === 'dark' || (resolvedTheme === undefined && theme === 'dark');
+    
+    useEffect(() => {
+        setMountedTheme(true);
+    }, []);
     const { data: walletInfor, refetch } = useQuery({
         queryKey: ["wallet-infor"],
         queryFn: getInforWallet,
@@ -53,6 +61,11 @@ export default function LiquidityPools() {
 
     // State cho filter type
     const [activeFilter, setActiveFilter] = useState<PoolFilterType>('all');
+    const filterRefs = useRef<(HTMLButtonElement | null)[]>([]);
+    const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+    
+    // State cho view style
+    const [viewStyle, setViewStyle] = useState<'table' | 'grid'>('table');
 
     // Query để lấy danh sách airdrop pools với filter
     const { data: poolsResponse, isLoading: isLoadingPools } = useQuery({
@@ -138,6 +151,57 @@ export default function LiquidityPools() {
     const handleFilterChange = (filter: PoolFilterType) => {
         setActiveFilter(filter);
     }
+
+    // Update slide indicator position
+    useEffect(() => {
+        const updateIndicator = () => {
+            const activeIndex = ['all', 'ranking', 'created', 'joined'].indexOf(activeFilter);
+            const activeButton = filterRefs.current[activeIndex];
+            if (activeButton) {
+                // Find the container with relative positioning
+                const container = activeButton.parentElement;
+                if (container && container.classList.contains('relative')) {
+                    const containerRect = container.getBoundingClientRect();
+                    const buttonRect = activeButton.getBoundingClientRect();
+                    
+                    // Calculate exact position relative to container
+                    // Container has p-1 (4px padding) and buttons have gap-0.5 (2px)
+                    // Indicator should align exactly with button, accounting for container padding
+                    const containerPadding = 4; // p-1 = 4px
+                    const leftOffset = buttonRect.left - containerRect.left - containerPadding;
+                    const width = buttonRect.width;
+                    
+                    setIndicatorStyle({
+                        left: Math.max(0, leftOffset), // Ensure non-negative
+                        width: width,
+                    });
+                }
+            }
+        };
+        
+        // Use double requestAnimationFrame for better accuracy after layout
+        const rafId = requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                updateIndicator();
+            });
+        });
+        
+        // Update on window resize and orientation change
+        const handleResize = () => {
+            requestAnimationFrame(() => {
+                updateIndicator();
+            });
+        };
+        
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+        
+        return () => {
+            cancelAnimationFrame(rafId);
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('orientationchange', handleResize);
+        };
+    }, [activeFilter, mountedTheme]);
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
@@ -362,11 +426,14 @@ export default function LiquidityPools() {
 
     const getColorRanking = (index: number) => {
         if (activeFilter === 'ranking' && index === 0) {
-            return "bg-gradient-to-r from-[#068b81] to-[#026669]";
+            // 1st place: Cyan/Blue gradient phù hợp với blockchain theme
+            return "bg-gradient-to-r from-[#15DFFD] via-[#02B7D2] to-[#00A8CC]";
         } else if (activeFilter === 'ranking' && index === 1) {
-            return "bg-gradient-to-r from-[#569200] to-[#1C5400]";
+            // 2nd place: Silver gradient phù hợp với blockchain theme
+            return "bg-gradient-to-r from-[#C0C0C0] via-[#A8A8A8] to-[#808080]";
         } else if (activeFilter === 'ranking' && index === 2) {
-            return "bg-gradient-to-r from-[#0059D0] to-[#002F92]";
+            // 3rd place: Purple gradient phù hợp với blockchain theme
+            return "bg-gradient-to-r from-[#8833EE] via-[#761BB3] to-[#5A0F9C]";
         }
         return "";
     }
@@ -383,52 +450,154 @@ export default function LiquidityPools() {
     }
 
     return (
-        <div className="flex-1 bg-white dark:bg-black text-gray-900 dark:text-white">
+        <div className="flex-1 bg-transparent dark:bg-transparent text-gray-900 dark:text-white mx-10">
             {/* Main Content */}
             <main className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-10">
                 <div className="2xl:container mx-auto ">
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-theme-primary-500 mb-6 sm:mb-8 lg:mb-12">BITTWORLD POOL</h1>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-theme-primary-500 mb-6 sm:mb-8 lg:mb-12 m-8">BITTWORLD POOL</h1>
+
 
                     {/* Search and Actions */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-6">
+                        
+                        {/* View Style Toggle */}
+                        <div 
+                                className="inline-flex items-center gap-1 p-1 rounded-xl backdrop-blur-xl mx-4"
+                                style={{
+                                    background: mountedTheme && isDark
+                                        ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                                    border: mountedTheme && isDark
+                                        ? '1px solid rgba(107, 114, 128, 0.3)'
+                                        : '1px solid rgba(156, 163, 175, 0.3)',
+                                    boxShadow: mountedTheme && isDark
+                                        ? '0 4px 12px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
+                                        : '0 4px 12px -4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
+                                }}
+                            >
+                                <button
+                                    onClick={() => setViewStyle('table')}
+                                    className={`p-2 rounded-lg transition-all duration-300 ${
+                                        viewStyle === 'table' ? '' : 'opacity-60 hover:opacity-100'
+                                    }`}
+                                    style={{
+                                        background: viewStyle === 'table'
+                                            ? (mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.25) 0%, rgba(31, 193, 107, 0.2) 100%)'
+                                                : 'linear-gradient(135deg, rgba(31, 193, 107, 0.3) 0%, rgba(31, 193, 107, 0.25) 100%)')
+                                            : 'transparent',
+                                        border: viewStyle === 'table'
+                                            ? (mountedTheme && isDark
+                                                ? '1px solid rgba(107, 114, 128, 0.4)'
+                                                : '1px solid rgba(156, 163, 175, 0.4)')
+                                            : '1px solid transparent',
+                                        color: viewStyle === 'table'
+                                            ? (mountedTheme && isDark ? 'white' : '#1f2937')
+                                            : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'),
+                                    }}
+                                >
+                                    <ListIcon className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => setViewStyle('grid')}
+                                    className={`p-2 rounded-lg transition-all duration-300 ${
+                                        viewStyle === 'grid' ? '' : 'opacity-60 hover:opacity-100'
+                                    }`}
+                                    style={{
+                                        background: viewStyle === 'grid'
+                                            ? (mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.25) 0%, rgba(31, 193, 107, 0.2) 100%)'
+                                                : 'linear-gradient(135deg, rgba(31, 193, 107, 0.3) 0%, rgba(31, 193, 107, 0.25) 100%)')
+                                            : 'transparent',
+                                        border: viewStyle === 'grid'
+                                            ? (mountedTheme && isDark
+                                                ? '1px solid rgba(107, 114, 128, 0.4)'
+                                                : '1px solid rgba(156, 163, 175, 0.4)')
+                                            : '1px solid transparent',
+                                        color: viewStyle === 'grid'
+                                            ? (mountedTheme && isDark ? 'white' : '#1f2937')
+                                            : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'),
+                                    }}
+                                >
+                                    <LayoutGrid className="w-4 h-4" />
+                                </button>
+                            </div>
+
                         <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
-                            <div className="flex items-center gap-3 w-full sm:w-auto">
+                            <div 
+                                className="relative inline-flex items-center gap-0.5 p-1 rounded-xl backdrop-blur-xl"
+                                style={{
+                                    background: mountedTheme && isDark
+                                        ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                                    border: mountedTheme && isDark
+                                        ? '1px solid rgba(107, 114, 128, 0.3)'
+                                        : '1px solid rgba(156, 163, 175, 0.3)',
+                                    boxShadow: mountedTheme && isDark
+                                        ? '0 8px 24px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 2px 8px -2px rgba(107, 114, 128, 0.1)'
+                                        : '0 8px 24px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 2px 8px -2px rgba(156, 163, 175, 0.08)',
+                                }}
+                            >
+                                {/* Slide Indicator */}
+                                <div 
+                                    className="absolute top-1 bottom-1 rounded-lg transition-all duration-300 ease-out z-0"
+                                    style={{
+                                        left: `${indicatorStyle.left}px`,
+                                        width: `${indicatorStyle.width}px`,
+                                        background: mountedTheme && isDark
+                                            ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.25) 0%, rgba(31, 193, 107, 0.2) 100%)'
+                                            : 'linear-gradient(135deg, rgba(31, 193, 107, 0.3) 0%, rgba(31, 193, 107, 0.25) 100%)',
+                                        border: mountedTheme && isDark
+                                            ? '1px solid rgba(107, 114, 128, 0.4)'
+                                            : '1px solid rgba(156, 163, 175, 0.4)',
+                                        backdropFilter: 'blur(12px)',
+                                        WebkitBackdropFilter: 'blur(12px)',
+                                    }}
+                                />
+                                
+                                {/* Filter Buttons */}
+                                {(['all', 'ranking', 'created', 'joined'] as PoolFilterType[]).map((filter, index) => {
+                                    const labels = {
+                                        all: t('pools.filterAll'),
+                                        ranking: t('pools.filterRanking'),
+                                        created: t('pools.filterCreated'),
+                                        joined: t('pools.filterJoined'),
+                                    };
+                                    const isActive = activeFilter === filter;
+                                    
+                                    return (
                                 <Button
-                                    className={`text-xs flex-1 sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2 h-auto sm:max-h-[30px] w-full sm:w-auto transition-colors ${activeFilter === 'all'
-                                        ? 'text-theme-primary-500 underline underline-offset-8'
-                                        : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                                        }`}
-                                    onClick={() => handleFilterChange('all')}
+                                            key={filter}
+                                            ref={(el) => {
+                                                filterRefs.current[index] = el;
+                                            }}
+                                            className="relative z-10 text-xs sm:text-sm font-medium px-3 sm:px-4 py-1.5 sm:py-2 h-auto rounded-lg transition-all duration-300 bg-transparent border-0"
+                                            style={{
+                                                color: isActive
+                                                    ? (mountedTheme && isDark ? 'white' : '#1f2937')
+                                                    : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.6)'),
+                                                fontWeight: isActive ? '600' : '500',
+                                            }}
+                                            onClick={() => handleFilterChange(filter)}
+                                            onMouseEnter={(e) => {
+                                                if (!isActive) {
+                                                    e.currentTarget.style.color = mountedTheme && isDark 
+                                                        ? 'rgba(255, 255, 255, 0.7)' 
+                                                        : 'rgba(0, 0, 0, 0.8)';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isActive) {
+                                                    e.currentTarget.style.color = mountedTheme && isDark 
+                                                        ? 'rgba(255, 255, 255, 0.5)' 
+                                                        : 'rgba(0, 0, 0, 0.6)';
+                                                }
+                                            }}
                                 >
-                                    {t('pools.filterAll')}
+                                            {labels[filter]}
                                 </Button>
-                                <Button
-                                    className={`text-xs flex-1 sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2 h-auto sm:max-h-[30px] w-full sm:w-auto transition-colors ${activeFilter === 'ranking'
-                                        ? 'text-theme-primary-500 underline underline-offset-8'
-                                        : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                                        }`}
-                                    onClick={() => handleFilterChange('ranking')}
-                                >
-                                    {t('pools.filterRanking')}
-                                </Button>
-                                <Button
-                                    className={`text-xs flex-1 sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2 h-auto sm:max-h-[30px] w-full sm:w-auto transition-colors ${activeFilter === 'created'
-                                        ? 'text-theme-primary-500 underline underline-offset-8'
-                                        : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                                        }`}
-                                    onClick={() => handleFilterChange('created')}
-                                >
-                                    {t('pools.filterCreated')}
-                                </Button>
-                                <Button
-                                    className={`text-xs flex-1 sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2 h-auto sm:max-h-[30px] w-full sm:w-auto transition-colors ${activeFilter === 'joined'
-                                        ? 'text-theme-primary-500 underline underline-offset-8'
-                                        : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                                        }`}
-                                    onClick={() => handleFilterChange('joined')}
-                                >
-                                    {t('pools.filterJoined')}
-                                </Button>
+                                    );
+                                })}
                             </div>
                             <div className="relative w-full sm:w-auto">
                                 <input
@@ -438,260 +607,519 @@ export default function LiquidityPools() {
                                         setSearchQuery(e.target.value);
                                     }}
                                     placeholder={t('pools.searchPlaceholder')}
-                                    className="w-full sm:w-[11vw] xl:w-[17vw] rounded-full py-1.5 pl-10 pr-4 text-sm focus:outline-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 border border-gray-300 dark:border-gray-600 placeholder:text-gray-500 dark:placeholder:text-gray-400 placeholder:text-xs"
+                                    className="w-full sm:w-[11vw] xl:w-[17vw] rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 placeholder:text-gray-500 dark:placeholder:text-gray-400 placeholder:text-xs transition-all duration-200"
                                 />
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                         </div>
 
 
-                        <div className="flex space-x-4 w-full sm:w-auto">
-                            <div className="flex space-x-4 w-full sm:w-auto">
-                                <Button
-                                    className="bg-theme-primary-500 text-white text-xs sm:text-sm font-medium hover:bg-green-500 px-3 sm:px-4 py-2 sm:py-2 h-auto sm:max-h-[30px] w-full sm:w-auto"
-                                    onClick={() => router.push('/airdrop-rewards')}
-                                >
-                                    {t('airdropRewards.title')}
-                                </Button>
-                            </div>
-                            <div className="flex space-x-4 w-full sm:w-auto">
-                                <Button
-                                    className="bg-theme-primary-500 text-white text-xs sm:text-sm font-medium hover:bg-green-500 px-3 sm:px-4 py-2 sm:py-2 h-auto sm:max-h-[30px] w-full sm:w-auto"
-                                    onClick={() => setIsCreateModalOpen(true)}
-                                >
-                                    {t('pools.createPoolBtn')}
-                                </Button>
-                            </div>
+                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                            
+                            <Button
+                                className="w-full sm:w-auto
+                                    bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                    hover:from-theme-primary-400 hover:to-theme-primary-500
+                                    rounded-full 
+                                    text-white font-semibold tracking-wide
+                                    transition-all duration-300
+                                    border-0
+                                    text-xs sm:text-sm
+                                    px-3 sm:px-4 py-2 h-auto"
+                                onClick={() => setIsCreateModalOpen(true)}
+                            >
+                                {t('pools.createPoolBtn')}
+                            </Button>
                         </div>
                     </div>
 
 
 
-                    {/* Mobile Card Layout */}
-                    <div className="sm:hidden space-y-3">
-                        {filteredPools.map((pool: AirdropPool, index: number) => (
-                            <div key={pool.poolId} className={`bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-none ${getColorRanking(index)}`}>
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className="flex items-center gap-3">
-                                        {getImgRanking(index)}
-                                        <img
-                                            src={pool.logo || "/logo.png"}
-                                            alt={pool.name}
-                                            className="w-8 h-8 rounded-full"
-                                            onError={(e) => {
-                                                const target = e.target as HTMLImageElement;
-                                                target.src = "/logo.png";
-                                            }}
-                                        />
-                                        <div>
-                                            <div className="font-medium text-sm text-gray-900 dark:text-white">{pool.name}</div>
-                                            <div className="text-xs text-gray-500 dark:text-white">{pool.memberCount} {t('pools.members')}</div>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => toggleFavorite(pool.poolId.toString())}
-                                        className="text-white hover:text-yellow-500 dark:text-white dark:hover:text-yellow-400 transition-colors p-1"
-                                    >
-                                        <Star className={`w-5 h-5 ${favoritePools.includes(pool.poolId.toString()) ? "fill-yellow-500 text-yellow-500 dark:fill-yellow-400 dark:text-yellow-400" : ""}`} />
-                                    </button>
-                                </div>
-
-                                <div className="space-y-2 text-xs mb-3">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500 dark:text-white">{t('pools.uidLeader')}:</span>
-                                        <span className="font-mono text-gray-900 dark:text-white">{pool?.creatorBittworldUid || "N/A"}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-gray-500 dark:text-white">{t('pools.leaderAddress')}:</span>
-                                        <span className="font-mono text-yellow-500 flex items-center gap-1">{truncateString(pool.creatorAddress, 12)} <Copy className="w-3 h-3 cursor-pointer" onClick={() => {
-                                            navigator.clipboard.writeText(pool.creatorAddress)
-                                            toast.success(t('pools.detailPage.copiedToClipboard'))
-                                        }} /></span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500 dark:text-white">{t('pools.volume')}:</span>
-                                        <span className="font-mono text-gray-900 dark:text-white">{formatNumber(pool.totalVolume)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500 dark:text-white">{t('pools.round')}:</span>
-                                        <span className="font-mono text-gray-900 dark:text-white">{formatNumber(pool.roundVolume)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-500 dark:text-white">{t('pools.created')}:</span>
-                                        <span className="text-gray-900 dark:text-white">{formatDate(pool.creationDate)}</span>
-                                    </div>
-                                </div>
-
-                                <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-                                    <Button
-                                        size="sm"
-                                        className="w-full bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white hover:bg-theme-primary-500 hover:text-white text-xs py-2"
-                                        onClick={() => router.push(`/pools/${pool.poolId}`)}
-                                    >
-                                        {t('pools.detail')}
-                                    </Button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Tablet Optimized Table */}
-                    <div className="hidden sm:block lg:hidden overflow-hidden z-20 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900">
-                        <div className="overflow-x-auto scrollbar-thin max-h-[60vh] scroll-smooth">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 dark:bg-gray-800 sticky top-0 z-10 shadow-sm">
+                    {/* Table View */}
+                    {viewStyle === 'table' && (
+                    <div 
+                        className="overflow-hidden z-20 rounded-3xl backdrop-blur-xl"
+                        style={{
+                            background: mountedTheme && isDark
+                                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                            border: mountedTheme && isDark
+                                ? '1px solid rgba(107, 114, 128, 0.3)'
+                                : '1px solid rgba(156, 163, 175, 0.3)',
+                            boxShadow: mountedTheme && isDark
+                                ? '0 8px 32px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
+                                : '0 8px 32px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
+                        }}
+                    >
+                        <div className="overflow-x-auto scrollbar-thin max-h-[70vh] scroll-smooth">
+                            <table className="min-w-full w-full">
+                                <thead className="sticky top-0 z-10">
                                     <tr>
-                                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 w-[5%]">&ensp;</th>
-                                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 w-[30%]">{t('pools.poolName')}</th>
-                                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 w-[10%]">{t('pools.uidLeader')}</th>
-                                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 w-[10%]">{t('pools.leaderAddress')}</th>
-                                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 w-[10%]">{t('pools.members')}</th>
-                                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 w-[10%]">{t('pools.round')}</th>
-                                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 w-[10%]">{t('pools.volume')}</th>
-                                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 w-[10%]">{t('pools.action')}</th>
+                                        <th 
+                                            className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[3%] sm:w-[2%]"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            &ensp;
+                                        </th>
+                                        <th 
+                                            className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            {t('pools.poolName')}
+                                        </th>
+                                        <th 
+                                            className="hidden md:table-cell px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            {t('pools.uidLeader')}
+                                        </th>
+                                        <th 
+                                            className="hidden lg:table-cell px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            {t('pools.leaderAddress')}
+                                        </th>
+                                        <th 
+                                            className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[8%]"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            {t('pools.members')}
+                                        </th>
+                                        <th 
+                                            className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[12%]"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            {t('pools.round')}
+                                        </th>
+                                        <th 
+                                            className="hidden md:table-cell px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[12%]"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            {t('pools.volume')}
+                                        </th>
+                                        <th 
+                                            className="hidden lg:table-cell px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[10%]"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            {t('pools.created')}
+                                        </th>
+                                        <th 
+                                            className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[10%]"
+                                            style={{
+                                                background: mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                borderBottom: mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                            }}
+                                        >
+                                            {t('pools.action')}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredPools.map((pool: AirdropPool, index: number) => (
-                                        <tr key={pool.poolId} className={`border-t border-gray-200 dark:border-gray-700 ${index % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
-                                            <td className="px-2 py-2 text-xs text-gray-900 dark:text-gray-300">
-                                                <div className="flex items-center gap-2">
-                                                    <button
-                                                        onClick={() => toggleFavorite(pool.poolId.toString())}
-                                                        className="text-gray-400 hover:text-yellow-500 dark:text-gray-500 dark:hover:text-yellow-400 transition-colors p-1"
-                                                    >
-                                                        <Star className={`w-4 h-4 ${favoritePools.includes(pool.poolId.toString()) ? "fill-yellow-500 text-yellow-500 dark:fill-yellow-400 dark:text-yellow-400" : ""}`} />
-                                                    </button>
+                                    {filteredPools.map((pool: AirdropPool, index: number) => {
+                                        const rankingColor = getColorRanking(index);
+                                        const hasRankingColor = rankingColor !== "";
+                                        
+                                        return (
+                                        <tr 
+                                            key={pool.poolId} 
+                                            className={`transition-all duration-200 hover:opacity-90 ${rankingColor} ${hasRankingColor ? 'backdrop-blur-md' : ''}`}
+                                            style={{
+                                                background: hasRankingColor 
+                                                    ? undefined
+                                                    : (index % 2 === 0
+                                                        ? (mountedTheme && isDark
+                                                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.3) 100%)')
+                                                        : (mountedTheme && isDark
+                                                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.15) 100%)'
+                                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)')),
+                                                borderTop: index > 0 ? (mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.2)'
+                                                    : '1px solid rgba(156, 163, 175, 0.2)') : 'none',
+                                                ...(hasRankingColor && {
+                                                    backdropFilter: 'blur(16px)',
+                                                    WebkitBackdropFilter: 'blur(16px)',
+                                                    border: mountedTheme && isDark
+                                                        ? '1px solid rgba(255, 255, 255, 0.2)'
+                                                        : '1px solid rgba(255, 255, 255, 0.3)',
+                                                    boxShadow: mountedTheme && isDark
+                                                        ? '0 8px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
+                                                        : '0 8px 32px -8px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.2) inset',
+                                                }),
+                                            }}
+                                        >
+                                            <td 
+                                                className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm"
+                                            >
+                                                <div className="flex items-center justify-center gap-2 sm:gap-3">
+                                                    {getImgRanking(index)}
                                                 </div>
                                             </td>
-                                            <td className="px-2 py-2 text-xs text-gray-900 dark:text-gray-300">
-                                                <div className="flex items-center gap-2">
+                                            <td 
+                                                className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm"
+                                            >
+                                                <div className="flex items-center gap-3 sm:gap-4">
+                                                    <div 
+                                                        className="relative flex-shrink-0 rounded-2xl p-1"
+                                                        style={{
+                                                            background: mountedTheme && isDark
+                                                                ? 'linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(107, 114, 128, 0.1) 100%)'
+                                                                : 'linear-gradient(135deg, rgba(156, 163, 175, 0.15) 0%, rgba(156, 163, 175, 0.1) 100%)',
+                                                            border: mountedTheme && isDark
+                                                                ? '1px solid rgba(107, 114, 128, 0.4)'
+                                                                : '1px solid rgba(156, 163, 175, 0.4)',
+                                                            boxShadow: mountedTheme && isDark
+                                                                ? '0 4px 12px -4px rgba(107, 114, 128, 0.2)'
+                                                                : '0 4px 12px -4px rgba(156, 163, 175, 0.15)',
+                                                        }}
+                                                    >
                                                     <img
                                                         src={pool.logo || "/logo.png"}
                                                         alt={pool.name}
-                                                        className="w-5 h-5 rounded-full"
+                                                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover"
                                                         onError={(e) => {
                                                             const target = e.target as HTMLImageElement;
                                                             target.src = "/logo.png";
                                                         }}
                                                     />
-                                                    <div className="flex flex-col">
-                                                        <div className="font-medium">{pool.name}</div>
-                                                        <div className="text-xs text-gray-500 dark:text-gray-400">{pool.memberCount} {t('pools.members')}</div>
+                                                    </div>
+                                                    <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                                                        <div 
+                                                            className="font-bold text-sm sm:text-base truncate"
+                                                            style={{
+                                                                color: '#1FC16B',
+                                                            }}
+                                                        >
+                                                            {pool.name}
+                                                        </div>
+                                                        <div 
+                                                            className="text-xs font-medium hidden sm:block"
+                                                            style={{
+                                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+                                                            }}
+                                                        >
+                                                            {pool.memberCount} {t('pools.members')}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-2 py-2 text-xs text-gray-900 dark:text-gray-300">
+                                            <td 
+                                                className="hidden md:table-cell px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono font-semibold"
+                                                style={{
+                                                    color: mountedTheme && isDark ? 'rgba(255, 255, 255)' : 'rgba(0, 0, 0)',
+                                                }}
+                                            >
                                                 {pool?.creatorBittworldUid || "N/A"}
                                             </td>
-                                            <td className="px-2 py-2 text-xs text-gray-900 dark:text-gray-300">
-                                                {truncateString(pool.creatorAddress, 12)} <Copy className="w-3 h-3 cursor-pointer" onClick={() => {
+                                            <td 
+                                                className="hidden lg:table-cell px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm dark:text-yellow-400 text-amber-600"
+                                                                                    >
+                                                <div className="flex items-center gap-2">
+                                                    <span className="italic">{truncateString(pool.creatorAddress, 12)}</span>
+                                                    <Copy 
+                                                        className="w-3 h-3 cursor-pointer hover:opacity-70 transition-opacity flex-shrink-0" 
+                                                        onClick={() => {
                                                     navigator.clipboard.writeText(pool.creatorAddress)
                                                     toast.success(t('pools.detailPage.copiedToClipboard'))
-                                                }} />
+                                                        }} 
+                                                    />
+                                                </div>
                                             </td>
-                                            <td className="px-2 py-2 text-xs text-gray-900 dark:text-gray-300">
+                                            <td 
+                                                className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold"
+                                                style={{
+                                                    color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                }}
+                                            >
                                                 {pool.memberCount}
                                             </td>
-                                            <td className="px-2 py-2 text-xs text-gray-900 dark:text-gray-300">
-                                                <span className="font-mono">{formatNumber(pool.roundVolume)}</span>
+                                            <td 
+                                                className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono font-semibold"
+                                                style={{
+                                                    color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                }}
+                                            >
+                                                {formatNumber(pool.roundVolume)}
                                             </td>
-                                            <td className="px-2 py-2 text-xs text-gray-900 dark:text-gray-300">
+                                            <td 
+                                                className="hidden md:table-cell px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold"
+                                                style={{
+                                                    color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                }}
+                                            >
+                                                {formatNumber(pool.totalVolume)}
+                                            </td>
+                                            <td 
+                                                className="hidden lg:table-cell px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium"
+                                                style={{
+                                                    color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                }}
+                                            >
+                                                {formatDate(pool.creationDate)}
+                                            </td>
+                                            <td 
+                                                className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm"
+                                            >
                                                 <Button
                                                     size="sm"
-                                                    className="bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white hover:bg-theme-primary-500 hover:text-white text-xs px-2 py-1"
+                                                    className="bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white 
+                                                        hover:bg-gradient-to-r hover:from-theme-primary-400 hover:to-theme-primary-500 hover:text-white 
+                                                        text-xs px-2 sm:px-3 md:px-4 py-1 rounded-lg transition-all duration-300"
                                                     onClick={() => router.push(`/pools/${pool.poolId}`)}
                                                 >
                                                     {t('pools.detail')}
                                                 </Button>
                                             </td>
                                         </tr>
-                                    ))}
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
-                    {/* Desktop Full Table */}
-                    <div className="hidden lg:block overflow-hidden z-20 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900">
-                        <div className="overflow-x-auto scrollbar-thin max-h-[65vh] scroll-smooth">
-                            <table className="min-w-[800px] w-full">
-                                <thead className="bg-gray-50 dark:bg-gray-800 sticky top-0 z-10 shadow-sm">
-                                    <tr>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-[2%]">&ensp;</th>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-auto">{t('pools.poolName')}</th>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-auto">{t('pools.uidLeader')}</th>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-auto">{t('pools.leaderAddress')}</th>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-[8%]">{t('pools.members')}</th>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-[12%]">{t('pools.round')}</th>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-[12%]">{t('pools.volume')}</th>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-[10%]">{t('pools.created')}</th>
-                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 w-[10%]"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredPools.map((pool: AirdropPool, index: number) => (
-                                        <tr key={pool.poolId} className={`border-t border-gray-200 dark:border-gray-700 ${getColorRanking(index)} ${index % 2 === 0 ? "bg-white dark:bg-[#171717]" : "bg-gray-50 dark:bg-[#525252]/60"}`}>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-900 dark:text-white">
-                                                <div className="flex items-center gap-3">
-                                                    {getImgRanking(index)}
-                                                </div>
-                                            </td>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-900 dark:text-white">
-                                                <div className="flex items-center gap-3">
+                    )}
+                    
+                    {/* Grid View */}
+                    {viewStyle === 'grid' && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                            {filteredPools.map((pool: AirdropPool, index: number) => {
+                                const rankingColor = getColorRanking(index);
+                                const hasRankingColor = rankingColor !== "";
+                                
+                                return (
+                                    <div
+                                        key={pool.poolId}
+                                        className={`rounded-xl transition-all duration-300 hover:scale-[1.02] ${rankingColor} ${hasRankingColor ? 'backdrop-blur-xl' : 'backdrop-blur-xl'}`}
+                                        style={{
+                                            background: hasRankingColor
+                                                ? undefined
+                                                : (mountedTheme && isDark
+                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
+                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)'),
+                                            border: hasRankingColor
+                                                ? (mountedTheme && isDark
+                                                    ? '1px solid rgba(255, 255, 255, 0.25)'
+                                                    : '1px solid rgba(255, 255, 255, 0.35)')
+                                                : (mountedTheme && isDark
+                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
+                                                    : '1px solid rgba(156, 163, 175, 0.3)'),
+                                            boxShadow: hasRankingColor
+                                                ? (mountedTheme && isDark
+                                                    ? '0 8px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 4px 16px -4px rgba(255, 255, 255, 0.1)'
+                                                    : '0 8px 32px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.25) inset, 0 4px 16px -4px rgba(255, 255, 255, 0.15)')
+                                                : (mountedTheme && isDark
+                                                    ? '0 4px 12px -4px rgba(0, 0, 0, 0.2)'
+                                                    : '0 4px 12px -4px rgba(0, 0, 0, 0.08)'),
+                                            ...(hasRankingColor && {
+                                                backdropFilter: 'blur(20px)',
+                                                WebkitBackdropFilter: 'blur(20px)',
+                                            }),
+                                        }}
+                                    >
+                                        <div className="p-4 sm:p-5 space-y-4">
+                                            {/* Header with Logo and Name */}
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                    <div 
+                                                        className="relative flex-shrink-0 rounded-2xl p-1"
+                                                        style={{
+                                                            background: mountedTheme && isDark
+                                                                ? 'linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(107, 114, 128, 0.1) 100%)'
+                                                                : 'linear-gradient(135deg, rgba(156, 163, 175, 0.15) 0%, rgba(156, 163, 175, 0.1) 100%)',
+                                                            border: mountedTheme && isDark
+                                                                ? '1px solid rgba(107, 114, 128, 0.4)'
+                                                                : '1px solid rgba(156, 163, 175, 0.4)',
+                                                            boxShadow: mountedTheme && isDark
+                                                                ? '0 4px 12px -4px rgba(107, 114, 128, 0.2)'
+                                                                : '0 4px 12px -4px rgba(156, 163, 175, 0.15)',
+                                                        }}
+                                                    >
                                                     <img
                                                         src={pool.logo || "/logo.png"}
                                                         alt={pool.name}
-                                                        className="w-5 h-5 sm:w-6 sm:h-6 rounded-full"
+                                                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover"
                                                         onError={(e) => {
                                                             const target = e.target as HTMLImageElement;
                                                             target.src = "/logo.png";
                                                         }}
                                                     />
-                                                    <div className="flex flex-col ml-1">
-                                                        <div className="font-medium">{pool.name}</div>
+                                                    </div>
+                                                    <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                                                        <div 
+                                                            className="font-bold text-sm sm:text-base truncate"
+                                                            style={{
+                                                                color: '#1FC16B',
+                                                            }}
+                                                        >
+                                                            {pool.name}
+                                                </div>
+                                                        <div 
+                                                            className="text-xs font-medium"
+                                                            style={{
+                                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)',
+                                                            }}
+                                                        >
+                                                            {pool.memberCount} {t('pools.members')}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-900 dark:text-white">
+                                            </div>
+                                            
+                                            {/* Ranking Badge */}
+                                            {activeFilter === 'ranking' && getImgRanking(index)}
+                                            
+                                            {/* Pool Info */}
+                                            <div className="space-y-2 text-xs">
+                                                <div className="flex justify-between items-center">
+                                                    <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)' }}>
+                                                        {t('pools.uidLeader')}:
+                                                    </span>
+                                                    <span 
+                                                        className="font-mono font-semibold"
+                                                        style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)' }}
+                                                    >
                                                 {pool?.creatorBittworldUid || "N/A"}
-                                            </td>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-yellow-500 italic flex items-center md:min-h-16 gap-2">
-                                                {truncateString(pool.creatorAddress, 12)}
-                                                <Copy className="w-3 h-3" onClick={() => {
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)' }}>
+                                                        {t('pools.leaderAddress')}:
+                                                    </span>
+                                                    <div className="flex items-center gap-1">
+                                                        <span 
+                                                            className="font-mono italic text-xs"
+                                                            style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)' }}
+                                                        >
+                                                            {truncateString(pool.creatorAddress, 8)}
+                                                        </span>
+                                                        <Copy 
+                                                            className="w-3 h-3 cursor-pointer hover:opacity-70 transition-opacity flex-shrink-0" 
+                                                            onClick={() => {
                                                     navigator.clipboard.writeText(pool.creatorAddress)
                                                     toast.success(t('pools.detailPage.copiedToClipboard'))
-                                                }} />
-                                            </td>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-900 dark:text-white">
-                                                {pool.memberCount}
-                                            </td>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-[#6ae1ec]">
-                                                <span className="font-mono font-semibold">{formatNumber(pool.roundVolume)}</span>
-                                            </td>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-900 dark:text-white">
+                                                            }}
+                                                            style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)' }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)' }}>
+                                                        {t('pools.round')}:
+                                                    </span>
+                                                    <span 
+                                                        className="font-mono font-semibold"
+                                                        style={{ color: '#1FC16B' }}
+                                                    >
+                                                        {formatNumber(pool.roundVolume)}
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)' }}>
+                                                        {t('pools.volume')}:
+                                                    </span>
+                                                    <span 
+                                                        className="font-semibold"
+                                                        style={{ color: '#1FC16B' }}
+                                                    >
                                                 {formatNumber(pool.totalVolume)}
-                                            </td>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm italic text-gray-900 dark:text-white">
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)' }}>
+                                                        {t('pools.created')}:
+                                                    </span>
+                                                    <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)' }}>
                                                 {formatDate(pool.creationDate)}
-                                            </td>
-                                            <td className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-900 dark:text-white">
-                                                <Button
-                                                    size="sm"
-                                                    className="bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white hover:bg-theme-primary-500 hover:text-white text-xs px-4 py-1"
-                                                    onClick={() => {
-                                                        router.push(`/pools/${pool.poolId}`)
-                                                    }}
-                                                >
-                                                    {t('pools.detail')}
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Action Button */}
+                                            <Button
+                                                size="sm"
+                                                className="w-full bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white 
+                                                    hover:bg-gradient-to-r hover:from-theme-primary-400 hover:to-theme-primary-500 hover:text-white 
+                                                    text-xs py-2 rounded-lg transition-all duration-300"
+                                                onClick={() => router.push(`/pools/${pool.poolId}`)}
+                                            >
+                                                {t('pools.detail')}
+                                            </Button>
                         </div>
                     </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                    
                     {/* Loading State */}
                     {isLoadingPools && (
                         <div className="text-center py-12">

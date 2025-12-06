@@ -316,7 +316,7 @@ const OverView = () => {
                         <div className='flex flex-col gap-2 h-full justify-around w-full'>
                             <Title name={t('overview.topPumfun')} />
                             {topPumFun24h.map((coin: any) => (
-                                <div onClick={() => router.push(`/trading?address=${coin.address}`)} key={coin.id} className='flex items-center justify-between gap-1 w-full h-[30px] cursor-pointer hover:bg-slate-800 px-2 rounded-md'>
+                                <div onClick={() => router.push(`/pools?address=${coin.address}`)} key={coin.id} className='flex items-center justify-between gap-1 w-full h-[30px] cursor-pointer hover:bg-slate-800 px-2 rounded-md'>
                                     <div className='flex items-center gap-1'>
                                         <img
                                             src={coin.logo_uri}

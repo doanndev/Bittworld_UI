@@ -64,7 +64,7 @@ export function useWsSubscribeTokens(params?: SubscribeParams) {
   const [isConnected, setIsConnected] = useState(false);
   const mountedRef = useRef(true);
   const pathname = usePathname();
-  const isTradingPage = pathname?.startsWith('/trading');
+  const isTradingPage = false; // Trading page has been removed
   const isDashboardPage = pathname?.startsWith('/dashboard');
   const isInitialLoadRef = useRef(true);
 

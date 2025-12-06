@@ -15,7 +15,99 @@ import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Checkbox } from '@/ui/checkbox';
-import TermsOfServiceModal from '../components/TermsOfServiceModal';
+import TermsOfServiceModal from '../../components/TermsOfServiceModal';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+
+// Float Label Input Component
+interface FloatLabelInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    label: string;
+    id: string;
+}
+
+const FloatLabelInput = React.forwardRef<HTMLInputElement, FloatLabelInputProps>(
+    ({ label, id, className, value, ...props }, ref) => {
+        const [isFocused, setIsFocused] = React.useState(false);
+        const hasValue = Boolean(value);
+        const isActive = isFocused || hasValue;
+
+        return (
+            <div className="relative">
+                <Input
+                    {...props}
+                    ref={ref}
+                    id={id}
+                    value={value}
+                    placeholder=""
+                    className={cn(
+                        "transition-all duration-200",
+                        isActive ? "py-2" : "pt-6 pb-2",
+                        className
+                    )}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                />
+                <Label
+                    htmlFor={id}
+                    className={cn(
+                        "absolute left-3 transition-all duration-200 pointer-events-none px-1",
+                        isActive
+                            ? "-top-2.5 text-xs text-theme-primary-500 z-10 dark:bg-black/30 bg-white/70"
+                            : "top-1/2 -translate-y-1/2 text-sm dark:text-gray-400 text-gray-500 bg-transparent"
+                    )}
+                >
+                    {label}
+                </Label>
+            </div>
+        );
+    }
+);
+FloatLabelInput.displayName = "FloatLabelInput";
+
+// Float Label Password Input Component
+interface FloatLabelPasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    label: string;
+    id: string;
+}
+
+const FloatLabelPasswordInput = React.forwardRef<HTMLInputElement, FloatLabelPasswordInputProps>(
+    ({ label, id, className, value, ...props }, ref) => {
+        const [isFocused, setIsFocused] = React.useState(false);
+        const hasValue = Boolean(value);
+        const isActive = isFocused || hasValue;
+
+        return (
+            <div className="relative">
+                <PasswordInput
+                    {...props}
+                    ref={ref}
+                    id={id}
+                    value={value}
+                    placeholder=""
+                    className={cn(
+                        "transition-all duration-200",
+                        isActive ? "py-2" : "pt-6 pb-2",
+                        className
+                    )}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                />
+                <Label
+                    htmlFor={id}
+                    className={cn(
+                        "absolute left-3 transition-all duration-200 pointer-events-none px-1",
+                        isActive
+                            ? "-top-2.5 text-xs text-theme-primary-500 z-10 dark:bg-black/30 bg-white/70"
+                            : "top-1/2 -translate-y-1/2 text-sm dark:text-gray-400 text-gray-500 bg-transparent"
+                    )}
+                >
+                    {label}
+                </Label>
+            </div>
+        );
+    }
+);
+FloatLabelPasswordInput.displayName = "FloatLabelPasswordInput";
 
 const Connect = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -149,35 +241,68 @@ const Connect = () => {
 
         try {
             const response = await manualLogin(loginData);
-            console.log(response)
+            
+            // Debug logs
+            console.log('🔍 [DEBUG] Login Response:', response);
+            console.log('🔍 [DEBUG] Response type:', typeof response);
+            console.log('🔍 [DEBUG] Response keys:', Object.keys(response || {}));
+            console.log('🔍 [DEBUG] response.status:', response?.status);
+            console.log('🔍 [DEBUG] response.data:', response?.data);
+            console.log('🔍 [DEBUG] response.token:', response?.token);
+            console.log('🔍 [DEBUG] response.user:', response?.user);
+            
             // Check if response has the expected structure
-            if ((response.status === 201 || response.status === 200) && response.data?.token) {
+            // Support both formats: { status, data: { token, user } } and { status, token, user }
+            const token = response?.data?.token || response?.token;
+            const user = response?.data?.user || response?.user;
+            const status = response?.status;
+            
+            console.log('🔍 [DEBUG] Extracted values - token:', token, 'user:', user, 'status:', status);
+            
+            if ((status === 201 || status === 200 || !status) && token) {
                 // Save token to localStorage and update auth state
-                login(response.data.token);
+                login(token);
 
-                toast.success(t('connectPage.messages.loginSuccess', { name: response.data.user?.name || t('connectPage.login.title') }));
+                toast.success(t('connectPage.messages.loginSuccess', { name: user?.name || t('connectPage.login.title') }));
                 const timeout = setTimeout(() => {
                     router.push('/');
                 }, 1000);
                 return () => clearTimeout(timeout);
 
             } else {
+                console.error('❌ [DEBUG] Invalid response format:', {
+                    hasStatus: !!status,
+                    statusValue: status,
+                    hasToken: !!token,
+                    tokenValue: token,
+                    fullResponse: response
+                });
                 throw new Error('Invalid response format');
             }
         } catch (error: any) {
+            // Debug logs for error
+            console.error('❌ [DEBUG] Login Error:', error);
+            console.error('❌ [DEBUG] Error type:', typeof error);
+            console.error('❌ [DEBUG] Error keys:', Object.keys(error || {}));
+            console.error('❌ [DEBUG] error.response:', error?.response);
+            console.error('❌ [DEBUG] error.response?.data:', error?.response?.data);
+            console.error('❌ [DEBUG] error.response?.data?.message:', error?.response?.data?.message);
+            console.error('❌ [DEBUG] error.message:', error?.message);
+            
             if (error.response?.data?.message === 'Invalid or expired verification code') {
                 toast.error(t('connectPage.messages.invalidVerificationCode'));
-            }if (error.response?.data?.message === 'Invalid password') {
+            } else if (error.response?.data?.message === 'Invalid password') {
                 toast.error(t('connectPage.messages.invalidPassword'));
             } else if (error.response?.data?.message === 'User not found') {
                 toast.error(t('connectPage.messages.userNotFound'));
             } else if (error.response?.data?.message === 'User not verified') {
                 toast.error(t('connectPage.messages.userNotVerified'));
-            }else if (error.response?.data?.message === 'Email is not verified. Please verify your email first.') {
+            } else if (error.response?.data?.message === 'Email is not verified. Please verify your email first.') {
                 toast.error(t('connectPage.messages.emailNotVerified'));
-            }
-            else {
-                toast.error(error.response?.data?.message || t('connectPage.messages.loginError'));
+            } else if (error.message === 'Invalid response format') {
+                toast.error(t('connectPage.messages.loginError') + ' (Invalid response format)');
+            } else {
+                toast.error(error.response?.data?.message || error.message || t('connectPage.messages.loginError'));
             }
         } finally {
             setIsLoading(false);
@@ -310,10 +435,34 @@ const Connect = () => {
 
     return (
         <div className="h-[93vh] flex flex-col justify-center items-center gap-2 xl:gap-4 px-4 lg:px-0 relative z-40 2xl:pt-4 pt-2">
-            <Card className="w-full max-w-lg">
+            <Card className="w-full max-w-lg 
+                backdrop-blur-xl 
+                dark:bg-gradient-to-br dark:from-black/20 dark:via-theme-primary-500/10 dark:to-theme-primary-300/10
+                bg-gradient-to-br from-white/80 via-theme-primary-500/5 to-theme-primary-300/5
+                dark:border-white/10 border-gray-200/50
+                rounded-[32px] 
+                dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.37),inset_0_1px_0_0_rgba(255,255,255,0.1)]
+                shadow-[0_8px_32px_0_rgba(0,0,0,0.1),inset_0_1px_0_0_rgba(255,255,255,0.8)]
+                dark:bg-black/30 bg-white/70">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white p-0">
-                        {t('connectPage.title')}
+                   
+                    <CardTitle className="text-2xl font-bold dark:text-white text-gray-900 p-0 tracking-wide">
+                        {/* {t('connectPage.title')} */}
+                         {/* Logo */}
+                    <div className='flex items-center justify-center my-4'>
+                        <Link href="/" className="flex items-center">
+                            <img
+                                src="/bitworld-logo-light.png"
+                                alt="logo"
+                                className="h-8 xl:h-10 block dark:hidden"
+                            />
+                            <img
+                                src="/bitworld-logo.png"
+                                alt="logo"
+                                className="h-8 xl:h-10 hidden dark:block"
+                            />
+                        </Link>
+                    </div>
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -330,147 +479,188 @@ const Connect = () => {
                             setForgotPasswordCode('');
                             setNewPassword('');
                         }
-                    }} className="w-full max-h-[570px] overflow-y-auto p-6 pt-0">
+                    }} className="w-full p-6 pt-0">
                         {!isForgot ? (
-                            <TabsList className="grid w-full grid-cols-2 bg-theme-primary-500 sticky top-0 z-10 ">
-                                <TabsTrigger value="login" className="text-gray-900 ">{t('connectPage.tabs.login')}</TabsTrigger>
-                                <TabsTrigger value="register" className="text-gray-900 ">{t('connectPage.tabs.register')}</TabsTrigger>
+                            <TabsList className="grid w-full grid-cols-2 dark:bg-gray-800/30 bg-gray-100/50 backdrop-blur-sm dark:border-white/10 border-gray-200/50 rounded-xl sticky top-0 z-10 p-1 mb-4">
+                                <TabsTrigger 
+                                    value="login" 
+                                    className="dark:text-gray-300 text-gray-600 
+                                        data-[state=active]:bg-gradient-to-r data-[state=active]:from-theme-primary-500 data-[state=active]:to-theme-primary-400 data-[state=active]:text-white 
+                                        hover:bg-theme-primary-500/20 dark:hover:bg-theme-primary-500/10 
+                                        rounded-lg transition-all">
+                                    {t('connectPage.tabs.login')}
+                                </TabsTrigger>
+                                <TabsTrigger 
+                                    value="register" 
+                                    className="dark:text-gray-300 text-gray-600 
+                                        data-[state=active]:bg-gradient-to-r data-[state=active]:from-theme-primary-500 data-[state=active]:to-theme-primary-400 data-[state=active]:text-white 
+                                        hover:bg-theme-primary-500/20 dark:hover:bg-theme-primary-500/10 
+                                        rounded-lg transition-all">
+                                    {t('connectPage.tabs.register')}
+                                </TabsTrigger>
                             </TabsList>
                         ) : (
                             <></>
                         )}
 
-                        {/* Login Tab */}
-                        {!isForgot && <TabsContent value="login" className="space-y-4">
-                            <form onSubmit={handleLogin} className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="login-email">{t('connectPage.login.email')}</Label>
-                                    <Input
-                                        id="login-email"
-                                        type="email"
-                                        placeholder={t('connectPage.login.emailPlaceholder')}
-                                        value={loginData.email}
-                                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="login-password">{t('connectPage.login.password')}</Label>
-                                    <PasswordInput
-                                        id="login-password"
-                                        minLength={4}
-                                        placeholder={t('connectPage.login.passwordPlaceholder')}
-                                        value={loginData.password}
-                                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                                        required
-                                    />
-                                </div>
-                                <div className='text-xs text-gray-500'>
-                                    <span className='cursor-pointer hover:text-blue-600 text-black dark:text-white' onClick={() => setIsForgot(true)}>{t('connectPage.login.forgotPassword')}</span>
-                                </div>
-                                <Button type="submit" className="w-full bg-theme-primary-500/80 hover:bg-theme-primary-500" disabled={isLoading}>
-                                    {isLoading ? t('connectPage.login.loggingIn') : t('connectPage.login.loginButton')}
-                                </Button>
-                            </form>
-                        </TabsContent>}
+                        {/* Tab Content Container with Animation */}
+                        <div className="relative overflow-hidden">
+                            <AnimatePresence mode="popLayout" initial={false}>
+                                {/* Login Tab */}
+                                {!isForgot && activeTab === 'login' && (
+                                    <motion.div
+                                        key="login"
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 20 }}
+                                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                                        className="w-full"
+                                    >
+                                        <TabsContent value="login" className="space-y-4 m-0">
+                                            <form onSubmit={handleLogin} className="space-y-5 mt-4">
+                                                <FloatLabelInput
+                                                    id="login-email"
+                                                    type="email"
+                                                    label={t('connectPage.login.email')}
+                                                    value={loginData.email}
+                                                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                                                    required
+                                                    className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                                />
+                                                <FloatLabelPasswordInput
+                                                    id="login-password"
+                                                    minLength={4}
+                                                    label={t('connectPage.login.password')}
+                                                    value={loginData.password}
+                                                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                                                    required
+                                                    className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                                />
+                                                <div className='text-xs dark:text-gray-400 text-gray-600'>
+                                                    <span className='cursor-pointer hover:text-theme-primary-500 dark:hover:text-theme-primary-300 dark:text-gray-300 text-gray-700 transition-colors' onClick={() => setIsForgot(true)}>{t('connectPage.login.forgotPassword')}</span>
+                                                </div>
+                                                <Button 
+                                                    type="submit" 
+                                                    className="w-full 
+                                                        bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                                        hover:from-theme-primary-400 hover:to-theme-primary-500
+                                                        rounded-full 
+                                                        text-white font-semibold tracking-wide
+                                                        transition-all duration-300
+                                                        border-0" 
+                                                    disabled={isLoading}>
+                                                    {isLoading ? t('connectPage.login.loggingIn') : t('connectPage.login.loginButton')}
+                                                </Button>
+                                            </form>
+                                        </TabsContent>
+                                    </motion.div>
+                                )}
 
-                        {/* Register Tab */}
-                        <TabsContent value="register" className="space-y-4">
-                            {registrationStep === 'email' ? (
+                                {/* Register Tab */}
+                                {!isForgot && activeTab === 'register' && (
+                                    <motion.div
+                                        key="register"
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                                        className="w-full"
+                                    >
+                                        <TabsContent value="register" className="space-y-4 m-0">
+                                            {registrationStep === 'email' ? (
                                 // Email verification step
-                                <form onSubmit={handleSendVerificationCode} className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="verification-email">{t('connectPage.register.email')}</Label>
-                                        <Input
-                                            id="verification-email"
-                                            type="email"
-                                            placeholder={t('connectPage.register.emailPlaceholder')}
-                                            value={emailForVerification}
-                                            onChange={(e) => setEmailForVerification(e.target.value)}
-                                            required
-                                        />
-                                    </div>
-                                    <Button type="submit" className="w-full bg-theme-primary-500/80 hover:bg-theme-primary-500" disabled={isLoading}>
+                                <form onSubmit={handleSendVerificationCode} className="space-y-5 mt-4">
+                                    <FloatLabelInput
+                                        id="verification-email"
+                                        type="email"
+                                        label={t('connectPage.register.email')}
+                                        value={emailForVerification}
+                                        onChange={(e) => setEmailForVerification(e.target.value)}
+                                        required
+                                        className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                    />
+                                    <Button 
+                                        type="submit" 
+                                        className="w-full 
+                                            bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                            hover:from-theme-primary-400 hover:to-theme-primary-500
+                                            rounded-full 
+                                            text-white font-semibold tracking-wide
+                                            transition-all duration-300
+                                            border-0" 
+                                        disabled={isLoading}>
                                         {isLoading ? t('connectPage.register.sendingCode') : t('connectPage.register.sendCode')}
                                     </Button>
                                 </form>
                             ) : (
                                 // Full registration form
-                                <form onSubmit={handleRegister} className="space-y-3">
+                                <form onSubmit={handleRegister} className="space-y-4">
                                     <div className="flex items-center justify-between mb-2">
-                                        <div className="text-sm text-gray-600 dark:text-white">
+                                        <div className="text-sm dark:text-gray-300 text-gray-700">
                                             {t('connectPage.register.emailDisplay', { email: emailForVerification })}
                                         </div>
                                     </div>
 
-                                    <div className="space-y-1">
-                                        <Label htmlFor="verification-code">{t('connectPage.register.verificationCode')}</Label>
-                                        <div className="flex gap-2">
-                                            <Input
+                                    <div className="flex gap-2">
+                                        <div className="flex-1">
+                                            <FloatLabelInput
                                                 id="verification-code"
                                                 type="text"
                                                 maxLength={6}
-                                                placeholder={t('connectPage.register.verificationCodePlaceholder')}
+                                                label={t('connectPage.register.verificationCode')}
                                                 value={verificationCode}
                                                 onChange={(e) => setVerificationCode(e.target.value)}
                                                 required
+                                                className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
                                             />
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                onClick={handleResendCode}
-                                                disabled={isLoading}
-                                                className="whitespace-nowrap"
-                                            >
-                                                {t('connectPage.register.resendCode')}
-                                            </Button>
                                         </div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={handleResendCode}
+                                            disabled={isLoading}
+                                            className="whitespace-nowrap dark:bg-gray-800/50 bg-gray-100/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white hover:border-theme-primary-500/50 self-end"
+                                        >
+                                            {t('connectPage.register.resendCode')}
+                                        </Button>
                                     </div>
 
-                                    <div className="space-y-1">
-                                        <Label htmlFor="register-nickname">{t('connectPage.register.nickname')}</Label>
-                                        <Input
-                                            id="register-nickname"
-                                            type="text"
-                                            placeholder={t('connectPage.register.nicknamePlaceholder')}
-                                            value={registerData.nick_name}
-                                            onChange={(e) => setRegisterData({ ...registerData, nick_name: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <Label htmlFor="register-password">{t('connectPage.register.password')}</Label>
-                                        <PasswordInput
-                                            id="register-password"
-                                            minLength={4}
-                                            placeholder={t('connectPage.register.passwordPlaceholder') + " " + t('connectPage.messages.minPasswordLength')}
-                                            value={registerData.password}
-                                            onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <Label htmlFor="register-uid">{t('connectPage.register.bitworldUid')}</Label>
-                                        <Input
-                                            id="register-uid"
-                                            type="text"
-                                            minLength={6}
-                                            placeholder={t('connectPage.register.bitworldUidPlaceholder')}
-                                            value={registerData.bittworld_uid}
-                                            onChange={(e) => setRegisterData({ ...registerData, bittworld_uid: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <Label htmlFor="ref-bittworld-uid">{t('connectPage.register.referralCodeBittworldUid')}</Label>
-                                        <Input
-                                            id="ref-bittworld-uid"
-                                            type="text"
-                                            placeholder={t('connectPage.register.referralCodePlaceholder')}
-                                            value={registerData.referrer_bittworld_uid}
-                                            onChange={(e) => setRegisterData({ ...registerData, referrer_bittworld_uid: e.target.value })}
-                                        />
-                                    </div>
+                                    <FloatLabelInput
+                                        id="register-nickname"
+                                        type="text"
+                                        label={t('connectPage.register.nickname')}
+                                        value={registerData.nick_name}
+                                        onChange={(e) => setRegisterData({ ...registerData, nick_name: e.target.value })}
+                                        required
+                                        className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                    />
+                                    <FloatLabelPasswordInput
+                                        id="register-password"
+                                        minLength={4}
+                                        label={t('connectPage.register.password') + " " + t('connectPage.messages.minPasswordLength')}
+                                        value={registerData.password}
+                                        onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                                        required
+                                        className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                    />
+                                    <FloatLabelInput
+                                        id="register-uid"
+                                        type="text"
+                                        minLength={6}
+                                        label={t('connectPage.register.bitworldUid')}
+                                        value={registerData.bittworld_uid}
+                                        onChange={(e) => setRegisterData({ ...registerData, bittworld_uid: e.target.value })}
+                                        required
+                                        className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                    />
+                                    <FloatLabelInput
+                                        id="ref-bittworld-uid"
+                                        type="text"
+                                        label={t('connectPage.register.referralCodeBittworldUid')}
+                                        value={registerData.referrer_bittworld_uid}
+                                        onChange={(e) => setRegisterData({ ...registerData, referrer_bittworld_uid: e.target.value })}
+                                        className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                    />
                                     <div className="flex justify-center items-center gap-2">
                                     <Checkbox
                                         id="terms-of-service"
@@ -479,95 +669,135 @@ const Connect = () => {
                                         onClick={handleCheckboxClick}
                                     />
                                     <button
-                                        className="text-xs"
+                                        className="text-xs dark:text-gray-300 text-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors"
                                         onClick={handleCheckboxClick}
                                     >
-                                        {t('modalSignin.agreeToTerms')} <span className="text-theme-primary-500">{t('modalSignin.termsOfService')}</span> {t('modalSignin.ofBittworld')}
+                                        {t('modalSignin.agreeToTerms')} <span className="bg-gradient-to-r from-theme-primary-500 to-theme-primary-300 bg-clip-text text-transparent">{t('modalSignin.termsOfService')}</span> {t('modalSignin.ofBittworld')}
                                     </button>
                                 </div>
-                                    <Button type="submit" className="w-full bg-theme-primary-500/80 hover:bg-theme-primary-500" disabled={isLoading || !isTermsChecked}>
+                                    <Button 
+                                        type="submit" 
+                                        className="w-full 
+                                            bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                            hover:from-theme-primary-400 hover:to-theme-primary-500
+                                            rounded-full 
+                                            text-white font-semibold tracking-wide
+                                            transition-all duration-300
+                                            border-0
+                                            disabled:opacity-50 disabled:cursor-not-allowed" 
+                                        disabled={isLoading || !isTermsChecked}>
                                         {isLoading ? t('connectPage.register.registering') : t('connectPage.register.registerButton')}
                                     </Button>
-                                </form>
-                            )}
-                        </TabsContent>
+                                        </form>
+                                    )}
+                                        </TabsContent>
+                                    </motion.div>
+                                )}
 
-                        {/* Forgot Password Tab */}
-                        {isForgot && <TabsContent value="login" className="space-y-2">
-                            <div className='flex items-center justify-between mt-3 mb-1'>
-                                <div className='text-theme-primary-500 text-lg font-bold'>
-                                    {t('connectPage.forgotPassword.title')}
-                                </div>
-                                <div className='dark:text-white text-black text-sm cursor-pointer hover:text-blue-600' onClick={() => setIsForgot(false)}>{t('connectPage.login.backToLogin')}</div>
-                            </div>
-                            {forgotPasswordStep === 'email' && (
-                                <form onSubmit={handleSendForgotPasswordCode} className="space-y-5">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="forgot-password-email">{t('connectPage.forgotPassword.email')}</Label>
-                                        <Input
-                                            id="forgot-password-email"
-                                            type="email"
-                                            placeholder={t('connectPage.forgotPassword.emailPlaceholder')}
-                                            value={forgotPasswordEmail}
-                                            onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                                            required
-                                        />
-                                    </div>
-                                    <Button type="submit" className="w-full bg-theme-primary-500/80 hover:bg-theme-primary-500" disabled={isLoading}>
-                                        {isLoading ? t('connectPage.forgotPassword.sendingCode') : t('connectPage.forgotPassword.sendCode')}
-                                    </Button>
-                                </form>
-                            )}
+                                {/* Forgot Password Tab */}
+                                {isForgot && (
+                                    <motion.div
+                                        key="forgot-password"
+                                        initial={{ opacity: 0, y: 15 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -15 }}
+                                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                                        className="w-full"
+                                    >
+                                        <TabsContent value="login" className="space-y-2 m-0">
+                                            <div className='flex items-center justify-between mt-3 mb-1'>
+                                                <div className='bg-gradient-to-r from-theme-primary-500 to-theme-primary-300 bg-clip-text text-transparent text-lg font-bold'>
+                                                    {t('connectPage.forgotPassword.title')}
+                                                </div>
+                                                <div className='dark:text-gray-300 text-gray-700 text-sm cursor-pointer hover:text-theme-primary-500 dark:hover:text-theme-primary-300 transition-colors' onClick={() => setIsForgot(false)}>{t('connectPage.login.backToLogin')}</div>
+                                            </div>
+                                            {forgotPasswordStep === 'email' && (
+                                                <form onSubmit={handleSendForgotPasswordCode} className="space-y-6 mt-4">
+                                                    <FloatLabelInput
+                                                        id="forgot-password-email"
+                                                        type="email"
+                                                        label={t('connectPage.forgotPassword.email')}
+                                                        value={forgotPasswordEmail}
+                                                        onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                                                        required
+                                                        className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                                    />
+                                                    <Button 
+                                                        type="submit" 
+                                                        className="w-full 
+                                                            bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                                            hover:from-theme-primary-400 hover:to-theme-primary-500
+                                                            rounded-full 
+                                                            text-white font-semibold tracking-wide
+                                                            transition-all duration-300
+                                                            border-0" 
+                                                        disabled={isLoading}>
+                                                        {isLoading ? t('connectPage.forgotPassword.sendingCode') : t('connectPage.forgotPassword.sendCode')}
+                                                    </Button>
+                                                </form>
+                                            )}
 
-                            {forgotPasswordStep === 'code' && (
-                                <form onSubmit={handleChangePassword} className="space-y-4">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="text-sm text-gray-600 dark:text-white">
-                                            {t('connectPage.register.emailDisplay', { email: forgotPasswordEmail })}
-                                        </div>
-                                    </div>
+                                            {forgotPasswordStep === 'code' && (
+                                                <form onSubmit={handleChangePassword} className="space-y-5">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <div className="text-sm dark:text-gray-300 text-gray-700">
+                                                            {t('connectPage.register.emailDisplay', { email: forgotPasswordEmail })}
+                                                        </div>
+                                                    </div>
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="forgot-password-code">{t('connectPage.forgotPassword.verificationCode')}</Label>
-                                        <div className="flex gap-2">
-                                            <Input
-                                                id="forgot-password-code"
-                                                type="text"
-                                                placeholder={t('connectPage.forgotPassword.verificationCodePlaceholder')}
-                                                value={forgotPasswordCode}
-                                                onChange={(e) => setForgotPasswordCode(e.target.value)}
-                                                required
-                                            />
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                onClick={handleResendForgotPasswordCode}
-                                                disabled={isLoading || resendCooldown > 0}
-                                                className="whitespace-nowrap"
-                                            >
-                                                {resendCooldown > 0 ? t('connectPage.register.resendCodeWithTimer', { seconds: resendCooldown }) : t('connectPage.register.resendCode')}
-                                            </Button>
-                                        </div>
-                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <div className="flex-1">
+                                                            <FloatLabelInput
+                                                                id="forgot-password-code"
+                                                                type="text"
+                                                                label={t('connectPage.forgotPassword.verificationCode')}
+                                                                value={forgotPasswordCode}
+                                                                onChange={(e) => setForgotPasswordCode(e.target.value)}
+                                                                required
+                                                                className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                                            />
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            onClick={handleResendForgotPasswordCode}
+                                                            disabled={isLoading || resendCooldown > 0}
+                                                            className="whitespace-nowrap dark:bg-gray-800/50 bg-gray-100/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white hover:border-theme-primary-500/50 self-end"
+                                                        >
+                                                            {resendCooldown > 0 ? t('connectPage.register.resendCodeWithTimer', { seconds: resendCooldown }) : t('connectPage.register.resendCode')}
+                                                        </Button>
+                                                    </div>
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="new-password">{t('connectPage.forgotPassword.newPassword')}</Label>
-                                        <PasswordInput
-                                            id="new-password"
-                                            minLength={4}
-                                            placeholder={t('connectPage.forgotPassword.newPasswordPlaceholder') + " " + t('connectPage.messages.minPasswordLength')}
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                            required
-                                        />
-                                    </div>
+                                                    <FloatLabelPasswordInput
+                                                        id="new-password"
+                                                        minLength={4}
+                                                        label={t('connectPage.forgotPassword.newPassword') + " " + t('connectPage.messages.minPasswordLength')}
+                                                        value={newPassword}
+                                                        onChange={(e) => setNewPassword(e.target.value)}
+                                                        required
+                                                        className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                                    />
 
-                                    <Button type="submit" disabled={isLoading} className="w-full bg-theme-primary-500/80 hover:bg-theme-primary-500">
-                                        {isLoading ? t('connectPage.forgotPassword.changingPassword') : t('connectPage.forgotPassword.changePassword')}
-                                    </Button>
-                                </form>
-                            )}
-                        </TabsContent>}
+                                                    <Button 
+                                                        type="submit" 
+                                                        disabled={isLoading} 
+                                                        className="w-full 
+                                                            bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                                            hover:from-theme-primary-400 hover:to-theme-primary-500
+                                                            rounded-full 
+                                                            text-white font-semibold tracking-wide
+                                                            transition-all duration-300
+                                                            border-0
+                                                            disabled:opacity-50 disabled:cursor-not-allowed">
+                                                        {isLoading ? t('connectPage.forgotPassword.changingPassword') : t('connectPage.forgotPassword.changePassword')}
+                                                    </Button>
+                                                </form>
+                                            )}
+                                        </TabsContent>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </Tabs>
                     {/* <div className='w-full px-4 pb-5 flex flex-col gap-4'>
                         <div className='text-xs text-center mx-auto dark:text-white text-black'>{t('or')}</div>

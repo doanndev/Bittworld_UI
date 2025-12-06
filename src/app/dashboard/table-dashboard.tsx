@@ -7,17 +7,14 @@ import { useState, useEffect } from "react";
 import { SolonaTokenService } from "@/services/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { formatNumberWithSuffix, truncateString } from "@/utils/format";
-import notify from "@/app/components/notify";
+import notify from "@/components/notify";
 import { useAuth } from "@/hooks/useAuth";
-import { TableTokenList } from "@/app/components/trading/TableTokenList";
 import { Tabs, TabsContent } from "@/ui/tabs";
 import { getMyWishlist } from "@/services/api/SolonaTokenService";
 import { useQuery } from "@tanstack/react-query";
 import { getNewCoins, getTopCoins } from "@/services/api/OnChainService";
-import TokenList from "@/app/components/dashboard/TokenListCard";
 import { getTokenCategorys } from "@/services/api/TelegramWalletService";
-import PumpFun from "../components/pump-fun";
-import TokenListCategory from "@/app/components/dashboard/TokenListCategory";
+import PumpFun from "../../components/pump-fun";
 import { useTranslate } from "@/hooks/useTranslate";
 
 interface Token {
@@ -280,23 +277,8 @@ export default function Trading() {
           <TabsContent value="1">
             {displayTokens && (
               <CardContent className="w-full p-0">
-                {/* Desktop Table View */}
-                <div className="hidden md:block">
-                  <TableTokenList
-                    tokens={displayTokens}
-                    onCopyAddress={handleCopyAddress}
-                    onStarClick={handleStarClick}
-                    isFavoritesTab={false}
-                    isLoading={isLoadingTopCoins}
-                    sortBy={sortBy}
-                    sortType={sortType}
-                    onSort={handleSort}
-                    enableSort={!debouncedSearchQuery.trim()}
-                  />
-                </div>
-
-                {/* Mobile Card View */}
-                <div className="md:hidden space-y-4">
+                {/* Token List View */}
+                <div className="space-y-4">
                   {displayTokens.map((token) => {
                     return (
                       <div
@@ -317,7 +299,7 @@ export default function Trading() {
                           </div>
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => router.push(`/trading?address=${token.address}`)}
+                              onClick={() => router.push(`/pools?address=${token.address}`)}
                               className="text-sm bg-theme-primary-500 text-theme-neutral-100 dark:text-neutral-100 font-medium px-3 md:px-4 py-[6px] rounded-full transition-colors whitespace-nowrap"
                             >
                               {t('trading.trade')}
@@ -393,30 +375,14 @@ export default function Trading() {
 
           <TabsContent value="2">
             <CardContent className="w-full p-0">
-              <TokenList />
             </CardContent>
           </TabsContent>
 
           <TabsContent value="3">
             {displayTokens && (
               <CardContent className="w-full p-0">
-                {/* Desktop Table View */}
-                <div className="hidden md:block">
-                  <TableTokenList
-                    tokens={displayTokens}
-                    onCopyAddress={handleCopyAddress}
-                    onStarClick={handleStarClick}
-                    isFavoritesTab={true}
-                    isLoading={false}
-                    sortBy={sortBy}
-                    sortType={sortType}
-                    onSort={handleSort}
-                    enableSort={!debouncedSearchQuery.trim()}
-                  />
-                </div>
-
-                {/* Mobile Card View */}
-                <div className="md:hidden space-y-4">
+                {/* Token List View */}
+                <div className="space-y-4">
                   {displayTokens.map((token) => {
                     return (
                       <div
@@ -437,7 +403,7 @@ export default function Trading() {
                           </div>
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => router.push(`/trading?address=${token.address}`)}
+                              onClick={() => router.push(`/pools?address=${token.address}`)}
                               className="text-sm bg-theme-primary-500 text-theme-neutral-100 dark:text-neutral-100 font-medium px-3 md:px-4 py-[6px] rounded-full transition-colors whitespace-nowrap"
                             >
                               {t('trading.trade')}
@@ -512,7 +478,7 @@ export default function Trading() {
           </TabsContent>
           <TabsContent value="4">
             <CardContent className="w-full p-0">
-              <TokenListCategory category={selectedCategory} />
+              {/* <TokenListCategory category={selectedCategory} /> */}
             </CardContent>
           </TabsContent>
 
