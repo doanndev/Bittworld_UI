@@ -41,3 +41,7 @@ next-env.d.ts
 
 #server 
 /json-server
+
+
+#ignore package-lock.json
+package-lock.json
