@@ -36,7 +36,9 @@ const SwapInterface = React.memo(({
   handleSwapTokens,
   handleSetMaxAmount,
   insufficientBalance,
-  isDark
+  isDark,
+  isSwapping,
+  swapRotation
 }: {
   balance: any
   fromAmount: string
@@ -55,6 +57,8 @@ const SwapInterface = React.memo(({
   handleSetMaxAmount: () => void
   insufficientBalance: boolean
   isDark: boolean
+  isSwapping: boolean
+  swapRotation: number
 }) => {
   const { t } = useLang()
 
@@ -88,6 +92,9 @@ const SwapInterface = React.memo(({
             border: isDark
               ? '1px solid rgba(107, 114, 128, 0.2)'
               : '1px solid rgba(156, 163, 175, 0.2)',
+            transform: isSwapping ? 'translateY(80px)' : 'translateY(0)',
+            opacity: isSwapping ? 0.2 : 1,
+            transition: 'transform 600ms cubic-bezier(0.4, 0, 0.2, 1), opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
           <div className="flex items-start justify-between gap-2 flex-col">
@@ -154,7 +161,12 @@ const SwapInterface = React.memo(({
               color: '#1FC16B',
             }}
           >
-            <ArrowUpDown className="w-5 h-5 sm:w-6 sm:h-6" />
+            <ArrowUpDown 
+              className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-600"
+              style={{
+                transform: `rotate(${swapRotation}deg)`,
+              }}
+            />
           </Button>
         </div>
 
@@ -168,6 +180,9 @@ const SwapInterface = React.memo(({
             border: isDark
               ? '1px solid rgba(107, 114, 128, 0.2)'
               : '1px solid rgba(156, 163, 175, 0.2)',
+            transform: isSwapping ? 'translateY(-80px)' : 'translateY(0)',
+            opacity: isSwapping ? 0.2 : 1,
+            transition: 'transform 600ms cubic-bezier(0.4, 0, 0.2, 1), opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
           <div className="flex items-center justify-between">
@@ -346,6 +361,8 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
   const [activeTab, setActiveTab] = useState<'swap' | 'history'>('swap')
   const [isLoading, setIsLoading] = useState(false)
   const [insufficientBalance, setInsufficientBalance] = useState(false)
+  const [isSwapping, setIsSwapping] = useState(false)
+  const [swapRotation, setSwapRotation] = useState(0)
 
   // API Queries
   const { data: balance, isLoading: isBalanceLoading } = useQuery({
@@ -441,12 +458,24 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
   }
 
   const handleSwapTokens = () => {
-    const tempToken = fromToken
-    const tempAmount = fromAmount || ""
-    setFromToken(toToken)
-    setToToken(tempToken)
-    setFromAmount(toAmount || "")
-    setToAmount(tempAmount)
+    setIsSwapping(true)
+    // Rotate icon 180 degrees (accumulate rotation)
+    setSwapRotation(prev => prev + 180)
+    
+    // Wait for animation to complete before swapping
+    setTimeout(() => {
+      const tempToken = fromToken
+      const tempAmount = fromAmount || ""
+      setFromToken(toToken)
+      setToToken(tempToken)
+      setFromAmount(toAmount || "")
+      setToAmount(tempAmount)
+      
+      // Reset animation state after swap completes
+      setTimeout(() => {
+        setIsSwapping(false)
+      }, 50)
+    }, 300) // Half of animation duration
   }
 
   const handleSwap = async () => {
@@ -718,6 +747,8 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
               handleSetMaxAmount={handleSetMaxAmount}
               insufficientBalance={insufficientBalance}
               isDark={mountedTheme && isDark}
+              isSwapping={isSwapping}
+              swapRotation={swapRotation}
             />
           )}
 
@@ -743,6 +774,8 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
                   handleSetMaxAmount={handleSetMaxAmount}
                   insufficientBalance={insufficientBalance}
                   isDark={mountedTheme && isDark}
+                  isSwapping={isSwapping}
+                  swapRotation={swapRotation}
                 />
               )}
               {activeTab === 'history' && (
