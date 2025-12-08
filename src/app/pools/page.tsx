@@ -377,7 +377,6 @@ export default function LiquidityPools() {
             try {
                 setIsLoadingBoxLogos(true)
                 const logos = await listBoxLogos()
-                console.log('logos', logos)
                 setBoxLogos(logos)
             } catch (e) {
                 toast.error('Failed to load system logos')

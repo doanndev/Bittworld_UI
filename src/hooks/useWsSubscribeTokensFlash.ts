@@ -135,7 +135,6 @@ export function useWsSubscribeTokensFlash(params?: SubscribeParams) {
       });
 
       newSocket.on('connect', () => {
-        console.log("✅ Connected to Socket.IO server - useWsSubscribeTokensFlash");
         setIsConnected(true);
         setError(null);
         tokenStackRef.current = [];
@@ -143,7 +142,6 @@ export function useWsSubscribeTokensFlash(params?: SubscribeParams) {
       });
 
       newSocket.on('disconnect', (reason) => {
-        console.log("❌ Disconnected from Socket.IO server:", reason);
         setIsConnected(false);
         if (reason === 'io server disconnect') {
           newSocket.connect();
@@ -151,7 +149,6 @@ export function useWsSubscribeTokensFlash(params?: SubscribeParams) {
       });
 
       newSocket.on('connect_error', (error) => {
-        console.error("Socket.IO connection error:", error);
         if (mountedRef.current) {
           setError("Socket.IO connection error");
         }
@@ -168,7 +165,6 @@ export function useWsSubscribeTokensFlash(params?: SubscribeParams) {
               queryClient.setQueryData(['wsTokensFlash', params], initialTokens);
               tokenStackRef.current = convertedTokens.slice(params?.limit || 24);
               isInitialLoadRef.current = false;
-              console.log('Initial load:', convertedTokens.length, 'tokens');
 
               setTimeout(() => {
                 preloadImages(initialTokens, false).catch(console.error);

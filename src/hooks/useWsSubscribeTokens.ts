@@ -122,7 +122,6 @@ export function useWsSubscribeTokens(params?: SubscribeParams) {
           preloadImage(newToken.logoUrl, true).catch(console.error);
         }, 0);
         
-        console.log(`Buffer processed: ${tokenBufferRef.current.length} tokens remaining in buffer`);
       }
     } else {
       // Stop processing if buffer is empty
@@ -159,7 +158,6 @@ export function useWsSubscribeTokens(params?: SubscribeParams) {
       });
 
       newSocket.on('connect', () => {
-        console.log("✅ Connected to Socket.IO server - useWsSubscribeTokens");
         setIsConnected(true);
         setError(null);
         // Request 5x more data from backend
@@ -168,7 +166,6 @@ export function useWsSubscribeTokens(params?: SubscribeParams) {
       });
 
       newSocket.on('disconnect', (reason) => {
-        console.log("❌ Disconnected from Socket.IO server:", reason);
         setIsConnected(false);
         stopBufferProcessing();
         if (reason === 'io server disconnect') {
@@ -177,7 +174,6 @@ export function useWsSubscribeTokens(params?: SubscribeParams) {
       });
 
       newSocket.on('connect_error', (error) => {
-        console.error("Socket.IO connection error:", error);
         if (mountedRef.current) {
           setError("Socket.IO connection error");
         }
@@ -202,7 +198,6 @@ export function useWsSubscribeTokens(params?: SubscribeParams) {
               tokenBufferRef.current = remainingTokens;
               
               isInitialLoadRef.current = false;
-              console.log('Initial load:', initialDisplayTokens.length, 'tokens displayed,', remainingTokens.length, 'tokens in buffer');
               
               // Start processing buffer for remaining tokens
               if (remainingTokens.length > 0) {
@@ -237,7 +232,6 @@ export function useWsSubscribeTokens(params?: SubscribeParams) {
                 startBufferProcessing();
               }
               
-              console.log(`Buffer updated: ${tokenBufferRef.current.length} tokens in buffer, ${displayedTokensRef.current.length} displayed`);
             }
           } catch (error) {
             console.error("Error processing token data:", error);
@@ -294,7 +288,6 @@ export function useWsSubscribeTokens(params?: SubscribeParams) {
     if (socket && socket.connected) {
       socket.emit('message', message);
     } else {
-      console.warn("Cannot send message - Socket.IO is not connected");
     }
   };
 

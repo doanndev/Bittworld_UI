@@ -104,7 +104,6 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
       copy: isSending || !walletInfor?.solana_address
     };
   }, [amount, walletInfor, isSending, error, selectedToken, availableTokens]);
-  console.log("amount", amount)
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
@@ -217,7 +216,6 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
         google_auth_token: walletInforAccount?.isGGAuth ? googleAuthCode.join('') : undefined
       });
 
-      console.log("response", response);
       setAmount("0");
       setRecipientWallet("");
       setGoogleAuthCode(["", "", "", "", "", ""]);
@@ -263,7 +261,6 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
       setIsSending(false);
     }
   };
-  console.log("recipientWallet", recipientWallet)
   // Loading state for tokens
   if (!availableTokens || !availableTokens.tokens) {
     return (

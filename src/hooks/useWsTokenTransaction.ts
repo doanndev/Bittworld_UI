@@ -22,7 +22,6 @@ export function useWsTokenTransaction(tokenAddress: string) {
       });
 
       newSocket.on('connect', () => {
-        console.log("✅ Connected to Socket.IO server - useWsTokenTransaction");
         setIsConnected(true);
         setError(null);
         
@@ -35,7 +34,6 @@ export function useWsTokenTransaction(tokenAddress: string) {
       });
 
       newSocket.on('disconnect', (reason) => {
-        console.log("❌ Disconnected from Socket.IO server:", reason);
         setIsConnected(false);
         if (reason === 'io server disconnect') {
           newSocket.connect();
@@ -43,7 +41,6 @@ export function useWsTokenTransaction(tokenAddress: string) {
       });
 
       newSocket.on('connect_error', (error) => {
-        console.error("Socket.IO connection error:", error);
         if (mountedRef.current) {
           setError("Socket.IO connection error");
         }
@@ -113,7 +110,6 @@ export function useWsTokenTransaction(tokenAddress: string) {
     if (socket && socket.connected) {
       socket.emit('message', message);
     } else {
-      console.warn("Cannot send message - Socket.IO is not connected");
     }
   };
 

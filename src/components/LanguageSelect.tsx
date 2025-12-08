@@ -25,13 +25,11 @@ export function LangToggle({ className, showArrow = false, onLanguageChange }: {
   }, [theme, resolvedTheme]);
   
   const handleLanguageChange = (code: string) => {
-    console.log('Language change triggered:', code);
     setLang(code as any);
     // Close mobile menu if needed
     if (showArrow && onLanguageChange) {
       // Add a small delay to ensure the language change is processed
       setTimeout(() => {
-        console.log('Closing mobile menu');
         onLanguageChange();
       }, 50);
     }
@@ -49,11 +47,9 @@ export function LangToggle({ className, showArrow = false, onLanguageChange }: {
             background: 'transparent',
           }}
           onClick={(e) => {
-            console.log('Dropdown trigger clicked');
             e.stopPropagation();
           }}
           onTouchStart={(e) => {
-            console.log('Dropdown trigger touch start');
             e.stopPropagation();
           }}
         >
@@ -109,7 +105,6 @@ export function LangToggle({ className, showArrow = false, onLanguageChange }: {
               onTouchEnd={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Touch end on language item:', language.code);
                 handleLanguageChange(language.code);
               }}
                 className="group relative flex items-center gap-2 ml-0 cursor-pointer touch-manipulation xl:min-h-[44px] min-h-[30px] rounded-lg transition-all duration-300 px-3" 

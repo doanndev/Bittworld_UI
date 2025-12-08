@@ -21,7 +21,6 @@ export function useTokenInfor(tokenAddress: string) {
       });
 
       newSocket.on('connect', () => {
-        console.log("✅ Connected to Socket.IO server - useTokenInfor");
         setIsConnected(true);
         setError(null);
         
@@ -34,7 +33,6 @@ export function useTokenInfor(tokenAddress: string) {
       });
 
       newSocket.on('disconnect', (reason) => {
-        console.log("❌ Disconnected from Socket.IO server:", reason);
         setIsConnected(false);
         if (reason === 'io server disconnect') {
           newSocket.connect();

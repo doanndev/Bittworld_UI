@@ -241,23 +241,11 @@ const Connect = () => {
 
         try {
             const response = await manualLogin(loginData);
-            
-            // Debug logs
-            console.log('🔍 [DEBUG] Login Response:', response);
-            console.log('🔍 [DEBUG] Response type:', typeof response);
-            console.log('🔍 [DEBUG] Response keys:', Object.keys(response || {}));
-            console.log('🔍 [DEBUG] response.status:', response?.status);
-            console.log('🔍 [DEBUG] response.data:', response?.data);
-            console.log('🔍 [DEBUG] response.token:', response?.token);
-            console.log('🔍 [DEBUG] response.user:', response?.user);
-            
             // Check if response has the expected structure
             // Support both formats: { status, data: { token, user } } and { status, token, user }
             const token = response?.data?.token || response?.token;
             const user = response?.data?.user || response?.user;
             const status = response?.status;
-            
-            console.log('🔍 [DEBUG] Extracted values - token:', token, 'user:', user, 'status:', status);
             
             if ((status === 201 || status === 200 || !status) && token) {
                 // Save token to localStorage and update auth state

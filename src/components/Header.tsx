@@ -67,7 +67,6 @@ const Header = () => {
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
     });
-    console.log("walletInfor", walletInfor)
     
     const { data: balanceInfo, refetch: refetchBalanceInfo } = useQuery({
         queryKey: ["balance-info"],
@@ -76,7 +75,6 @@ const Header = () => {
         staleTime: 30000,
         enabled: isAuthenticated,
     });
-    console.log(balanceInfo)
 
     useEffect(() => {
         setMounted(true);
@@ -133,7 +131,6 @@ const Header = () => {
             const storedTokens = localStorage.getItem('recentTokens');
             const parsedTokens = storedTokens ? JSON.parse(storedTokens) : [];
             setTokens(parsedTokens);
-            console.log("tokens", parsedTokens);
         }
     }, [mounted]);
 

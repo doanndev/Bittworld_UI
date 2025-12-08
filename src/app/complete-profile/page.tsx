@@ -65,7 +65,6 @@ export default function CompleteProfile() {
             setToastMessage(t("tglogin.submitSuccess"));
             setShowToast(true);
         } catch (error: any) {
-            console.log(error);
             setToastMessage(t("tglogin.submitFailed"));
             setShowToast(true);
         }

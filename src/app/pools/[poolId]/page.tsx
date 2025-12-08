@@ -168,7 +168,6 @@ export default function PoolDetail() {
     const isDark = resolvedTheme === 'dark' || (resolvedTheme === undefined && theme === 'dark')
     const [required, setRequired] = useState(false)
     const { price: bittPrice } = useBittPrice()
-    console.log("bittPrice", bittPrice)
 
     useEffect(() => {
         setMountedTheme(true)
@@ -232,10 +231,10 @@ export default function PoolDetail() {
             // Check if price has changed significantly
             if (lastBittPrice && Math.abs(bittPrice.price - lastBittPrice) > 0.0001) {
                 // Show toast notification for price update
-                // toast.success(`Bitt price updated: $${bittPrice.price.toFixed(6)}`, {
-                //     duration: 2000,
-                //     position: 'top-right'
-                // })
+                toast.success(`Bitt price updated: $${bittPrice.price.toFixed(6)}`, {
+                    duration: 2000,
+                    position: 'top-right'
+                })
 
                 // Invalidate queries to refresh data
                 queryClient.invalidateQueries({ queryKey: ["pool-detail", poolId] })
@@ -253,8 +252,6 @@ export default function PoolDetail() {
         refetchInterval: 5000,
         refetchOnMount: true,
     })
-
-    console.log("balance", balance)
 
     // Lấy dữ liệu members từ API response
     const members = poolDetail?.members || []

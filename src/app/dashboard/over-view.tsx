@@ -67,7 +67,6 @@ const OverView = () => {
         .sort((a: any, b: any) => (b.price_change_24h_percent || 0) - (a.price_change_24h_percent || 0))
         .slice(0, 5) || [];
 
-    console.log("topCoins", topPriceChangeCoins)
     return (
         <div className='flex flex-col gap-2'>
             <div className='flex md:flex-row flex-col gap-3 z-10'>

@@ -81,7 +81,6 @@ export default function SwapComponent() {
   const handleSwap = () => {
     if (fromAmount && toAmount) {
       // Here you would implement the actual swap logic
-      console.log(`Swapping ${fromAmount} ${fromToken} for ${toAmount} ${toToken}`)
       // Reset amounts after swap
       setFromAmount("")
       setToAmount("")

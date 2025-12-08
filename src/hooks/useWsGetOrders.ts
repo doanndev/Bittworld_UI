@@ -8,7 +8,6 @@ export function useWsGetOrders() {
     const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}/ws`);
 
     ws.onopen = () => {
-      console.log("✅ Connected to WebSocket server - useWsGetOrders");
       ws.send(JSON.stringify({ method: "getOrders" }));
     };
 
@@ -17,11 +16,9 @@ export function useWsGetOrders() {
     };
 
     ws.onclose = () => {
-      console.log("❌ Disconnected from WebSocket server - useWsGetOrders");
     };
 
     ws.onerror = (error) => {
-      console.error("⚠️ WebSocket error:", error);
     };
 
     setSocket(ws);
@@ -38,7 +35,6 @@ export function useWsGetOrders() {
     if (socket?.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(message));
     } else {
-      console.warn("⚠️ WebSocket is not open. Message not sent. - useWsGetOrders");
     }
   };
 

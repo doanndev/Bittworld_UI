@@ -7,7 +7,6 @@ export function useAnalytics() {
   const { payloadToken } = useAuth();
   type MyPayload = { wallet_id?: number };
   const walletId = (payloadToken as MyPayload)?.wallet_id || 0;
-  console.log(payloadToken)
 
   useEffect(() => {
     // Connect to WebSocket server
@@ -21,13 +20,11 @@ export function useAnalytics() {
 
     // Handle connection events
     socket.on('connect', () => {
-      console.log('Connected to WebSocket Admin');
       setIsConnected(true);
     });
 
     // Handle disconnection events
     socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket Admin');
       setIsConnected(false);
     });
 
