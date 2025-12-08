@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from '@/ui/dialog'
 import { toast } from 'react-hot-toast'
+import { useTheme } from 'next-themes'
 
 // Extracted SwapInterface as a separate component
 const SwapInterface = React.memo(({ 
@@ -34,7 +35,8 @@ const SwapInterface = React.memo(({
   toToken,
   handleSwapTokens,
   handleSetMaxAmount,
-  insufficientBalance
+  insufficientBalance,
+  isDark
 }: {
   balance: any
   fromAmount: string
@@ -52,54 +54,85 @@ const SwapInterface = React.memo(({
   handleSwapTokens: () => void
   handleSetMaxAmount: () => void
   insufficientBalance: boolean
+  isDark: boolean
 }) => {
   const { t } = useLang()
 
   return (
-    <div className={`bg-white dark:bg-[#000000] rounded-md ${classes.padding} h-fit flex-1`}>
+    <div 
+      className={`rounded-xl sm:rounded-2xl ${classes.padding} h-fit flex-1 backdrop-blur-xl`}
+      style={{
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+        border: isDark
+          ? '1px solid rgba(107, 114, 128, 0.3)'
+          : '1px solid rgba(156, 163, 175, 0.3)',
+        boxShadow: isDark
+          ? '0 8px 32px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
+          : '0 8px 32px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
+      }}
+    >
       <div className="text-center md:mb-6">
         <h2 className={`${classes.subtitle} font-bold text-theme-primary-500 mb-1`}>{t('swap.easySwaps')}</h2>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3 sm:gap-4">
         {/* From Section */}
-        <div className="">
-          <div className="bg-gray-100 dark:bg-[#1B1A1A] rounded-xl px-4 py-2 pt-3 flex flex-col justify-between gap-2">
-            <div className="flex items-start justify-between gap-2 flex-col">
-              <div className="flex items-center gap-2">
-                {getTokenIcon(fromToken)}
-                <span className={`font-semibold ${classes.bodyText} text-gray-900 dark:text-white`}>{fromToken.toUpperCase()}</span>
-              </div>
-            </div>
-            <div className="flex md:items-center justify-between gap-2 flex-col md:flex-row w-full">
-              <span className={`${classes.historyText} text-gray-600 dark:text-white`}>
-                {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">{fromToken === "solana" ? balance?.sol?.token_balance || "0" : balance?.usdt?.token_balance || "0"}</span>
+        <div 
+          className="rounded-xl px-4 py-3 sm:py-4 flex flex-col justify-between gap-3 backdrop-blur-sm"
+          style={{
+            background: isDark
+              ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+            border: isDark
+              ? '1px solid rgba(107, 114, 128, 0.2)'
+              : '1px solid rgba(156, 163, 175, 0.2)',
+          }}
+        >
+          <div className="flex items-start justify-between gap-2 flex-col">
+            <div className="flex items-center gap-2">
+              {getTokenIcon(fromToken)}
+              <span className={`font-semibold ${classes.bodyText} ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                {fromToken.toUpperCase()}
               </span>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={fromAmount}
-                  onChange={(e) => handleFromAmountChange(e.target.value)}
-                  className={`${classes.inputText} w-full md:w-auto h-8 outline-none bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-500 rounded-md text-right p-0 text-gray-900 dark:text-white pr-3 placeholder:text-gray-400 placeholder:text-sm`}
-                  placeholder="0.00"
-                />
-                
-                <Button
-                  onClick={handleSetMaxAmount}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs px-2 py-1 h-7 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  {t('swap.max')}
-                </Button>
-              </div>
+            </div>
+          </div>
+          <div className="flex md:items-center justify-between gap-2 flex-col md:flex-row w-full">
+            <span className={`${classes.historyText} ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">
+                {fromToken === "solana" ? balance?.sol?.token_balance || "0" : balance?.usdt?.token_balance || "0"}
+              </span>
+            </span>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <input
+                type="text"
+                value={fromAmount}
+                onChange={(e) => handleFromAmountChange(e.target.value)}
+                className={`${classes.inputText} w-full md:w-auto h-9 sm:h-10 outline-none rounded-lg text-right px-3 ${isDark ? 'bg-black/30 text-white border-gray-600/30' : 'bg-white/50 text-gray-900 border-gray-300/30'} border backdrop-blur-sm placeholder:text-gray-400 placeholder:text-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 transition-all`}
+                placeholder="0.00"
+              />
+              
+              <Button
+                onClick={handleSetMaxAmount}
+                variant="outline"
+                size="sm"
+                className="text-xs px-3 py-1.5 h-9 sm:h-10 rounded-lg transition-all duration-300"
+                style={{
+                  borderColor: isDark ? 'rgba(107, 114, 128, 0.3)' : 'rgba(156, 163, 175, 0.3)',
+                  background: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.3)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                }}
+              >
+                {t('swap.max')}
+              </Button>
             </div>
           </div>
         </div>
 
         {/* Exchange Rate Display */}
         <div className="flex justify-center items-center gap-2">
-          <span className={`${classes.historyText} text-gray-500 dark:text-gray-400`}>
+          <span className={`${classes.historyText} ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             1 SOL = ${balance?.sol?.token_price_usd.toFixed(3) || "0.00"} USDT
           </span>
         </div>
@@ -110,34 +143,67 @@ const SwapInterface = React.memo(({
             onClick={handleSwapTokens}
             variant="ghost"
             size="icon"
-            className={`rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-white w-7 h-7`}
+            className="rounded-full w-10 h-10 sm:w-12 sm:h-12 transition-all duration-300 hover:scale-110"
+            style={{
+              background: isDark
+                ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.1) 100%)'
+                : 'linear-gradient(135deg, rgba(31, 193, 107, 0.12) 0%, rgba(31, 193, 107, 0.08) 100%)',
+              border: isDark
+                ? '1px solid rgba(31, 193, 107, 0.3)'
+                : '1px solid rgba(31, 193, 107, 0.25)',
+              color: '#1FC16B',
+            }}
           >
-            <ArrowUpDown className={`w-4 h-4`} />
+            <ArrowUpDown className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
         </div>
 
         {/* To Section */}
-        <div className="space-y-2">
-          <div className="bg-gray-100 dark:bg-[#1B1A1A] rounded-xl px-4 py-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {getTokenIcon(toToken)}
-                <span className={`font-semibold ${classes.bodyText} text-gray-900 dark:text-white`}>{toToken.toUpperCase()}</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between mt-2">
-              <span className={`${classes.historyText} text-gray-600 dark:text-white`}>
-                {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">{toToken === "usdt" ? balance?.usdt?.token_balance || "0" : balance?.sol?.token_balance || "0"}</span>
+        <div 
+          className="rounded-xl px-4 py-3 sm:py-4 backdrop-blur-sm"
+          style={{
+            background: isDark
+              ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+            border: isDark
+              ? '1px solid rgba(107, 114, 128, 0.2)'
+              : '1px solid rgba(156, 163, 175, 0.2)',
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {getTokenIcon(toToken)}
+              <span className={`font-semibold ${classes.bodyText} ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                {toToken.toUpperCase()}
               </span>
-              <span className={`${classes.inputText} font-semibold h-6 text-gray-900 dark:text-white`}>{toAmount || "0.00"}</span>
             </div>
+          </div>
+          <div className="flex items-center justify-between mt-3">
+            <span className={`${classes.historyText} ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">
+                {toToken === "usdt" ? balance?.usdt?.token_balance || "0" : balance?.sol?.token_balance || "0"}
+              </span>
+            </span>
+            <span className={`${classes.inputText} font-semibold h-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              {toAmount || "0.00"}
+            </span>
           </div>
         </div>
 
         {/* Insufficient Balance Warning */}
         {insufficientBalance && (
-          <div className="mt-2 p-2 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-md">
-            <p className={`${classes.historyText} text-red-600 dark:text-red-400 text-center`}>
+          <div 
+            className="mt-2 p-3 rounded-lg backdrop-blur-sm"
+            style={{
+              background: isDark
+                ? 'rgba(239, 68, 68, 0.1)'
+                : 'rgba(239, 68, 68, 0.05)',
+              border: isDark
+                ? '1px solid rgba(239, 68, 68, 0.3)'
+                : '1px solid rgba(239, 68, 68, 0.2)',
+            }}
+          >
+            <p className={`${classes.historyText} text-red-500 dark:text-red-400 text-center`}>
               {t('swap.insufficientBalance')}
             </p>
           </div>
@@ -152,7 +218,12 @@ const SwapInterface = React.memo(({
             isSwapLoading || 
             insufficientBalance
           }
-          className={`w-full mt-6 ${classes.buttonHeight} bg-theme-primary-500 hover:bg-theme-primary-600 text-white font-semibold py-4 rounded-md ${classes.bodyText} disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`w-full mt-4 sm:mt-6 ${classes.buttonHeight} 
+            bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+            hover:from-theme-primary-400 hover:to-theme-primary-500
+            disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed
+            text-white font-semibold py-4 rounded-full ${classes.bodyText} 
+            transition-all duration-300 disabled:opacity-50`}
         >
           {isSwapLoading ? t('swap.swapping') : t('swap.swap')}
         </Button>
@@ -167,49 +238,76 @@ SwapInterface.displayName = 'SwapInterface'
 const HistoryInterface = React.memo(({ 
   swapHistory, 
   isHistoryLoading, 
-  classes 
+  classes,
+  isDark
 }: {
   swapHistory: any[]
   isHistoryLoading: boolean
   classes: any
+  isDark: boolean
 }) => {
   const { t } = useLang()
   return (
-    <div className={`bg-white dark:bg-[#000000] rounded-md ${classes.padding} pr-0 flex-1 min-h-[43vh]`}>
-      <h2 className={`${classes.subtitle} font-semibold mb-6 text-center text-gray-900 dark:text-white`}>{t('swap.swapHistory')}</h2>
+    <div 
+      className={`rounded-xl sm:rounded-2xl ${classes.padding} pr-0 flex-1 min-h-[43vh] backdrop-blur-xl`}
+      style={{
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+        border: isDark
+          ? '1px solid rgba(107, 114, 128, 0.3)'
+          : '1px solid rgba(156, 163, 175, 0.3)',
+        boxShadow: isDark
+          ? '0 8px 32px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
+          : '0 8px 32px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
+      }}
+    >
+      <h2 className={`${classes.subtitle} font-semibold mb-6 text-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
+        {t('swap.swapHistory')}
+      </h2>
 
       {isHistoryLoading ? (
         <div className="flex justify-center items-center h-32">
-          <div className="text-gray-500 dark:text-gray-400">{t('common.loading')}</div>
+          <div className={isDark ? 'text-gray-400' : 'text-gray-500'}>{t('common.loading')}</div>
         </div>
       ) : swapHistory.length === 0 ? (
         <div className="flex justify-center items-center h-32">
-          <div className="text-gray-500 dark:text-gray-400">{t('swap.noSwapHistory')}</div>
+          <div className={isDark ? 'text-gray-400' : 'text-gray-500'}>{t('swap.noSwapHistory')}</div>
         </div>
       ) : (
         <div className="space-y-1">
           {/* Header */}
-          <div className="grid grid-cols-3 gap-4 text-sm text-gray-500 dark:text-gray-400 pb-2 border-b border-gray-200 dark:border-gray-700">
+          <div 
+            className="grid grid-cols-3 gap-4 text-sm pb-3 border-b"
+            style={{
+              borderColor: isDark ? 'rgba(107, 114, 128, 0.2)' : 'rgba(156, 163, 175, 0.2)',
+              color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+            }}
+          >
             <div className={classes.historyText}>{t('swap.time')}</div>
             <div className={classes.historyText}>{t('swap.buy')}</div>
             <div className={classes.historyText}>{t('swap.sell')}</div>
           </div>
 
           {/* History Items */}
-          <div className={`max-h-[${classes.maxHeight}] overflow-y-auto space-y-1 pr-4`}>
+          <div className={`max-h-[${classes.maxHeight}] overflow-y-auto space-y-1 pr-4 scrollbar-thin`}>
             {swapHistory.map((item, index) => (
               <div
                 key={item.id}
-                className={`grid grid-cols-3 gap-4 py-3 px-2 rounded-lg ${classes.historyText} ${index % 2 === 0 ? "bg-gray-50 dark:bg-[#1B1A1A]" : "bg-white dark:bg-[#000000]"
-                  }`}
+                className={`grid grid-cols-3 gap-4 py-3 px-2 rounded-lg ${classes.historyText} transition-colors`}
+                style={{
+                  background: index % 2 === 0
+                    ? (isDark ? 'rgba(31, 193, 107, 0.03)' : 'rgba(31, 193, 107, 0.02)')
+                    : 'transparent',
+                }}
               >
-                <div className="text-gray-600 dark:text-gray-300">
+                <div className={isDark ? 'text-gray-300' : 'text-gray-700'}>
                   {item.time} {item.date}
                 </div>
-                <div className="text-gray-900 dark:text-white">
+                <div className={isDark ? 'text-white' : 'text-gray-900'}>
                   {item.buyAmount} {item.buyToken}
                 </div>
-                <div className="text-gray-900 dark:text-white">
+                <div className={isDark ? 'text-white' : 'text-gray-900'}>
                   {item.sellAmount} {item.sellToken}
                 </div>
               </div>
@@ -226,6 +324,14 @@ HistoryInterface.displayName = 'HistoryInterface'
 // Main SwapModal component
 const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClose: () => void, selectedToken: string }) => {
   const { t } = useLang()
+  const { theme, resolvedTheme } = useTheme()
+  const [mountedTheme, setMountedTheme] = useState(false)
+  const isDark = resolvedTheme === 'dark' || (resolvedTheme === undefined && theme === 'dark')
+
+  useEffect(() => {
+    setMountedTheme(true)
+  }, [])
+
   const isMobile = useMediaQuery('(max-width: 767px)')
   const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1023px)')
   const isDesktop = useMediaQuery('(min-width: 1024px)')
@@ -475,18 +581,93 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${classes.modal} outline-none overflow-y-auto bg-white dark:bg-[#121619] max-h-auto md:max-h-[80vh] h-fit border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white`} onPointerDownOutside={(e) => e.preventDefault()}>
-        <DialogHeader className="flex flex-row items-center justify-between max-h-10">
-          <DialogTitle className={`${classes.title} font-bold text-gray-900 dark:text-white max-h-10`}>{t('swap.swap')}</DialogTitle>
+      <DialogContent 
+        className={`${classes.modal} outline-none overflow-y-auto max-h-auto md:max-h-[80vh] h-fit relative`}
+        style={{
+          position: 'fixed',
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: mountedTheme && isDark
+            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.75) 100%)'
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+          border: mountedTheme && isDark
+            ? '1px solid rgba(31, 193, 107, 0.4)'
+            : '1px solid rgba(31, 193, 107, 0.3)',
+          boxShadow: mountedTheme && isDark
+            ? '0 0 0 1px rgba(31, 193, 107, 0.3), 0 0 30px rgba(31, 193, 107, 0.25), 0 0 60px rgba(31, 193, 107, 0.15), 0 20px 60px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 8px 32px -8px rgba(107, 114, 128, 0.15)'
+            : '0 0 0 1px rgba(31, 193, 107, 0.25), 0 0 30px rgba(31, 193, 107, 0.2), 0 0 60px rgba(31, 193, 107, 0.1), 0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 8px 32px -8px rgba(156, 163, 175, 0.1)',
+        }}
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
+        {/* Gradient Glow Overlay */}
+        {mountedTheme && (
+          <div 
+            className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-2xl opacity-40"
+            style={{
+              background: isDark
+                ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.05) 50%, rgba(31, 193, 107, 0.15) 100%)'
+                : 'linear-gradient(135deg, rgba(31, 193, 107, 0.12) 0%, rgba(31, 193, 107, 0.04) 50%, rgba(31, 193, 107, 0.12) 100%)',
+            }}
+          />
+        )}
+        <div className="relative z-10">
+        <DialogHeader className="flex flex-row items-center justify-between max-h-10 mb-4">
+          <DialogTitle className={`${classes.title} font-bold ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'} max-h-10`}>
+            {t('swap.swap')}
+          </DialogTitle>
         </DialogHeader>
+
+        {/* Loading State for Balance */}
+        {isBalanceLoading && (
+          <div 
+            className="rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-4 sm:mb-6 backdrop-blur-xl"
+            style={{
+              background: mountedTheme && isDark
+                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
+                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+              border: mountedTheme && isDark
+                ? '1px solid rgba(107, 114, 128, 0.2)'
+                : '1px solid rgba(156, 163, 175, 0.2)',
+            }}
+          >
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="space-y-2">
+                <div className={`h-4 w-16 rounded animate-pulse ${mountedTheme && isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+                <div className={`h-6 w-24 rounded animate-pulse ${mountedTheme && isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+                <div className={`h-4 w-20 rounded animate-pulse ${mountedTheme && isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+              </div>
+              <div className="space-y-2">
+                <div className={`h-4 w-16 rounded animate-pulse ${mountedTheme && isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+                <div className={`h-6 w-24 rounded animate-pulse ${mountedTheme && isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+                <div className={`h-4 w-20 rounded animate-pulse ${mountedTheme && isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+              </div>
+            </div>
+            <div className={`mt-4 pt-4 h-6 w-32 rounded animate-pulse ${mountedTheme && isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+          </div>
+        )}
 
         {/* Mobile Tabs */}
         {isMobile && (
-          <div className="flex bg-gray-100 dark:bg-[#1B1A1A] rounded-lg p-1 mb-4 h-fit gap-2">
+          <div 
+            className="flex rounded-lg p-1 mb-4 h-fit gap-2 backdrop-blur-sm"
+            style={{
+              background: mountedTheme && isDark
+                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+              border: mountedTheme && isDark
+                ? '1px solid rgba(107, 114, 128, 0.2)'
+                : '1px solid rgba(156, 163, 175, 0.2)',
+            }}
+          >
             <Button
               onClick={() => setActiveTab('swap')}
               variant={activeTab === 'swap' ? 'default' : 'ghost'}
-              className={`flex-1 ${activeTab === 'swap' ? 'bg-theme-primary-500 text-white' : 'text-gray-600 dark:text-gray-400'}`}
+              className={`flex-1 transition-all duration-300 ${
+                activeTab === 'swap' 
+                  ? 'bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 text-white' 
+                  : (mountedTheme && isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900')
+              }`}
             >
               <ArrowLeftRight className="w-4 h-4 mr-2" />
               {t('swap.swap')}
@@ -494,7 +675,11 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
             <Button
               onClick={() => setActiveTab('history')}
               variant={activeTab === 'history' ? 'default' : 'ghost'}
-              className={`flex-1 ${activeTab === 'history' ? 'bg-theme-primary-500 text-white' : 'text-gray-600 dark:text-gray-400'}`}
+              className={`flex-1 transition-all duration-300 ${
+                activeTab === 'history' 
+                  ? 'bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 text-white' 
+                  : (mountedTheme && isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900')
+              }`}
             >
               <History className="w-4 h-4 mr-2" />
               {t('swap.history')}
@@ -509,6 +694,7 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
               swapHistory={swapHistory}
               isHistoryLoading={historyLoading}
               classes={classes}
+              isDark={mountedTheme && isDark}
             />
           )}
 
@@ -531,6 +717,7 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
               handleSwapTokens={handleSwapTokens}
               handleSetMaxAmount={handleSetMaxAmount}
               insufficientBalance={insufficientBalance}
+              isDark={mountedTheme && isDark}
             />
           )}
 
@@ -555,6 +742,7 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
                   handleSwapTokens={handleSwapTokens}
                   handleSetMaxAmount={handleSetMaxAmount}
                   insufficientBalance={insufficientBalance}
+                  isDark={mountedTheme && isDark}
                 />
               )}
               {activeTab === 'history' && (
@@ -562,10 +750,12 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
                   swapHistory={swapHistory}
                   isHistoryLoading={historyLoading}
                   classes={classes}
+                  isDark={mountedTheme && isDark}
                 />
               )}
             </>
           )}
+        </div>
         </div>
       </DialogContent>
     </Dialog>

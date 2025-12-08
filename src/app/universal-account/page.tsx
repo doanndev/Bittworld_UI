@@ -12,6 +12,7 @@ import { toast } from '@/hooks/use-toast';
 import { truncateString } from '@/utils/format';
 import { useLang } from '@/lang';
 import { useSearchParams } from 'next/navigation';
+import { useTheme } from 'next-themes';
 
 type Transaction = {
     id: number
@@ -31,6 +32,14 @@ type Transaction = {
 // Create a client component for the content
 const UniversalAccountContent = () => {
     const { t } = useLang();
+    const { theme, resolvedTheme } = useTheme();
+    const [mountedTheme, setMountedTheme] = useState(false);
+    const isDark = resolvedTheme === 'dark' || (resolvedTheme === undefined && theme === 'dark');
+
+    useEffect(() => {
+        setMountedTheme(true);
+    }, []);
+
     const { data: walletInfor, isLoading, isError, error } = useQuery({
         queryKey: ["wallet-infor"],
         queryFn: getInforWallet,
@@ -40,16 +49,26 @@ const UniversalAccountContent = () => {
     const type = searchParams.get('type')
     const [tab, setTab] = useState<"deposit" | "withdraw">(type === "withdraw" ? "withdraw" : "deposit");
 
-    const { data: transactions } = useQuery({
+
+
+    const { data: transactionsData } = useQuery({
         queryKey: ["transactions"],
         queryFn: () => getTransactionHistory(),
     });
 
+    // Extract transactions array from response
+    // API might return { data: [...] } or directly an array
+    const transactions = Array.isArray(transactionsData) 
+        ? transactionsData 
+        : (transactionsData?.data || transactionsData?.transactions || []);
+
     // Filter transactions based on current tab
-    const filteredTransactions = transactions?.filter((tx: Transaction) => {
-        const isMatch = tab === "deposit" ? tx.type === "deposit" : tx.type === "withdraw";
-        return isMatch;
-    }) || [];
+    const filteredTransactions = Array.isArray(transactions) 
+        ? transactions.filter((tx: Transaction) => {
+            const isMatch = tab === "deposit" ? tx.type === "deposit" : tx.type === "withdraw";
+            return isMatch;
+        })
+        : [];
 
     // Format date for display
     const formatDate = (dateString: string) => {
@@ -58,20 +77,41 @@ const UniversalAccountContent = () => {
     };
 
     return (
-        <div className="px-[12px] sm:px-[16px] lg:px-[40px] flex flex-col pt-[12px] sm:pt-[16px] lg:pt-[30px] relative mx-auto z-10 pb-6 lg:pb-0">
+        <div className="px-[12px] sm:px-[16px] lg:px-[40px] flex flex-col pt-[12px] sm:pt-[16px] lg:pt-[30px] relative mx-auto z-10 pb-6 lg:pb-0 my-8">
             <div className='container flex flex-col gap-4 sm:gap-6'>
                 {/* Toaster removed - using the one from ClientLayout */}
                 {walletInfor?.solana_address && (
                     <div className="flex items-center justify-center flex-col gap-6">
-                        <div className="flex w-full border-gray-200 dark:border-neutral-600 max-w-auto sm:max-w-[320px] h-[32px] md:h-[40px] bg-gray-100 dark:bg-theme-neutral-800 rounded-full">
+                        <div className="grid w-full max-w-auto sm:max-w-[320px] grid-cols-2 backdrop-blur-sm rounded-xl p-1"
+                            style={{
+                                background: mountedTheme && isDark
+                                    ? 'rgba(31, 41, 55, 0.3)'
+                                    : 'rgba(243, 244, 246, 0.5)',
+                                border: mountedTheme && isDark
+                                    ? '1px solid rgba(255, 255, 255, 0.1)'
+                                    : '1px solid rgba(229, 231, 235, 0.5)',
+                            }}
+                        >
                             <button
-                                className={`flex-1 rounded-full text-sm sm:text-base cursor-pointer font-medium uppercase text-center ${tab === "deposit" ? "text-white bg-theme-primary-500" : "text-gray-500 dark:text-neutral-400"}`}
+                                className={`flex-1 rounded-lg text-sm sm:text-base cursor-pointer font-medium text-center transition-all ${
+                                    tab === "deposit" 
+                                        ? "text-white bg-gradient-to-r from-theme-primary-500 to-theme-primary-400" 
+                                        : (mountedTheme && isDark 
+                                            ? "text-gray-300 hover:bg-theme-primary-500/10" 
+                                            : "text-gray-600 hover:bg-theme-primary-500/20")
+                                }`}
                                 onClick={() => setTab("deposit")}
                             >
                                 {t('universal_account.deposit')}
                             </button>
                             <button
-                                className={`flex-1 rounded-full cursor-pointer text-sm sm:text-base font-medium uppercase text-center ${tab === "withdraw" ? "text-white bg-theme-primary-500" : "text-gray-500 dark:text-neutral-400"}`}
+                                className={`flex-1 rounded-lg cursor-pointer text-sm sm:text-base font-medium text-center transition-all ${
+                                    tab === "withdraw" 
+                                        ? "text-white bg-gradient-to-r from-theme-primary-500 to-theme-primary-400" 
+                                        : (mountedTheme && isDark 
+                                            ? "text-gray-300 hover:bg-theme-primary-500/10" 
+                                            : "text-gray-600 hover:bg-theme-primary-500/20")
+                                }`}
                                 onClick={() => setTab("withdraw")}
                             >
                                 {t('universal_account.withdraw')}
@@ -93,22 +133,37 @@ const UniversalAccountContent = () => {
 
             <div className='container px-0 mt-8'>
                 <div className="flex items-center gap-2 mb-3 sm:mb-4 mt-4 lg:mt-0">
-                    <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-cyan-400 rounded-full"></div>
-                    <h3 className="font-bold dark:text-white text-black text-sm sm:text-base uppercase">{t(`universal_account.${tab}`)} {t('universal_account.history')}</h3>
-                    <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-cyan-400 rounded-full"></div>
+                    <h3 className={`font-bold text-sm sm:text-base uppercase ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                        {t(`universal_account.${tab}`)} {t('universal_account.history')}
+                    </h3>
+                    
                 </div>
 
                 {/* Mobile Card View */}
                 <div className="block sm:hidden space-y-3">
                     {filteredTransactions.length > 0 ? (
                         filteredTransactions.map((tx: Transaction) => (
-                            <div key={tx.id} className="bg-white dark:bg-theme-neutral-1000/50 rounded-md border border-theme-purple-200 p-3 space-y-2">
+                            <div 
+                                key={tx.id} 
+                                className="rounded-xl p-3 sm:p-4 space-y-2 backdrop-blur-xl"
+                                style={{
+                                    background: mountedTheme && isDark
+                                        ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
+                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                                    border: mountedTheme && isDark
+                                        ? '1px solid rgba(31, 193, 107, 0.3)'
+                                        : '1px solid rgba(31, 193, 107, 0.25)',
+                                    boxShadow: mountedTheme && isDark
+                                        ? '0 0 0 1px rgba(31, 193, 107, 0.2), 0 0 20px rgba(31, 193, 107, 0.15), 0 4px 16px -4px rgba(0, 0, 0, 0.3)'
+                                        : '0 0 0 1px rgba(31, 193, 107, 0.15), 0 0 20px rgba(31, 193, 107, 0.1), 0 4px 16px -4px rgba(0, 0, 0, 0.1)',
+                                }}
+                            >
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] dark:text-gray-400 text-black">{t('universal_account.time')}</span>
-                                    <span className="text-[11px] dark:text-gray-300 text-black">{formatDate(tx.created_at)}</span>
+                                    <span className={`text-[10px] ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.time')}</span>
+                                    <span className={`text-[11px] ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>{formatDate(tx.created_at)}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] dark:text-gray-400 text-black">{t('universal_account.type')}</span>
+                                    <span className={`text-[10px] ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.type')}</span>
                                     <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-medium ${tx.type === "deposit"
                                             ? "bg-blue-500/20 text-blue-400"
                                             : "bg-purple-500/20 text-purple-400"
@@ -117,7 +172,7 @@ const UniversalAccountContent = () => {
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] dark:text-gray-400 text-black">{t('universal_account.status')}</span>
+                                    <span className={`text-[10px] ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.status')}</span>
                                     <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-medium ${tx.status === "completed"
                                             ? "bg-green-500/20 text-green-400"
                                             : tx.status === "pending"
@@ -128,14 +183,14 @@ const UniversalAccountContent = () => {
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] dark:text-gray-400 text-black">{t('universal_account.amount')}</span>
-                                    <span className="text-[11px] dark:text-gray-300 text-black">{tx.amount} {tx.token_symbol}</span>
+                                    <span className={`text-[10px] ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.amount')}</span>
+                                    <span className={`text-[11px] ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>{tx.amount} {tx.token_symbol}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] dark:text-gray-400 text-black">{t('universal_account.transaction_id')}</span>
+                                    <span className={`text-[10px] ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.transaction_id')}</span>
                                     {tx.transaction_hash && (
                                         <div className="flex items-center gap-1">
-                                            <span className="text-[11px] dark:text-gray-300 text-black">{truncateString(tx.transaction_hash, 8)}</span>
+                                            <span className={`text-[11px] ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>{truncateString(tx.transaction_hash, 8)}</span>
                                             <button
                                                 onClick={() => {
                                                     navigator.clipboard.writeText(tx.transaction_hash);
@@ -144,51 +199,109 @@ const UniversalAccountContent = () => {
                                                         description: "Transaction hash copied to clipboard",
                                                     });
                                                 }}
-                                                className="text-gray-400 hover:text-gray-200"
+                                                className={`transition-colors ${mountedTheme && isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
                                             >
                                                 <Copy className="w-2.5 h-2.5" />
                                             </button>
                                         </div>
                                     )}
                                 </div>
-                                <div className="pt-2 border-t border-theme-purple-200/20">
+                                <div 
+                                    className="pt-2 border-t"
+                                    style={{
+                                        borderColor: mountedTheme && isDark
+                                            ? 'rgba(31, 193, 107, 0.2)'
+                                            : 'rgba(31, 193, 107, 0.15)',
+                                    }}
+                                >
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] dark:text-gray-400 text-black">{t('universal_account.from')}</span>
-                                        <span className="text-[11px] dark:text-gray-300 text-black">{truncateString(tx.wallet_address_from, 8)}</span>
+                                        <span className={`text-[10px] ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.from')}</span>
+                                        <span className={`text-[11px] ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>{truncateString(tx.wallet_address_from, 8)}</span>
                                     </div>
                                     <div className="flex items-center justify-between mt-1">
-                                        <span className="text-[10px] dark:text-gray-400 text-black">{t('universal_account.to')}</span>
-                                        <span className="text-[11px] dark:text-gray-300 text-black">{truncateString(tx.wallet_address_to, 8)}</span>
+                                        <span className={`text-[10px] ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.to')}</span>
+                                        <span className={`text-[11px] ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>{truncateString(tx.wallet_address_to, 8)}</span>
                                     </div>
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <div className="text-center py-6 text-gray-400 text-xs border border-gray-500 rounded-md p-2">
-                            {t('universal_account.no_transactions', { type: t(`universal_account.${tab}`) })}
+                        <div 
+                            className="text-center py-6 text-xs rounded-xl p-2 backdrop-blur-xl"
+                            style={{
+                                background: mountedTheme && isDark
+                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+                                border: mountedTheme && isDark
+                                    ? '1px solid rgba(107, 114, 128, 0.2)'
+                                    : '1px solid rgba(156, 163, 175, 0.2)',
+                            }}
+                        >
+                            <span className={mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}>
+                                {t('universal_account.no_transactions', { type: t(`universal_account.${tab}`) })}
+                            </span>
                         </div>
                     )}
                 </div>
 
                 {/* Desktop Table View */}
-                <div className="hidden sm:block overflow-x-auto rounded-md border-1 z-10 border-solid border-gray-500 bg-theme-neutral-1000/50">
+                <div 
+                    className="hidden sm:block overflow-x-auto rounded-xl sm:rounded-2xl z-10 backdrop-blur-xl"
+                    style={{
+                        background: mountedTheme && isDark
+                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                        border: mountedTheme && isDark
+                            ? '1px solid rgba(31, 193, 107, 0.3)'
+                            : '1px solid rgba(31, 193, 107, 0.25)',
+                        boxShadow: mountedTheme && isDark
+                            ? '0 0 0 1px rgba(31, 193, 107, 0.2), 0 0 30px rgba(31, 193, 107, 0.15), 0 8px 32px -8px rgba(0, 0, 0, 0.4)'
+                            : '0 0 0 1px rgba(31, 193, 107, 0.15), 0 0 30px rgba(31, 193, 107, 0.1), 0 8px 32px -8px rgba(0, 0, 0, 0.1)',
+                    }}
+                >
                     <Table className="w-full">
                         <TableHeader>
-                            <TableRow className="border-b border-gray-500 hover:bg-transparent">
-                                <TableHead className="py-2 px-6 text-xs font-medium dark:text-gray-400 text-black">{t('universal_account.time')}</TableHead>
-                                <TableHead className="py-2 px-4 text-xs font-medium dark:text-gray-400 text-black">{t('universal_account.type')}</TableHead>
-                                <TableHead className="py-2 px-3 text-xs font-medium dark:text-gray-400 text-black">{t('universal_account.status')}</TableHead>
-                                <TableHead className="py-2 px-6 text-xs font-medium dark:text-gray-400 text-black text-right">{t('universal_account.amount')}</TableHead>
-                                <TableHead className="py-2 px-6 text-xs font-medium dark:text-gray-400 text-black">{t('universal_account.from_address')}</TableHead>
-                                <TableHead className="py-2 px-6 text-xs font-medium dark:text-gray-400 text-black">{t('universal_account.to_address')}</TableHead>
-                                <TableHead className="py-2 px-6 text-xs font-medium dark:text-gray-400 text-black">{t('universal_account.transaction_id')}</TableHead>
+                            <TableRow 
+                                className="hover:bg-transparent"
+                                style={{
+                                    borderBottom: mountedTheme && isDark
+                                        ? '1px solid rgba(31, 193, 107, 0.2)'
+                                        : '1px solid rgba(31, 193, 107, 0.15)',
+                                    background: mountedTheme && isDark
+                                        ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.1) 0%, rgba(31, 193, 107, 0.05) 100%)'
+                                        : 'linear-gradient(135deg, rgba(31, 193, 107, 0.08) 0%, rgba(31, 193, 107, 0.04) 100%)',
+                                }}
+                            >
+                                <TableHead className={`py-2 px-6 text-xs font-medium ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.time')}</TableHead>
+                                <TableHead className={`py-2 px-4 text-xs font-medium ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.type')}</TableHead>
+                                <TableHead className={`py-2 px-3 text-xs font-medium ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.status')}</TableHead>
+                                <TableHead className={`py-2 px-6 text-xs font-medium text-right ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.amount')}</TableHead>
+                                <TableHead className={`py-2 px-6 text-xs font-medium ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.from_address')}</TableHead>
+                                <TableHead className={`py-2 px-6 text-xs font-medium ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.to_address')}</TableHead>
+                                <TableHead className={`py-2 px-6 text-xs font-medium ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('universal_account.transaction_id')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filteredTransactions.length > 0 ? (
                                 filteredTransactions.map((tx: Transaction) => (
-                                    <TableRow key={tx.id} className="text-xs dark:hover:bg-theme-neutral-900/50 cursor-pointer hover:bg-theme-green-300 transition-colors">
-                                        <TableCell className="py-2 px-6 dark:text-gray-300 text-black whitespace-nowrap">
+                                    <TableRow 
+                                        key={tx.id} 
+                                        className="text-xs cursor-pointer transition-colors"
+                                        style={{
+                                            borderBottom: mountedTheme && isDark
+                                                ? '1px solid rgba(107, 114, 128, 0.1)'
+                                                : '1px solid rgba(156, 163, 175, 0.1)',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = mountedTheme && isDark
+                                                ? 'rgba(31, 193, 107, 0.05)'
+                                                : 'rgba(31, 193, 107, 0.03)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = 'transparent';
+                                        }}
+                                    >
+                                        <TableCell className={`py-2 px-6 whitespace-nowrap ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>
                                             {formatDate(tx.created_at)}
                                         </TableCell>
                                         <TableCell className="py-2 px-4">
@@ -209,16 +322,16 @@ const UniversalAccountContent = () => {
                                                 {t(`transactionHistory.${tx.status}`)}
                                             </span>
                                         </TableCell>
-                                        <TableCell className="py-2 px-6 text-right dark:text-gray-300 text-black whitespace-nowrap">
+                                        <TableCell className={`py-2 px-6 text-right whitespace-nowrap ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>
                                             {Number(tx.amount).toFixed(5)} {tx.token_symbol}
                                         </TableCell>
-                                        <TableCell className="py-2 px-6 dark:text-gray-300 text-black">
+                                        <TableCell className={`py-2 px-6 ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>
                                             {truncateString(tx.wallet_address_from, 12)}
                                         </TableCell>
-                                        <TableCell className="py-2 px-6 dark:text-gray-300 text-black">
+                                        <TableCell className={`py-2 px-6 ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>
                                             {truncateString(tx.wallet_address_to, 12)}
                                         </TableCell>
-                                        <TableCell className="py-2 px-6 italic text-yellow-400">
+                                        <TableCell className="py-2 px-6 italic text-theme-primary-500">
                                             {tx.transaction_hash && (
                                                 <div className="flex items-center gap-2">
                                                     {truncateString(tx.transaction_hash, 12)}
@@ -230,7 +343,7 @@ const UniversalAccountContent = () => {
                                                                 description: "Transaction hash copied to clipboard",
                                                             });
                                                         }}
-                                                        className="text-gray-400 hover:text-gray-200"
+                                                        className={`transition-colors ${mountedTheme && isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
                                                     >
                                                         <Copy className="w-3 h-3" />
                                                     </button>
@@ -241,7 +354,7 @@ const UniversalAccountContent = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="py-8 text-center text-gray-400">
+                                    <TableCell colSpan={7} className={`py-8 text-center ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                                         {t('universal_account.no_transactions', { type: t(`universal_account.${tab}`) })}
                                     </TableCell>
                                 </TableRow>

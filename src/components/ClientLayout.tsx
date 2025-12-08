@@ -53,7 +53,7 @@ export default function ClientLayout({
         <ThemeProvider>
           <ThemedBackground>
             {!isLoginRoute && <Header />}
-            <main className="bg-transparent overflow-x-hidden flex-1">
+            <main className="bg-transparent overflow-x-hidden flex-1 lg:pb-0 pb-20">
               {children}
             </main>
           </ThemedBackground>

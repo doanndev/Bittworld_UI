@@ -25,6 +25,98 @@ import {
     type StakePoolRequest
 } from "@/services/api/PoolServices"
 import { Checkbox } from "@/ui/checkbox"
+import { cn } from "@/lib/utils"
+import React from "react"
+
+// Float Label Input Component
+interface FloatLabelInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    label: string;
+    id: string;
+}
+
+const FloatLabelInput = React.forwardRef<HTMLInputElement, FloatLabelInputProps>(
+    ({ label, id, className, value, ...props }, ref) => {
+        const [isFocused, setIsFocused] = React.useState(false);
+        const hasValue = Boolean(value);
+        const isActive = isFocused || hasValue;
+
+        return (
+            <div className="relative">
+                <Input
+                    {...props}
+                    ref={ref}
+                    id={id}
+                    value={value}
+                    placeholder=""
+                    className={cn(
+                        "transition-all duration-200",
+                        isActive ? "py-2" : "pt-6 pb-2",
+                        className
+                    )}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                />
+                <Label
+                    htmlFor={id}
+                    className={cn(
+                        "absolute left-3 transition-all duration-200 pointer-events-none px-1",
+                        isActive
+                            ? "-top-2.5 text-xs text-theme-primary-500 z-10 dark:bg-black/30 bg-white/70"
+                            : "top-1/2 -translate-y-1/2 text-sm dark:text-gray-400 text-gray-500 bg-transparent"
+                    )}
+                >
+                    {label}
+                </Label>
+            </div>
+        );
+    }
+);
+FloatLabelInput.displayName = "FloatLabelInput";
+
+// Float Label Textarea Component
+interface FloatLabelTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    label: string;
+    id: string;
+}
+
+const FloatLabelTextarea = React.forwardRef<HTMLTextAreaElement, FloatLabelTextareaProps>(
+    ({ label, id, className, value, ...props }, ref) => {
+        const [isFocused, setIsFocused] = React.useState(false);
+        const hasValue = Boolean(value);
+        const isActive = isFocused || hasValue;
+
+        return (
+            <div className="relative">
+                <Textarea
+                    {...props}
+                    ref={ref}
+                    id={id}
+                    value={value}
+                    placeholder=""
+                    className={cn(
+                        "transition-all duration-200 resize-none",
+                        isActive ? "pt-6 pb-2" : "pt-6 pb-2",
+                        className
+                    )}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                />
+                <Label
+                    htmlFor={id}
+                    className={cn(
+                        "absolute left-3 transition-all duration-200 pointer-events-none px-1",
+                        isActive
+                            ? "-top-2.5 text-xs text-theme-primary-500 z-10 dark:bg-black/30 bg-white/70"
+                            : "top-3 text-sm dark:text-gray-400 text-gray-500 bg-transparent"
+                    )}
+                >
+                    {label}
+                </Label>
+            </div>
+        );
+    }
+);
+FloatLabelTextarea.displayName = "FloatLabelTextarea";
 
 interface CreatePoolForm {
     name: string
@@ -46,6 +138,21 @@ export default function LiquidityPools() {
     useEffect(() => {
         setMountedTheme(true);
     }, []);
+
+    // Detect screen size and force grid view on mobile/tablet
+    useEffect(() => {
+        const checkScreenSize = () => {
+            const isSmallScreen = window.innerWidth < 1024; // lg breakpoint
+            setIsMobileOrTablet(isSmallScreen);
+            if (isSmallScreen) {
+                setViewStyle('grid');
+            }
+        };
+
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
     const { data: walletInfor, refetch } = useQuery({
         queryKey: ["wallet-infor"],
         queryFn: getInforWallet,
@@ -66,6 +173,7 @@ export default function LiquidityPools() {
     
     // State cho view style
     const [viewStyle, setViewStyle] = useState<'table' | 'grid'>('table');
+    const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
 
     // Query để lấy danh sách airdrop pools với filter
     const { data: poolsResponse, isLoading: isLoadingPools } = useQuery({
@@ -439,13 +547,13 @@ export default function LiquidityPools() {
     }
     const getImgRanking = (index: number) => {
         if (activeFilter === 'ranking' && index === 0) {
-            return <img src={"/firsth.png"} alt="ranking" className="w-10 h-12" />
+            return <img src={"/firsth.png"} alt="ranking" className="w-8 h-10 sm:w-9 sm:h-11 md:w-10 md:h-12" />
         } else if (activeFilter === 'ranking' && index === 1) {
-            return <img src={"/sectionth.png"} alt="ranking" className="w-10 h-12" />
+            return <img src={"/sectionth.png"} alt="ranking" className="w-8 h-10 sm:w-9 sm:h-11 md:w-10 md:h-12" />
         } else if (activeFilter === 'ranking' && index === 2) {
-            return <img src={"/threeth.png"} alt="ranking" className="w-10 h-12" />
+            return <img src={"/threeth.png"} alt="ranking" className="w-8 h-10 sm:w-9 sm:h-11 md:w-10 md:h-12" />
         } else {
-            return <div className="md:w-10 md:h-12 w-8 h-8 flex items-center justify-center">{index + 1}</div>
+            return <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-12 flex items-center justify-center text-[10px] sm:text-xs md:text-sm font-semibold">{index + 1}</div>
         }
     }
 
@@ -457,12 +565,14 @@ export default function LiquidityPools() {
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-theme-primary-500 mb-6 sm:mb-8 lg:mb-12 m-8">BITTWORLD POOL</h1>
 
 
-                    {/* Search and Actions */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-6">
-                        
-                        {/* View Style Toggle */}
-                        <div 
-                                className="inline-flex items-center gap-1 p-1 rounded-xl backdrop-blur-xl mx-4"
+                    {/* Search and Actions - Responsive */}
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-4 mb-6">
+                        {/* Left Section: View Toggle, Filter, Search */}
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 flex-1">
+                            {/* View Style Toggle - Hidden on mobile/tablet */}
+                            {!isMobileOrTablet && (
+                            <div 
+                                className="inline-flex items-center gap-1 p-1 rounded-xl backdrop-blur-xl mx-auto sm:mx-0"
                                 style={{
                                     background: mountedTheme && isDark
                                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
@@ -496,7 +606,7 @@ export default function LiquidityPools() {
                                             : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'),
                                     }}
                                 >
-                                    <ListIcon className="w-4 h-4" />
+                                    <ListIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
                                 <button
                                     onClick={() => setViewStyle('grid')}
@@ -519,105 +629,110 @@ export default function LiquidityPools() {
                                             : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'),
                                     }}
                                 >
-                                    <LayoutGrid className="w-4 h-4" />
+                                    <LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
                             </div>
+                            )}
 
-                        <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
-                            <div 
-                                className="relative inline-flex items-center gap-0.5 p-1 rounded-xl backdrop-blur-xl"
-                                style={{
-                                    background: mountedTheme && isDark
-                                        ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
-                                    border: mountedTheme && isDark
-                                        ? '1px solid rgba(107, 114, 128, 0.3)'
-                                        : '1px solid rgba(156, 163, 175, 0.3)',
-                                    boxShadow: mountedTheme && isDark
-                                        ? '0 8px 24px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 2px 8px -2px rgba(107, 114, 128, 0.1)'
-                                        : '0 8px 24px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 2px 8px -2px rgba(156, 163, 175, 0.08)',
-                                }}
-                            >
-                                {/* Slide Indicator */}
-                                <div 
-                                    className="absolute top-1 bottom-1 rounded-lg transition-all duration-300 ease-out z-0"
-                                    style={{
-                                        left: `${indicatorStyle.left}px`,
-                                        width: `${indicatorStyle.width}px`,
-                                        background: mountedTheme && isDark
-                                            ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.25) 0%, rgba(31, 193, 107, 0.2) 100%)'
-                                            : 'linear-gradient(135deg, rgba(31, 193, 107, 0.3) 0%, rgba(31, 193, 107, 0.25) 100%)',
-                                        border: mountedTheme && isDark
-                                            ? '1px solid rgba(107, 114, 128, 0.4)'
-                                            : '1px solid rgba(156, 163, 175, 0.4)',
-                                        backdropFilter: 'blur(12px)',
-                                        WebkitBackdropFilter: 'blur(12px)',
-                                    }}
-                                />
-                                
+                            {/* Filter and Search Container */}
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
                                 {/* Filter Buttons */}
-                                {(['all', 'ranking', 'created', 'joined'] as PoolFilterType[]).map((filter, index) => {
-                                    const labels = {
-                                        all: t('pools.filterAll'),
-                                        ranking: t('pools.filterRanking'),
-                                        created: t('pools.filterCreated'),
-                                        joined: t('pools.filterJoined'),
-                                    };
-                                    const isActive = activeFilter === filter;
-                                    
-                                    return (
-                                <Button
-                                            key={filter}
-                                            ref={(el) => {
-                                                filterRefs.current[index] = el;
-                                            }}
-                                            className="relative z-10 text-xs sm:text-sm font-medium px-3 sm:px-4 py-1.5 sm:py-2 h-auto rounded-lg transition-all duration-300 bg-transparent border-0"
-                                            style={{
-                                                color: isActive
-                                                    ? (mountedTheme && isDark ? 'white' : '#1f2937')
-                                                    : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.6)'),
-                                                fontWeight: isActive ? '600' : '500',
-                                            }}
-                                            onClick={() => handleFilterChange(filter)}
-                                            onMouseEnter={(e) => {
-                                                if (!isActive) {
-                                                    e.currentTarget.style.color = mountedTheme && isDark 
-                                                        ? 'rgba(255, 255, 255, 0.7)' 
-                                                        : 'rgba(0, 0, 0, 0.8)';
-                                                }
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                if (!isActive) {
-                                                    e.currentTarget.style.color = mountedTheme && isDark 
-                                                        ? 'rgba(255, 255, 255, 0.5)' 
-                                                        : 'rgba(0, 0, 0, 0.6)';
-                                                }
-                                            }}
-                                >
-                                            {labels[filter]}
-                                </Button>
-                                    );
-                                })}
-                            </div>
-                            <div className="relative w-full sm:w-auto">
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value);
+                                <div 
+                                    className="relative inline-flex items-center gap-0.5 p-1 rounded-xl backdrop-blur-xl w-full sm:w-auto justify-center sm:justify-start"
+                                    style={{
+                                        background: mountedTheme && isDark
+                                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
+                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                                        border: mountedTheme && isDark
+                                            ? '1px solid rgba(107, 114, 128, 0.3)'
+                                            : '1px solid rgba(156, 163, 175, 0.3)',
+                                        boxShadow: mountedTheme && isDark
+                                            ? '0 8px 24px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 2px 8px -2px rgba(107, 114, 128, 0.1)'
+                                            : '0 8px 24px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 2px 8px -2px rgba(156, 163, 175, 0.08)',
                                     }}
-                                    placeholder={t('pools.searchPlaceholder')}
-                                    className="w-full sm:w-[11vw] xl:w-[17vw] rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 placeholder:text-gray-500 dark:placeholder:text-gray-400 placeholder:text-xs transition-all duration-200"
-                                />
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                >
+                                    {/* Slide Indicator */}
+                                    <div 
+                                        className="absolute top-1 bottom-1 rounded-lg transition-all duration-300 ease-out z-0"
+                                        style={{
+                                            left: `${indicatorStyle.left}px`,
+                                            width: `${indicatorStyle.width}px`,
+                                            background: mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.25) 0%, rgba(31, 193, 107, 0.2) 100%)'
+                                                : 'linear-gradient(135deg, rgba(31, 193, 107, 0.3) 0%, rgba(31, 193, 107, 0.25) 100%)',
+                                            border: mountedTheme && isDark
+                                                ? '1px solid rgba(107, 114, 128, 0.4)'
+                                                : '1px solid rgba(156, 163, 175, 0.4)',
+                                            backdropFilter: 'blur(12px)',
+                                            WebkitBackdropFilter: 'blur(12px)',
+                                        }}
+                                    />
+                                    
+                                    {/* Filter Buttons */}
+                                    {(['all', 'ranking', 'created', 'joined'] as PoolFilterType[]).map((filter, index) => {
+                                        const labels = {
+                                            all: t('pools.filterAll'),
+                                            ranking: t('pools.filterRanking'),
+                                            created: t('pools.filterCreated'),
+                                            joined: t('pools.filterJoined'),
+                                        };
+                                        const isActive = activeFilter === filter;
+                                        
+                                        return (
+                                            <Button
+                                                key={filter}
+                                                ref={(el) => {
+                                                    filterRefs.current[index] = el;
+                                                }}
+                                                className="relative z-10 text-xs sm:text-sm font-medium px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 h-auto rounded-lg transition-all duration-300 bg-transparent border-0 whitespace-nowrap"
+                                                style={{
+                                                    color: isActive
+                                                        ? (mountedTheme && isDark ? 'white' : '#1f2937')
+                                                        : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.6)'),
+                                                    fontWeight: isActive ? '600' : '500',
+                                                }}
+                                                onClick={() => handleFilterChange(filter)}
+                                                onMouseEnter={(e) => {
+                                                    if (!isActive) {
+                                                        e.currentTarget.style.color = mountedTheme && isDark 
+                                                            ? 'rgba(255, 255, 255, 0.7)' 
+                                                            : 'rgba(0, 0, 0, 0.8)';
+                                                    }
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    if (!isActive) {
+                                                        e.currentTarget.style.color = mountedTheme && isDark 
+                                                            ? 'rgba(255, 255, 255, 0.5)' 
+                                                            : 'rgba(0, 0, 0, 0.6)';
+                                                    }
+                                                }}
+                                            >
+                                                {labels[filter]}
+                                            </Button>
+                                        );
+                                    })}
+                                </div>
+                                
+                                {/* Search Input */}
+                                <div className="relative w-full sm:w-auto sm:flex-1 md:flex-initial">
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value);
+                                        }}
+                                        placeholder={t('pools.searchPlaceholder')}
+                                        className="w-full sm:w-full md:w-[11vw] lg:w-[15vw] xl:w-[17vw] rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 placeholder:text-gray-500 dark:placeholder:text-gray-400 placeholder:text-xs transition-all duration-200"
+                                    />
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                </div>
                             </div>
                         </div>
 
-
-                        <div className="flex items-center gap-3 w-full sm:w-auto">
-                            
+                        {/* Create Pool Button */}
+                        <div className="flex items-center justify-center md:justify-end">
                             <Button
-                                className="w-full sm:w-auto
+                                className="w-full md:w-auto
                                     bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
                                     hover:from-theme-primary-400 hover:to-theme-primary-500
                                     rounded-full 
@@ -625,7 +740,7 @@ export default function LiquidityPools() {
                                     transition-all duration-300
                                     border-0
                                     text-xs sm:text-sm
-                                    px-3 sm:px-4 py-2 h-auto"
+                                    px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 h-auto"
                                 onClick={() => setIsCreateModalOpen(true)}
                             >
                                 {t('pools.createPoolBtn')}
@@ -635,10 +750,10 @@ export default function LiquidityPools() {
 
 
 
-                    {/* Table View */}
-                    {viewStyle === 'table' && (
+                    {/* Table View - Hidden on mobile/tablet */}
+                    {viewStyle === 'table' && !isMobileOrTablet && (
                     <div 
-                        className="overflow-hidden z-20 rounded-3xl backdrop-blur-xl"
+                        className="overflow-hidden z-20 rounded-xl sm:rounded-2xl md:rounded-3xl backdrop-blur-xl"
                         style={{
                             background: mountedTheme && isDark
                                 ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
@@ -651,12 +766,12 @@ export default function LiquidityPools() {
                                 : '0 8px 32px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
                         }}
                     >
-                        <div className="overflow-x-auto scrollbar-thin max-h-[70vh] scroll-smooth">
+                        <div className="overflow-x-auto scrollbar-thin max-h-[60vh] sm:max-h-[65vh] md:max-h-[70vh] scroll-smooth">
                             <table className="min-w-full w-full">
                                 <thead className="sticky top-0 z-10">
                                     <tr>
                                         <th 
-                                            className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[3%] sm:w-[2%]"
+                                            className="px-1 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold w-[4%] sm:w-[3%] md:w-[2%]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -670,7 +785,7 @@ export default function LiquidityPools() {
                                             &ensp;
                                         </th>
                                         <th 
-                                            className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold"
+                                            className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold min-w-[140px] sm:min-w-[180px]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -684,7 +799,7 @@ export default function LiquidityPools() {
                                             {t('pools.poolName')}
                                         </th>
                                         <th 
-                                            className="hidden md:table-cell px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold"
+                                            className="hidden md:table-cell px-2 md:px-3 lg:px-4 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -698,7 +813,7 @@ export default function LiquidityPools() {
                                             {t('pools.uidLeader')}
                                         </th>
                                         <th 
-                                            className="hidden lg:table-cell px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold"
+                                            className="hidden lg:table-cell px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -712,7 +827,7 @@ export default function LiquidityPools() {
                                             {t('pools.leaderAddress')}
                                         </th>
                                         <th 
-                                            className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[8%]"
+                                            className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold w-[10%] sm:w-[8%]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -723,10 +838,11 @@ export default function LiquidityPools() {
                                                     : '1px solid rgba(156, 163, 175, 0.3)',
                                             }}
                                         >
-                                            {t('pools.members')}
+                                            <span className="hidden sm:inline">{t('pools.members')}</span>
+                                            <span className="sm:hidden">#</span>
                                         </th>
                                         <th 
-                                            className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[12%]"
+                                            className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold w-[12%]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -768,7 +884,7 @@ export default function LiquidityPools() {
                                             {t('pools.created')}
                                         </th>
                                         <th 
-                                            className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold w-[10%]"
+                                            className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold w-[12%] sm:w-[10%]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -802,34 +918,44 @@ export default function LiquidityPools() {
                                                         : (mountedTheme && isDark
                                                             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.15) 100%)'
                                                             : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)')),
-                                                borderTop: index > 0 ? (mountedTheme && isDark
-                                                    ? '1px solid rgba(107, 114, 128, 0.2)'
-                                                    : '1px solid rgba(156, 163, 175, 0.2)') : 'none',
-                                                ...(hasRankingColor && {
+                                                ...(hasRankingColor ? {
                                                     backdropFilter: 'blur(16px)',
                                                     WebkitBackdropFilter: 'blur(16px)',
-                                                    border: mountedTheme && isDark
+                                                    borderTop: mountedTheme && isDark
+                                                        ? '1px solid rgba(255, 255, 255, 0.2)'
+                                                        : '1px solid rgba(255, 255, 255, 0.3)',
+                                                    borderRight: mountedTheme && isDark
+                                                        ? '1px solid rgba(255, 255, 255, 0.2)'
+                                                        : '1px solid rgba(255, 255, 255, 0.3)',
+                                                    borderBottom: mountedTheme && isDark
+                                                        ? '1px solid rgba(255, 255, 255, 0.2)'
+                                                        : '1px solid rgba(255, 255, 255, 0.3)',
+                                                    borderLeft: mountedTheme && isDark
                                                         ? '1px solid rgba(255, 255, 255, 0.2)'
                                                         : '1px solid rgba(255, 255, 255, 0.3)',
                                                     boxShadow: mountedTheme && isDark
                                                         ? '0 8px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
                                                         : '0 8px 32px -8px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.2) inset',
+                                                } : {
+                                                    borderTop: index > 0 ? (mountedTheme && isDark
+                                                        ? '1px solid rgba(107, 114, 128, 0.2)'
+                                                        : '1px solid rgba(156, 163, 175, 0.2)') : 'none',
                                                 }),
                                             }}
                                         >
                                             <td 
-                                                className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm"
+                                                className="px-1 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm"
                                             >
-                                                <div className="flex items-center justify-center gap-2 sm:gap-3">
+                                                <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-3">
                                                     {getImgRanking(index)}
                                                 </div>
                                             </td>
                                             <td 
-                                                className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm"
+                                                className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm"
                                             >
-                                                <div className="flex items-center gap-3 sm:gap-4">
+                                                <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
                                                     <div 
-                                                        className="relative flex-shrink-0 rounded-2xl p-1"
+                                                        className="relative flex-shrink-0 rounded-xl sm:rounded-2xl p-0.5 sm:p-1"
                                                         style={{
                                                             background: mountedTheme && isDark
                                                                 ? 'linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(107, 114, 128, 0.1) 100%)'
@@ -845,7 +971,7 @@ export default function LiquidityPools() {
                                                     <img
                                                         src={pool.logo || "/logo.png"}
                                                         alt={pool.name}
-                                                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover"
+                                                            className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg sm:rounded-xl object-cover"
                                                         onError={(e) => {
                                                             const target = e.target as HTMLImageElement;
                                                             target.src = "/logo.png";
@@ -854,7 +980,7 @@ export default function LiquidityPools() {
                                                     </div>
                                                     <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                                                         <div 
-                                                            className="font-bold text-sm sm:text-base truncate"
+                                                            className="font-bold text-xs sm:text-sm md:text-base truncate"
                                                             style={{
                                                                 color: '#1FC16B',
                                                             }}
@@ -862,12 +988,23 @@ export default function LiquidityPools() {
                                                             {pool.name}
                                                         </div>
                                                         <div 
-                                                            className="text-xs font-medium hidden sm:block"
+                                                            className="text-[10px] sm:text-xs font-medium hidden sm:block"
                                                             style={{
                                                                 color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                                                             }}
                                                         >
                                                             {pool.memberCount} {t('pools.members')}
+                                                        </div>
+                                                        {/* Mobile: Show round and volume info */}
+                                                        <div className="flex items-center gap-2 sm:hidden text-[9px]">
+                                                            <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
+                                                                {t('pools.round')}: <span className="font-semibold font-mono">{formatNumber(pool.roundVolume)}</span>
+                                                            </span>
+                                                            {activeFilter === 'ranking' && (
+                                                                <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
+                                                                    | {t('pools.volume')}: <span className="font-semibold">{formatNumber(pool.totalVolume)}</span>
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -895,7 +1032,7 @@ export default function LiquidityPools() {
                                                 </div>
                                             </td>
                                             <td 
-                                                className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold"
+                                                className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm font-semibold"
                                                 style={{
                                                     color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                                                 }}
@@ -903,7 +1040,7 @@ export default function LiquidityPools() {
                                                 {pool.memberCount}
                                             </td>
                                             <td 
-                                                className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-mono font-semibold"
+                                                className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm font-mono font-semibold"
                                                 style={{
                                                     color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                                                 }}
@@ -911,7 +1048,7 @@ export default function LiquidityPools() {
                                                 {formatNumber(pool.roundVolume)}
                                             </td>
                                             <td 
-                                                className="hidden md:table-cell px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold"
+                                                className="hidden md:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm font-semibold"
                                                 style={{
                                                     color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                                                 }}
@@ -919,7 +1056,7 @@ export default function LiquidityPools() {
                                                 {formatNumber(pool.totalVolume)}
                                             </td>
                                             <td 
-                                                className="hidden lg:table-cell px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium"
+                                                className="hidden lg:table-cell px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm font-medium"
                                                 style={{
                                                     color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                                                 }}
@@ -927,16 +1064,17 @@ export default function LiquidityPools() {
                                                 {formatDate(pool.creationDate)}
                                             </td>
                                             <td 
-                                                className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-xs sm:text-sm"
+                                                className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm"
                                             >
                                                 <Button
                                                     size="sm"
                                                     className="bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white 
                                                         hover:bg-gradient-to-r hover:from-theme-primary-400 hover:to-theme-primary-500 hover:text-white 
-                                                        text-xs px-2 sm:px-3 md:px-4 py-1 rounded-lg transition-all duration-300"
+                                                        text-[10px] sm:text-xs px-1.5 sm:px-2 md:px-3 lg:px-4 py-0.5 sm:py-1 rounded-md sm:rounded-lg transition-all duration-300 whitespace-nowrap"
                                                     onClick={() => router.push(`/pools/${pool.poolId}`)}
                                                 >
-                                                    {t('pools.detail')}
+                                                    <span className="hidden sm:inline">{t('pools.detail')}</span>
+                                                    <span className="sm:hidden">→</span>
                                                 </Button>
                                             </td>
                                         </tr>
@@ -962,17 +1100,23 @@ export default function LiquidityPools() {
                                         style={{
                                             background: hasRankingColor
                                                 ? undefined
-                                                : '#000000',
+                                                : (mountedTheme && isDark
+                                                    ? '#000000'
+                                                    : '#ffffff'),
                                             border: hasRankingColor
                                                 ? (mountedTheme && isDark
                                                     ? '1px solid rgba(255, 255, 255, 0.25)'
-                                                    : '1px solid rgba(255, 255, 255, 0.35)')
-                                                : '1px solid rgba(255, 255, 255, 0.1)',
+                                                    : '1px solid rgba(31, 193, 107, 0.2)')
+                                                : (mountedTheme && isDark
+                                                    ? '1px solid rgba(255, 255, 255, 0.1)'
+                                                    : '1px solid rgba(156, 163, 175, 0.2)'),
                                             boxShadow: hasRankingColor
                                                 ? (mountedTheme && isDark
                                                     ? '0 8px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 4px 16px -4px rgba(255, 255, 255, 0.1)'
-                                                    : '0 8px 32px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.25) inset, 0 4px 16px -4px rgba(255, 255, 255, 0.15)')
-                                                : '0 4px 12px -4px rgba(0, 0, 0, 0.5)',
+                                                    : '0 8px 32px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(31, 193, 107, 0.1) inset, 0 4px 16px -4px rgba(31, 193, 107, 0.08)')
+                                                : (mountedTheme && isDark
+                                                    ? '0 4px 12px -4px rgba(0, 0, 0, 0.5)'
+                                                    : '0 4px 12px -4px rgba(0, 0, 0, 0.1)'),
                                         }}
                                     >
                                         <div className="p-4 sm:p-5 space-y-4">
@@ -1135,9 +1279,38 @@ export default function LiquidityPools() {
 
             {/* Create Pool Modal */}
             <Dialog open={isCreateModalOpen} onOpenChange={handleCloseModal}>
-                <DialogContent className="w-[95vw] sm:max-w-[500px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 sm:p-5">
+                <DialogContent 
+                    className="w-[95vw] sm:max-w-[500px] p-4 sm:p-5 sm:p-6"
+                    style={{
+                        position: 'fixed',
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        background: mountedTheme && isDark
+                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.75) 100%)'
+                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+                        border: mountedTheme && isDark
+                            ? '1px solid rgba(31, 193, 107, 0.4)'
+                            : '1px solid rgba(31, 193, 107, 0.3)',
+                        boxShadow: mountedTheme && isDark
+                            ? '0 0 0 1px rgba(31, 193, 107, 0.3), 0 0 30px rgba(31, 193, 107, 0.25), 0 0 60px rgba(31, 193, 107, 0.15), 0 20px 60px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 8px 32px -8px rgba(107, 114, 128, 0.15)'
+                            : '0 0 0 1px rgba(31, 193, 107, 0.25), 0 0 30px rgba(31, 193, 107, 0.2), 0 0 60px rgba(31, 193, 107, 0.1), 0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 8px 32px -8px rgba(156, 163, 175, 0.1)',
+                    }}
+                >
+                    {/* Gradient Glow Overlay */}
+                    {mountedTheme && (
+                        <div 
+                            className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-2xl opacity-40"
+                            style={{
+                                background: isDark
+                                    ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.05) 50%, rgba(31, 193, 107, 0.15) 100%)'
+                                    : 'linear-gradient(135deg, rgba(31, 193, 107, 0.12) 0%, rgba(31, 193, 107, 0.04) 50%, rgba(31, 193, 107, 0.12) 100%)',
+                            }}
+                        />
+                    )}
+                    <div className="relative z-10">
                     <DialogHeader>
-                        <DialogTitle className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+                        <DialogTitle>
                             {t('pools.createTitle')}
                         </DialogTitle>
                     </DialogHeader>
@@ -1152,11 +1325,26 @@ export default function LiquidityPools() {
                                 className="hidden"
                             />
                             {imagePreview ? (
-                                <div className="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gray-100 dark:bg-gray-800 rounded-md flex items-center justify-center">
+                                <div 
+                                    className="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-xl sm:rounded-2xl flex items-center justify-center backdrop-blur-sm"
+                                    style={{
+                                        background: mountedTheme && isDark
+                                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+                                        border: mountedTheme && isDark
+                                            ? '1px solid rgba(107, 114, 128, 0.2)'
+                                            : '1px solid rgba(156, 163, 175, 0.2)',
+                                    }}
+                                >
                                     <img
                                         src={imagePreview}
                                         alt="Preview"
-                                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-full border border-gray-300 dark:border-gray-600"
+                                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-full border-2"
+                                        style={{
+                                            borderColor: mountedTheme && isDark
+                                                ? 'rgba(107, 114, 128, 0.3)'
+                                                : 'rgba(156, 163, 175, 0.3)',
+                                        }}
                                     />
                                     <button
                                         type="button"
@@ -1165,18 +1353,32 @@ export default function LiquidityPools() {
                                             setImagePreview(null)
                                             setCreateForm(prev => ({ ...prev, image: null }))
                                         }}
-                                        className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full p-1"
+                                        className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
                                     >
-                                        <X className="w-2 h-2" />
+                                        <X className="w-3 h-3" />
                                     </button>
                                 </div>
                             ) : (
                                 <div 
-                                    className={`flex flex-col items-center justify-center pt-4 sm:pt-5 pb-5 sm:pb-6 bg-gray-100 dark:bg-gray-800 rounded-md cursor-pointer border-2 border-dashed transition-colors ${
+                                    className={`flex flex-col items-center justify-center pt-4 sm:pt-5 pb-5 sm:pb-6 rounded-xl sm:rounded-2xl cursor-pointer border-2 border-dashed transition-all duration-300 backdrop-blur-sm ${
                                         isDragOver 
-                                            ? 'border-theme-primary-500 bg-theme-primary-50 dark:bg-theme-primary-900/20' 
-                                            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                                            ? 'border-theme-primary-500' 
+                                            : ''
                                     }`}
+                                    style={{
+                                        background: isDragOver
+                                            ? (mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.1) 100%)'
+                                                : 'linear-gradient(135deg, rgba(31, 193, 107, 0.12) 0%, rgba(31, 193, 107, 0.08) 100%)')
+                                            : (mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)'),
+                                        borderColor: isDragOver
+                                            ? '#1FC16B'
+                                            : (mountedTheme && isDark
+                                                ? 'rgba(107, 114, 128, 0.3)'
+                                                : 'rgba(156, 163, 175, 0.3)'),
+                                    }}
                                     onClick={() => document.getElementById('pool-image')?.click()}
                                     onDragOver={handleDragOver}
                                     onDragEnter={handleDragEnter}
@@ -1186,31 +1388,44 @@ export default function LiquidityPools() {
                                     <Upload className={`w-6 h-6 sm:w-8 sm:h-8 mb-3 sm:mb-4 transition-colors ${
                                         isDragOver 
                                             ? 'text-theme-primary-500' 
-                                            : 'text-gray-400 dark:text-gray-500'
+                                            : (mountedTheme && isDark ? 'text-gray-400' : 'text-gray-500')
                                     }`} />
                                     <p className={`mb-2 text-xs sm:text-sm text-center transition-colors ${
                                         isDragOver 
-                                            ? 'text-theme-primary-600 dark:text-theme-primary-400' 
-                                            : 'text-gray-600 dark:text-gray-400'
+                                            ? 'text-theme-primary-500' 
+                                            : (mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600')
                                     }`}>
                                         <span className="font-semibold">{t('pools.uploadImage')}</span> {t('pools.uploadDragDrop')}
                                     </p>
                                     <p className={`text-xs text-center transition-colors ${
                                         isDragOver 
-                                            ? 'text-theme-primary-500 dark:text-theme-primary-400' 
-                                            : 'text-gray-500 dark:text-gray-500'
+                                            ? 'text-theme-primary-500' 
+                                            : (mountedTheme && isDark ? 'text-gray-500' : 'text-gray-500')
                                     }`}>
                                         {t('pools.uploadFormats')}
                                     </p>
                                     {isDragOver && (
-                                        <p className="text-xs text-theme-primary-600 dark:text-theme-primary-400 font-medium mt-2">
+                                        <p className="text-xs text-theme-primary-500 font-medium mt-2">
                                             {t('pools.dropImageHere') || 'Drop image here'}
                                         </p>
                                     )}
                                 </div>
                             )}
-                            <div className="flex justify-center mt-4">
-                                <Button className="text-xs sm:text-sm !border-white/50" variant="outline" size="sm" onClick={openLogoPicker}>
+                            <div className="flex justify-center my-4">
+                                <Button 
+                                    className="text-xs sm:text-sm" 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={openLogoPicker}
+                                    style={{
+                                        borderColor: mountedTheme && isDark
+                                            ? 'rgba(107, 114, 128, 0.3)'
+                                            : 'rgba(156, 163, 175, 0.3)',
+                                        background: mountedTheme && isDark
+                                            ? 'rgba(0, 0, 0, 0.2)'
+                                            : 'rgba(255, 255, 255, 0.3)',
+                                    }}
+                                >
                                     {t('pools.chooseFromSystem') ?? 'Choose from gallery'}
                                 </Button>
                             </div>
@@ -1218,26 +1433,22 @@ export default function LiquidityPools() {
                     </div>
                     <div className="space-y-4">
                         {/* Pool Name */}
-                        <div className="space-y-2">
-                            <Label htmlFor="pool-name" className="text-gray-900 dark:text-white text-sm sm:text-base">
-                                {t('pools.nameLabel')} *
-                            </Label>
-                            <Input
+                        <div>
+                            <FloatLabelInput
                                 id="pool-name"
+                                type="text"
+                                label={`${t('pools.nameLabel')} *`}
                                 value={createForm.name}
                                 onChange={(e) => setCreateForm(prev => ({ ...prev, name: e.target.value }))}
-                                placeholder={t('pools.namePlaceholder')}
-                                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                                className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 text-sm sm:text-base"
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="pool-amount" className="text-gray-900 dark:text-white text-sm sm:text-base">
-                                {t('pools.amountLabel')} * (Min: 500,000)
-                            </Label>
-                            <Input
+                        <div>
+                            <FloatLabelInput
                                 id="pool-amount"
                                 type="text"
+                                label={`${t('pools.amountLabel')} * (Min: 500,000)`}
                                 value={formatInputNumber(createForm.amount)}
                                 onChange={(e) => {
                                     const cleanValue = e.target.value.replace(/[^\d]/g, '') // Chỉ cho phép số
@@ -1246,22 +1457,18 @@ export default function LiquidityPools() {
                                         setCreateForm(prev => ({ ...prev, amount: num }))
                                     }
                                 }}
-                                placeholder={t('pools.amountPlaceholder')}
-                                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                                className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 text-sm sm:text-base"
                             />
                         </div>
 
                         {/* Pool Description */}
-                        <div className="space-y-2">
-                            <Label htmlFor="pool-description" className="text-gray-900 dark:text-white text-sm sm:text-base">
-                                {t('pools.descLabel')} *
-                            </Label>
-                            <Textarea
+                        <div>
+                            <FloatLabelTextarea
                                 id="pool-description"
+                                label={`${t('pools.descLabel')} *`}
                                 value={createForm.description}
                                 onChange={(e) => setCreateForm(prev => ({ ...prev, description: e.target.value }))}
-                                placeholder={t('pools.descPlaceholder')}
-                                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 min-h-[80px] sm:min-h-[100px] text-sm sm:text-base focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                                className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
                             />
                         </div>
                         <div className="flex items-start gap-2">
@@ -1271,8 +1478,8 @@ export default function LiquidityPools() {
                                 onCheckedChange={(checked) => setCreateForm(prev => ({ ...prev, required: checked === true }))}
                             />
                             <div className="flex flex-col items-start gap-1">
-                                <div className="text-xs text-red-500 dark:text-red-400 italic leading-4">{t('pools.lockNote')}</div>
-                                <div className="text-xs text-red-500 dark:text-red-400 italic leading-4">{t('pools.required')}</div>
+                                <div className={`text-xs italic leading-4 ${mountedTheme && isDark ? 'text-red-400' : 'text-red-500'}`}>{t('pools.lockNote')}</div>
+                                <div className={`text-xs italic leading-4 ${mountedTheme && isDark ? 'text-red-400' : 'text-red-500'}`}>{t('pools.required')}</div>
                             </div>
                         </div>
                     </div>
@@ -1281,43 +1488,111 @@ export default function LiquidityPools() {
                         <Button
                             onClick={handleCreatePool}
                             disabled={isSubmitting || createPoolMutation.isPending || !createForm.required}
-                            className="bg-theme-primary-500 text-white font-semibold hover:bg-green-500 text-sm sm:text-base px-6 py-2"
+                            className="w-full 
+                                bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                hover:from-theme-primary-400 hover:to-theme-primary-500
+                                rounded-full 
+                                text-white font-semibold tracking-wide
+                                transition-all duration-300
+                                border-0
+                                text-sm sm:text-base px-6 py-2.5 sm:py-2"
                         >
                             {(isSubmitting || createPoolMutation.isPending) ? t('pools.creating') : t('pools.createBtn')}
                         </Button>
+                    </div>
                     </div>
                 </DialogContent>
             </Dialog>
 
             {/* System Logo Picker */}
             <Dialog open={isLogoPickerOpen} onOpenChange={setIsLogoPickerOpen}>
-                <DialogContent className="bg-white dark:bg-gray-800 lg:max-w-2xl w-[90vw]">
+                <DialogContent 
+                    className="lg:max-w-2xl w-[90vw] p-4 sm:p-5 sm:p-6 relative"
+                    style={{
+                        position: 'fixed',
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        background: mountedTheme && isDark
+                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.75) 100%)'
+                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+                        border: mountedTheme && isDark
+                            ? '1px solid rgba(31, 193, 107, 0.4)'
+                            : '1px solid rgba(31, 193, 107, 0.3)',
+                        boxShadow: mountedTheme && isDark
+                            ? '0 0 0 1px rgba(31, 193, 107, 0.3), 0 0 30px rgba(31, 193, 107, 0.25), 0 0 60px rgba(31, 193, 107, 0.15), 0 20px 60px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 8px 32px -8px rgba(107, 114, 128, 0.15)'
+                            : '0 0 0 1px rgba(31, 193, 107, 0.25), 0 0 30px rgba(31, 193, 107, 0.2), 0 0 60px rgba(31, 193, 107, 0.1), 0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 8px 32px -8px rgba(156, 163, 175, 0.1)',
+                    }}
+                >
+                    {/* Gradient Glow Overlay */}
+                    {mountedTheme && (
+                        <div 
+                            className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-2xl opacity-40"
+                            style={{
+                                background: isDark
+                                    ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.05) 50%, rgba(31, 193, 107, 0.15) 100%)'
+                                    : 'linear-gradient(135deg, rgba(31, 193, 107, 0.12) 0%, rgba(31, 193, 107, 0.04) 50%, rgba(31, 193, 107, 0.12) 100%)',
+                            }}
+                        />
+                    )}
+                    <div className="relative z-10">
                     <DialogHeader>
-                        <DialogTitle className="text-base sm:text-lg">{t('pools.createTitle')}</DialogTitle>
+                        <DialogTitle>{t('pools.createTitle')}</DialogTitle>
                     </DialogHeader>
-                    <div className="md:max-h-[74vh] max-h-[67vh] overflow-y-auto">
+                    <div className="md:max-h-[74vh] max-h-[67vh] overflow-y-auto scrollbar-thin">
                         {isLoadingBoxLogos ? (
-                            <div className="text-sm text-gray-500 dark:text-gray-400">{t('common.loading')}</div>
+                            <div className={`text-sm text-center py-8 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                {t('common.loading')}
+                            </div>
                         ) : boxLogos.length === 0 ? (
-                            <div className="text-sm text-gray-500 dark:text-gray-400">{t('pools.noSystemImages') ?? 'No images found'}</div>
+                            <div className={`text-sm text-center py-8 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                {t('pools.noSystemImages') ?? 'No images found'}
+                            </div>
                         ) : (
                             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
                                 {boxLogos.map((url) => (
                                     <button
                                         key={url}
                                         type="button"
-                                        className="border border-gray-200 dark:border-gray-700 rounded-lg p-2 flex items-center justify-center hover:border-theme-primary-500 focus:outline-none"
+                                        className="rounded-lg p-2 sm:p-3 flex items-center justify-center transition-all duration-300 backdrop-blur-sm hover:scale-105 focus:outline-none"
+                                        style={{
+                                            background: mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+                                            border: mountedTheme && isDark
+                                                ? '1px solid rgba(107, 114, 128, 0.2)'
+                                                : '1px solid rgba(156, 163, 175, 0.2)',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.borderColor = '#1FC16B';
+                                            e.currentTarget.style.background = mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.1) 100%)'
+                                                : 'linear-gradient(135deg, rgba(31, 193, 107, 0.12) 0%, rgba(31, 193, 107, 0.08) 100%)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.borderColor = mountedTheme && isDark
+                                                ? 'rgba(107, 114, 128, 0.2)'
+                                                : 'rgba(156, 163, 175, 0.2)';
+                                            e.currentTarget.style.background = mountedTheme && isDark
+                                                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)';
+                                        }}
                                         onClick={() => {
                                             setImagePreview(url)
                                             setCreateForm(prev => ({ ...prev, image: url }))
                                             setIsLogoPickerOpen(false)
                                         }}
                                     >
-                                        <img src={url} alt="logo" className="w-10 h-10 md:w-20 md:h-20 object-cover rounded-md" />
+                                        <img 
+                                            src={url} 
+                                            alt="logo" 
+                                            className="w-10 h-10 sm:w-12 sm:h-12 md:w-20 md:h-20 object-cover rounded-md" 
+                                        />
                                     </button>
                                 ))}
                             </div>
                         )}
+                    </div>
                     </div>
                 </DialogContent>
             </Dialog>

@@ -10,6 +10,7 @@ import { useLang } from "@/lang/useLang";
 import { useQuery } from "@tanstack/react-query";
 import { getInforWallet, getMultiTokenBalances, getListBuyToken } from "@/services/api/TelegramWalletService";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from 'next-themes';
 
 // Token type definition
 interface TokenOption {
@@ -29,6 +30,14 @@ interface TokenOption {
 
 export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
   const { isAuthenticated } = useAuth();
+  const { theme, resolvedTheme } = useTheme();
+  const [mountedTheme, setMountedTheme] = useState(false);
+  const isDark = resolvedTheme === 'dark' || (resolvedTheme === undefined && theme === 'dark');
+
+  useEffect(() => {
+    setMountedTheme(true);
+  }, []);
+
   const { data: walletInforAccount, refetch: refetchWalletInforAccount } = useQuery({
     queryKey: ["wallet-infor"],
     queryFn: getInforWallet,
@@ -282,35 +291,71 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
     <div className="flex flex-col gap-6 items-center">
       {/* Token Selection */}
       <div className="w-full max-w-[600px]">
-        <label className="block md:text-sm lg:text-base font-normal dark:text-neutral-100 text-black mb-1 text-xs">
-          {t('universal_account.select_token')} <span className="text-theme-red-200">*</span>
+        <label className={`block md:text-sm lg:text-base font-normal mb-1 text-xs ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+          {t('universal_account.select_token')} <span className="text-red-500">*</span>
         </label>
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowTokenDropdown(!showTokenDropdown)}
-            className="w-full bg-white dark:bg-theme-black-200 border border-gray-500 rounded-md px-3 py-2 text-left flex items-center justify-between hover:border-theme-purple-200 transition-all duration-300"
+            className="w-full rounded-lg px-3 py-2.5 text-left flex items-center justify-between backdrop-blur-sm transition-all duration-300"
+            style={{
+              background: mountedTheme && isDark
+                ? 'rgba(0, 0, 0, 0.3)'
+                : 'rgba(255, 255, 255, 0.5)',
+              border: mountedTheme && isDark
+                ? '1px solid rgba(31, 193, 107, 0.3)'
+                : '1px solid rgba(31, 193, 107, 0.25)',
+            }}
           >
             <div className="flex items-center gap-2">
               <img src={selectedToken?.token_logo_url} alt={selectedToken?.token_symbol} className="w-6 h-6" />
-              <span className="font-medium">{selectedToken?.token_symbol}</span>
+              <span className={`font-medium ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                {selectedToken?.token_symbol}
+              </span>
             </div>
-            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showTokenDropdown ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'} ${showTokenDropdown ? 'rotate-180' : ''}`} />
           </button>
 
           {showTokenDropdown && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-theme-black-200 border border-gray-300 rounded-md shadow-lg z-10">
+            <div 
+              className="absolute top-full left-0 right-0 mt-1 rounded-lg shadow-lg z-10 backdrop-blur-xl overflow-hidden"
+              style={{
+                background: mountedTheme && isDark
+                  ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
+                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                border: mountedTheme && isDark
+                  ? '1px solid rgba(31, 193, 107, 0.3)'
+                  : '1px solid rgba(31, 193, 107, 0.25)',
+                boxShadow: mountedTheme && isDark
+                  ? '0 0 0 1px rgba(31, 193, 107, 0.2), 0 0 30px rgba(31, 193, 107, 0.15), 0 8px 32px -8px rgba(0, 0, 0, 0.4)'
+                  : '0 0 0 1px rgba(31, 193, 107, 0.15), 0 0 30px rgba(31, 193, 107, 0.1), 0 8px 32px -8px rgba(0, 0, 0, 0.1)',
+              }}
+            >
               {availableTokens?.tokens?.filter((token: TokenOption) => token.token_balance > 0).map((token: TokenOption) => (
                 <button
                   key={token.token_symbol}
                   onClick={() => handleTokenSelect(token)}
-                  className="w-full px-3 py-2 text-left flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                  className="w-full px-3 py-2.5 text-left flex items-center justify-between transition-colors duration-200"
+                  style={{
+                    borderBottom: mountedTheme && isDark
+                      ? '1px solid rgba(107, 114, 128, 0.1)'
+                      : '1px solid rgba(156, 163, 175, 0.1)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = mountedTheme && isDark
+                      ? 'rgba(31, 193, 107, 0.1)'
+                      : 'rgba(31, 193, 107, 0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
                 >
                   <div className="flex items-center gap-2">
                     <img src={token.token_logo_url} alt={token.token_symbol} className="w-6 h-6" />
-                    <span>{token.token_symbol}</span>
+                    <span className={mountedTheme && isDark ? 'text-white' : 'text-gray-900'}>{token.token_symbol}</span>
                   </div>
-                  <div className="text-right text-xs text-gray-500">
+                  <div className={`text-right text-xs ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     <div>{token.token_balance} {token.token_symbol}</div>
                     {token.token_balance_usd > 0 && (
                       <div>${token.token_balance_usd.toFixed(2)}</div>
@@ -324,83 +369,110 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
       </div>
 
       {/* Amount Input */}
-      <div className={`p-[1px] rounded-md bg-gray-500 w-full max-w-[600px] group transition-all duration-300 ${isDisabled.input ? 'opacity-50 cursor-not-allowed' : ''}`}>
-        <div className="bg-white dark:bg-theme-black-200 p-4 sm:p-6 rounded-md group-hover:border-theme-purple-200 transition-all duration-300 ">
-          <div className="w-full">
-            <div className="text-center mb-1">
-              <p className="text-sm dark:text-gray-400 text-black group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
-                {isDisabled.input ? t('universal_account.transaction_progress') : t('universal_account.enter_amount')}
-              </p>
-            </div>
-            <div className="text-center mb-2 relative">
-              <div className="flex items-center justify-center gap-2 ml-[11%]">
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={amount}
-                  onChange={handleAmountChange}
-                  disabled={isDisabled.input}
-                  className={`bg-transparent text-center text-3xl max-w-[200px] font-bold w-full focus:outline-none transition-colors duration-300 ${error ? 'text-red-500' : 'group-hover:text-black dark:group-hover:text-white'} ${isDisabled.input ? 'cursor-not-allowed opacity-50' : ''}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (selectedToken && availableTokens?.tokens) {
-                      const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
-                      if (tokenData?.token_balance) {
-                        setAmount(tokenData.token_balance.toString());
-                      }
+      <div 
+        className={`w-full max-w-[600px] rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-xl transition-all duration-300 ${isDisabled.input ? 'opacity-50 cursor-not-allowed' : ''}`}
+        style={{
+          background: mountedTheme && isDark
+            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+          border: mountedTheme && isDark
+            ? '1px solid rgba(31, 193, 107, 0.3)'
+            : '1px solid rgba(31, 193, 107, 0.25)',
+          boxShadow: mountedTheme && isDark
+            ? '0 0 0 1px rgba(31, 193, 107, 0.2), 0 0 20px rgba(31, 193, 107, 0.15), 0 4px 16px -4px rgba(0, 0, 0, 0.3)'
+            : '0 0 0 1px rgba(31, 193, 107, 0.15), 0 0 20px rgba(31, 193, 107, 0.1), 0 4px 16px -4px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <div className="w-full">
+          <div className="text-center mb-1">
+            <p className={`text-sm transition-colors duration-300 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              {isDisabled.input ? t('universal_account.transaction_progress') : t('universal_account.enter_amount')}
+            </p>
+          </div>
+          <div className="text-center mb-2 relative">
+            <div className="flex items-center justify-center gap-2 ml-[11%]">
+              <input
+                type="text"
+                inputMode="decimal"
+                value={amount}
+                onChange={handleAmountChange}
+                disabled={isDisabled.input}
+                className={`bg-transparent text-center text-3xl max-w-[200px] font-bold w-full focus:outline-none transition-colors duration-300 ${error ? 'text-red-500' : (mountedTheme && isDark ? 'text-white' : 'text-gray-900')} ${isDisabled.input ? 'cursor-not-allowed opacity-50' : ''}`}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (selectedToken && availableTokens?.tokens) {
+                    const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
+                    if (tokenData?.token_balance) {
+                      setAmount(tokenData.token_balance.toString());
                     }
-                  }}
-                  disabled={isDisabled.input || !selectedToken || !availableTokens?.tokens}
-                  className="px-3 py-1 text-xs font-medium bg-theme-purple-100 hover:bg-theme-purple-200 text-theme-purple-600 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {t('universal_account.max_button')}
-                </button>
-              </div>
-              <span className={`absolute md:block hidden inset-y-0 right-0 flex items-center pr-3 transition-colors duration-300 ${error ? 'text-red-500' : 'text-gray-500 group-hover:text-gray-300'} ${isDisabled.input ? 'opacity-50' : ''}`}>
-                {selectedToken?.token_symbol}
-              </span>
+                  }
+                }}
+                disabled={isDisabled.input || !selectedToken || !availableTokens?.tokens}
+                className="px-3 py-1 text-xs font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: mountedTheme && isDark
+                    ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.2) 0%, rgba(31, 193, 107, 0.15) 100%)'
+                    : 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.1) 100%)',
+                  border: mountedTheme && isDark
+                    ? '1px solid rgba(31, 193, 107, 0.3)'
+                    : '1px solid rgba(31, 193, 107, 0.25)',
+                  color: '#1FC16B',
+                }}
+              >
+                {t('universal_account.max_button')}
+              </button>
             </div>
-            <div className="text-center text-xs text-gray-500 mb-1 group-hover:text-gray-400 transition-colors duration-300">
-              {t('universal_account.available', { amount: getCurrentTokenBalance() })} {selectedToken?.token_symbol}
-              {availableTokens?.tokens && selectedToken && (() => {
-                const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
-                return tokenData?.token_balance_usd ? ` ($${tokenData.token_balance_usd.toFixed(2)})` : '';
-              })()}
-            </div>
-            {/* <div className="text-center text-xs text-gray-400 mb-1">
-              Min: {getTokenLimits(selectedToken?.token_symbol || 'SOL').minAmount} | Max: {getTokenLimits(selectedToken?.token_symbol || 'SOL').maxAmount} {selectedToken?.token_symbol}
-            </div> */}
+            <span className={`absolute md:block hidden inset-y-0 right-0 flex items-center pr-3 transition-colors duration-300 ${error ? 'text-red-500' : (mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600')} ${isDisabled.input ? 'opacity-50' : ''}`}>
+              {selectedToken?.token_symbol}
+            </span>
+          </div>
+          <div className={`text-center text-xs mb-1 transition-colors duration-300 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            {t('universal_account.available', { amount: getCurrentTokenBalance() })} {selectedToken?.token_symbol}
             {availableTokens?.tokens && selectedToken && (() => {
               const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
-              return tokenData?.token_price_usd ? (
-                <div className="text-center text-xs text-gray-400 mb-1">
-                  {t('wallet.price')}: ${tokenData.token_price_usd.toFixed(4)} USD
-                </div>
-              ) : null;
+              return tokenData?.token_balance_usd ? ` ($${tokenData.token_balance_usd.toFixed(2)})` : '';
             })()}
-            {error && (
-              <div className="text-center text-xs text-red-500 mt-1">
-                {error}
-              </div>
-            )}
           </div>
+          {availableTokens?.tokens && selectedToken && (() => {
+            const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
+            return tokenData?.token_price_usd ? (
+              <div className={`text-center text-xs mb-1 ${mountedTheme && isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                {t('wallet.price')}: ${tokenData.token_price_usd.toFixed(4)} USD
+              </div>
+            ) : null;
+          })()}
+          {error && (
+            <div className="text-center text-xs text-red-500 mt-1">
+              {error}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Recipient Address */}
-      <div className="w-full max-w-[600px] ">
-        <label htmlFor="name" className={"block md:text-sm lg:text-base font-normal dark:text-neutral-100 text-black mb-1 text-xs"}>
-          {t('universal_account.recipient_address')} <span className="text-theme-red-200">*</span>
+      <div className="w-full max-w-[600px]">
+        <label htmlFor="name" className={`block md:text-sm lg:text-base font-normal mb-1 text-xs ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+          {t('universal_account.recipient_address')} <span className="text-red-500">*</span>
         </label>
-        <div className={`p-[1px] rounded-md bg-transparent w-full group hover:from-theme-purple-200 hover:to-theme-gradient-linear-end transition-all duration-300`}>
-          <div className="bg-white dark:bg-theme-black-200 border border-gray-500 rounded-md group-hover:border-theme-purple-200 transition-all duration-300">
+        <div className="w-full">
+          <div 
+            className="rounded-lg backdrop-blur-sm transition-all duration-300"
+            style={{
+              background: mountedTheme && isDark
+                ? 'rgba(0, 0, 0, 0.3)'
+                : 'rgba(255, 255, 255, 0.5)',
+              border: mountedTheme && isDark
+                ? '1px solid rgba(31, 193, 107, 0.3)'
+                : '1px solid rgba(31, 193, 107, 0.25)',
+            }}
+          >
             <input
               type="text"
               value={recipientWallet}
               onChange={(e) => setRecipientWallet(e.target.value)}
-              className="w-full bg-transparent h-10 rounded-md pl-3 text-sm font-normal focus:outline-none transition-colors duration-300"
+              className={`w-full bg-transparent h-10 rounded-lg pl-3 pr-3 text-sm font-normal focus:outline-none transition-colors duration-300 ${mountedTheme && isDark ? 'text-white placeholder:text-gray-500' : 'text-gray-900 placeholder:text-gray-400'}`}
               placeholder={t('universal_account.recipient_placeholder')}
             />
           </div>
@@ -415,33 +487,44 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
       {/* Google Authenticator Input */}
       {walletInforAccount?.isGGAuth && (
         <div className="w-full max-w-[600px]">
-          <label className="block md:text-sm lg:text-base font-normal dark:text-neutral-100 text-black mb-1 text-xs">
-            {t('universal_account.google_auth_code')} <span className="text-theme-red-200">*</span>
+          <label className={`block md:text-sm lg:text-base font-normal mb-1 text-xs ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+            {t('universal_account.google_auth_code')} <span className="text-red-500">*</span>
           </label>
-          <div className="p-[1px] rounded-md bg-gradient-to-t from-theme-purple-100 to-theme-gradient-linear-end w-full group hover:from-theme-purple-200 hover:to-theme-gradient-linear-end transition-all duration-300">
-            <div className="bg-white dark:bg-theme-black-200 border border-theme-gradient-linear-start rounded-md group-hover:border-theme-purple-200 transition-all duration-300 p-4">
-              <div className="flex justify-center gap-2">
-                {googleAuthCode.map((digit, index) => (
-                  <input
-                    key={index}
-                    id={`google-auth-${index}`}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleGoogleAuthChange(index, e.target.value)}
-                    onPaste={handleGoogleAuthPaste}
-                    onKeyDown={(e) => handleGoogleAuthKeyDown(index, e)}
-                    className="w-10 h-10 text-center text-lg font-bold border border-theme-blue-100 rounded-lg focus:outline-none focus:border-theme-blue-200"
-                    disabled={isSending}
-                  />
-                ))}
-              </div>
-              {googleAuthError && (
-                <div className="text-xs text-red-500 mt-2 text-center">
-                  {googleAuthError}
-                </div>
-              )}
+          <div 
+            className="rounded-xl sm:rounded-2xl p-4 backdrop-blur-xl"
+            style={{
+              background: mountedTheme && isDark
+                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
+                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+              border: mountedTheme && isDark
+                ? '1px solid rgba(31, 193, 107, 0.3)'
+                : '1px solid rgba(31, 193, 107, 0.25)',
+              boxShadow: mountedTheme && isDark
+                ? '0 0 0 1px rgba(31, 193, 107, 0.2), 0 0 20px rgba(31, 193, 107, 0.15), 0 4px 16px -4px rgba(0, 0, 0, 0.3)'
+                : '0 0 0 1px rgba(31, 193, 107, 0.15), 0 0 20px rgba(31, 193, 107, 0.1), 0 4px 16px -4px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <div className="flex justify-center gap-2">
+              {googleAuthCode.map((digit, index) => (
+                <input
+                  key={index}
+                  id={`google-auth-${index}`}
+                  type="text"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleGoogleAuthChange(index, e.target.value)}
+                  onPaste={handleGoogleAuthPaste}
+                  onKeyDown={(e) => handleGoogleAuthKeyDown(index, e)}
+                  className={`w-10 h-10 text-center text-lg font-bold rounded-lg focus:outline-none transition-all duration-300 ${mountedTheme && isDark ? 'text-white bg-black/30 border-gray-600/30 focus:border-theme-primary-500/50' : 'text-gray-900 bg-white/50 border-gray-300/30 focus:border-theme-primary-500/50'} border`}
+                  disabled={isSending}
+                />
+              ))}
             </div>
+            {googleAuthError && (
+              <div className="text-xs text-red-500 mt-2 text-center">
+                {googleAuthError}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -450,7 +533,18 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
       <button
         onClick={handleSend}
         disabled={isDisabled.send || recipientWallet.length === 0 || !selectedToken || Number(amount) === 0}
-        className={`lg:max-w-auto min-w-[160px] group relative bg-theme-primary-500 py-1.5 md:py-2 px-3 md:px-4 lg:px-6 rounded-full text-[11px] md:text-sm text-theme-neutral-100 transition-all duration-500 hover:from-theme-blue-100 hover:to-theme-blue-200 hover:scale-105 hover:shadow-lg hover:shadow-theme-primary-500/30 active:scale-95 w-full md:w-auto ${(isDisabled.send || recipientWallet.length === 0 || !selectedToken || Number(amount) === 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+        className={`lg:max-w-auto min-w-[160px] py-2 md:py-2.5 px-4 md:px-6 lg:px-8 rounded-full text-[11px] md:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-105 active:scale-95 w-full md:w-auto ${(isDisabled.send || recipientWallet.length === 0 || !selectedToken || Number(amount) === 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+        style={{
+          background: (isDisabled.send || recipientWallet.length === 0 || !selectedToken || Number(amount) === 0)
+            ? (mountedTheme && isDark ? 'rgba(107, 114, 128, 0.3)' : 'rgba(156, 163, 175, 0.3)')
+            : 'linear-gradient(to right, #1FC16B, #17A85A)',
+          color: 'white',
+          boxShadow: (isDisabled.send || recipientWallet.length === 0 || !selectedToken || Number(amount) === 0)
+            ? 'none'
+            : (mountedTheme && isDark
+              ? '0 0 20px rgba(31, 193, 107, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2)'
+              : '0 0 20px rgba(31, 193, 107, 0.25), 0 4px 12px rgba(0, 0, 0, 0.1)'),
+        }}
       >
         {isSending ? (
           <span className="flex items-center gap-2">
