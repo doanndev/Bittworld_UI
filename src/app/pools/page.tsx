@@ -958,31 +958,21 @@ export default function LiquidityPools() {
                                 return (
                                     <div
                                         key={pool.poolId}
-                                        className={`rounded-xl transition-all duration-300 hover:scale-[1.02] ${rankingColor} ${hasRankingColor ? 'backdrop-blur-xl' : 'backdrop-blur-xl'}`}
+                                        className={`rounded-xl transition-all duration-300 hover:scale-[1.02] ${rankingColor}`}
                                         style={{
                                             background: hasRankingColor
                                                 ? undefined
-                                                : (mountedTheme && isDark
-                                                    ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)'),
+                                                : '#000000',
                                             border: hasRankingColor
                                                 ? (mountedTheme && isDark
                                                     ? '1px solid rgba(255, 255, 255, 0.25)'
                                                     : '1px solid rgba(255, 255, 255, 0.35)')
-                                                : (mountedTheme && isDark
-                                                    ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)'),
+                                                : '1px solid rgba(255, 255, 255, 0.1)',
                                             boxShadow: hasRankingColor
                                                 ? (mountedTheme && isDark
                                                     ? '0 8px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 4px 16px -4px rgba(255, 255, 255, 0.1)'
                                                     : '0 8px 32px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.25) inset, 0 4px 16px -4px rgba(255, 255, 255, 0.15)')
-                                                : (mountedTheme && isDark
-                                                    ? '0 4px 12px -4px rgba(0, 0, 0, 0.2)'
-                                                    : '0 4px 12px -4px rgba(0, 0, 0, 0.08)'),
-                                            ...(hasRankingColor && {
-                                                backdropFilter: 'blur(20px)',
-                                                WebkitBackdropFilter: 'blur(20px)',
-                                            }),
+                                                : '0 4px 12px -4px rgba(0, 0, 0, 0.5)',
                                         }}
                                     >
                                         <div className="p-4 sm:p-5 space-y-4">
