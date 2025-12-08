@@ -59,7 +59,7 @@ const DepositWallet: React.FC<DepositWalletProps> = ({ walletAddress }) => {
                         {t('universal_account.deposit_wallet.title')}
                     </h3>
 
-                    {/* QR Code */}
+                {/* QR Code */}
                     <div 
                         className="bg-white p-4 sm:p-6 rounded-xl mx-auto w-fit"
                         style={{
@@ -68,18 +68,18 @@ const DepositWallet: React.FC<DepositWalletProps> = ({ walletAddress }) => {
                                 : '0 4px 16px -4px rgba(0, 0, 0, 0.1)',
                         }}
                     >
-                        {walletAddress && (
-                            <QRCodeSVG
-                                value={walletAddress}
-                                size={180}
-                                bgColor={"#FFFFFF"}
-                                fgColor={"#000000"}
-                                level={"L"}
-                            />
-                        )}
-                    </div>
+                    {walletAddress && (
+                        <QRCodeSVG
+                            value={walletAddress}
+                            size={180}
+                            bgColor={"#FFFFFF"}
+                            fgColor={"#000000"}
+                            level={"L"}
+                        />
+                    )}
+                </div>
 
-                    {/* Address */}
+                {/* Address */}
                     <div 
                         className="relative flex rounded-xl pr-3 pl-4 py-3 mt-4 backdrop-blur-sm"
                         style={{
@@ -92,18 +92,18 @@ const DepositWallet: React.FC<DepositWalletProps> = ({ walletAddress }) => {
                         }}
                     >
                         <div className={`text-center rounded-lg p-2 text-xs sm:text-sm break-all flex-1 ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>
-                            {walletAddress}
-                        </div>
-                        <button
-                            onClick={handleCopyAddress}
-                            className={`ml-2 transition-colors ${mountedTheme && isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                            {copied ? <Check className="w-4 h-4 text-theme-primary-500" /> : <Copy className="w-4 h-4" />}
-                            <span className="sr-only">Copy address</span>
-                        </button>
+                        {walletAddress}
                     </div>
+                    <button
+                        onClick={handleCopyAddress}
+                            className={`ml-2 transition-colors ${mountedTheme && isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                            {copied ? <Check className="w-4 h-4 text-theme-primary-500" /> : <Copy className="w-4 h-4" />}
+                        <span className="sr-only">Copy address</span>
+                    </button>
+                </div>
 
-                    {/* Warning */}
+                {/* Warning */}
                     <div 
                         className="rounded-xl text-center mt-4 p-4 backdrop-blur-sm"
                         style={{
@@ -115,15 +115,15 @@ const DepositWallet: React.FC<DepositWalletProps> = ({ walletAddress }) => {
                                 : '1px solid rgba(239, 68, 68, 0.2)',
                         }}
                     >
-                        <div className="flex justify-center mb-3">
-                            <div className="w-6 h-6 rounded-full flex items-center justify-center text-2xl">⚠️</div>
-                        </div>
+                    <div className="flex justify-center mb-3">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-2xl">⚠️</div>
+                    </div>
                         <p className={`text-xs sm:text-sm ${mountedTheme && isDark ? 'text-red-400' : 'text-red-600'}`}>
                             {t('universal_account.deposit_wallet.warning.title')}
                         </p>
                         <p className={`text-xs sm:text-sm mt-1 ${mountedTheme && isDark ? 'text-red-400' : 'text-red-600'}`}>
-                            {t('universal_account.deposit_wallet.warning.description')}
-                        </p>
+                        {t('universal_account.deposit_wallet.warning.description')}
+                    </p>
                     </div>
                 </div>
             </div>

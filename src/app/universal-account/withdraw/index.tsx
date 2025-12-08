@@ -383,33 +383,33 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
             : '0 0 0 1px rgba(31, 193, 107, 0.15), 0 0 20px rgba(31, 193, 107, 0.1), 0 4px 16px -4px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <div className="w-full">
-          <div className="text-center mb-1">
+          <div className="w-full">
+            <div className="text-center mb-1">
             <p className={`text-sm transition-colors duration-300 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              {isDisabled.input ? t('universal_account.transaction_progress') : t('universal_account.enter_amount')}
-            </p>
-          </div>
-          <div className="text-center mb-2 relative">
-            <div className="flex items-center justify-center gap-2 ml-[11%]">
-              <input
-                type="text"
-                inputMode="decimal"
-                value={amount}
-                onChange={handleAmountChange}
-                disabled={isDisabled.input}
+                {isDisabled.input ? t('universal_account.transaction_progress') : t('universal_account.enter_amount')}
+              </p>
+            </div>
+            <div className="text-center mb-2 relative">
+              <div className="flex items-center justify-center gap-2 ml-[11%]">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  disabled={isDisabled.input}
                 className={`bg-transparent text-center text-3xl max-w-[200px] font-bold w-full focus:outline-none transition-colors duration-300 ${error ? 'text-red-500' : (mountedTheme && isDark ? 'text-white' : 'text-gray-900')} ${isDisabled.input ? 'cursor-not-allowed opacity-50' : ''}`}
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  if (selectedToken && availableTokens?.tokens) {
-                    const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
-                    if (tokenData?.token_balance) {
-                      setAmount(tokenData.token_balance.toString());
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (selectedToken && availableTokens?.tokens) {
+                      const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
+                      if (tokenData?.token_balance) {
+                        setAmount(tokenData.token_balance.toString());
+                      }
                     }
-                  }
-                }}
-                disabled={isDisabled.input || !selectedToken || !availableTokens?.tokens}
+                  }}
+                  disabled={isDisabled.input || !selectedToken || !availableTokens?.tokens}
                 className="px-3 py-1 text-xs font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: mountedTheme && isDark
@@ -420,34 +420,34 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
                     : '1px solid rgba(31, 193, 107, 0.25)',
                   color: '#1FC16B',
                 }}
-              >
-                {t('universal_account.max_button')}
-              </button>
-            </div>
+                >
+                  {t('universal_account.max_button')}
+                </button>
+              </div>
             <span className={`absolute md:block hidden inset-y-0 right-0 flex items-center pr-3 transition-colors duration-300 ${error ? 'text-red-500' : (mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600')} ${isDisabled.input ? 'opacity-50' : ''}`}>
-              {selectedToken?.token_symbol}
-            </span>
-          </div>
+                {selectedToken?.token_symbol}
+              </span>
+            </div>
           <div className={`text-center text-xs mb-1 transition-colors duration-300 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            {t('universal_account.available', { amount: getCurrentTokenBalance() })} {selectedToken?.token_symbol}
+              {t('universal_account.available', { amount: getCurrentTokenBalance() })} {selectedToken?.token_symbol}
+              {availableTokens?.tokens && selectedToken && (() => {
+                const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
+                return tokenData?.token_balance_usd ? ` ($${tokenData.token_balance_usd.toFixed(2)})` : '';
+              })()}
+            </div>
             {availableTokens?.tokens && selectedToken && (() => {
               const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
-              return tokenData?.token_balance_usd ? ` ($${tokenData.token_balance_usd.toFixed(2)})` : '';
-            })()}
-          </div>
-          {availableTokens?.tokens && selectedToken && (() => {
-            const tokenData = availableTokens.tokens.find((token: TokenOption) => token.token_symbol === selectedToken.token_symbol);
-            return tokenData?.token_price_usd ? (
+              return tokenData?.token_price_usd ? (
               <div className={`text-center text-xs mb-1 ${mountedTheme && isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-                {t('wallet.price')}: ${tokenData.token_price_usd.toFixed(4)} USD
+                  {t('wallet.price')}: ${tokenData.token_price_usd.toFixed(4)} USD
+                </div>
+              ) : null;
+            })()}
+            {error && (
+              <div className="text-center text-xs text-red-500 mt-1">
+                {error}
               </div>
-            ) : null;
-          })()}
-          {error && (
-            <div className="text-center text-xs text-red-500 mt-1">
-              {error}
-            </div>
-          )}
+            )}
         </div>
       </div>
 
@@ -504,27 +504,27 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
                 : '0 0 0 1px rgba(31, 193, 107, 0.15), 0 0 20px rgba(31, 193, 107, 0.1), 0 4px 16px -4px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <div className="flex justify-center gap-2">
-              {googleAuthCode.map((digit, index) => (
-                <input
-                  key={index}
-                  id={`google-auth-${index}`}
-                  type="text"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleGoogleAuthChange(index, e.target.value)}
-                  onPaste={handleGoogleAuthPaste}
-                  onKeyDown={(e) => handleGoogleAuthKeyDown(index, e)}
+              <div className="flex justify-center gap-2">
+                {googleAuthCode.map((digit, index) => (
+                  <input
+                    key={index}
+                    id={`google-auth-${index}`}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleGoogleAuthChange(index, e.target.value)}
+                    onPaste={handleGoogleAuthPaste}
+                    onKeyDown={(e) => handleGoogleAuthKeyDown(index, e)}
                   className={`w-10 h-10 text-center text-lg font-bold rounded-lg focus:outline-none transition-all duration-300 ${mountedTheme && isDark ? 'text-white bg-black/30 border-gray-600/30 focus:border-theme-primary-500/50' : 'text-gray-900 bg-white/50 border-gray-300/30 focus:border-theme-primary-500/50'} border`}
-                  disabled={isSending}
-                />
-              ))}
-            </div>
-            {googleAuthError && (
-              <div className="text-xs text-red-500 mt-2 text-center">
-                {googleAuthError}
+                    disabled={isSending}
+                  />
+                ))}
               </div>
-            )}
+              {googleAuthError && (
+                <div className="text-xs text-red-500 mt-2 text-center">
+                  {googleAuthError}
+                </div>
+              )}
           </div>
         </div>
       )}

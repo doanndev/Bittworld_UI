@@ -44,6 +44,7 @@ const Header = () => {
     const [phantomPublicKey, setPhantomPublicKey] = useState<string | null>(null);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [isFixed, setIsFixed] = useState(false);
+    const [headerHeight, setHeaderHeight] = useState(0);
     const headerRef = React.useRef<HTMLElement>(null);
     const isFixedRef = React.useRef(false);
 
@@ -147,6 +148,34 @@ const Header = () => {
         isFixedRef.current = isFixed;
     }, [isFixed]);
 
+    // Update header height when it changes
+    useEffect(() => {
+        if (!mounted || !headerRef.current) return;
+
+        const updateHeaderHeight = () => {
+            if (headerRef.current) {
+                setHeaderHeight(headerRef.current.offsetHeight);
+            }
+        };
+
+        updateHeaderHeight();
+        window.addEventListener('resize', updateHeaderHeight);
+        
+        // Use ResizeObserver to detect height changes
+        const resizeObserver = new ResizeObserver(() => {
+            updateHeaderHeight();
+        });
+
+        if (headerRef.current) {
+            resizeObserver.observe(headerRef.current);
+        }
+
+        return () => {
+            window.removeEventListener('resize', updateHeaderHeight);
+            resizeObserver.disconnect();
+        };
+    }, [mounted]);
+
     // Handle scroll to detect when navbar goes out of viewport
     useEffect(() => {
         if (!mounted || !headerRef.current) return;
@@ -169,6 +198,8 @@ const Header = () => {
                         // If navbar is scrolled out of viewport (above viewport) and scrolling down
                         if (rect.bottom < 0 && scrollDown && currentScrollY > 100) {
                             if (!currentIsFixed) {
+                                // Update height before setting fixed
+                                setHeaderHeight(headerElement.offsetHeight);
                                 setIsFixed(true);
                                 setIsNavbarVisible(false);
                                 // Show navbar after a short delay with animation
@@ -233,6 +264,16 @@ const Header = () => {
     return (
         <>
             {/* NotifyProvider removed - using Toaster from ClientLayout */}
+            {/* Placeholder to prevent layout shift when header becomes fixed */}
+            {isFixed && (
+                <div 
+                    style={{ 
+                        height: `${headerHeight}px`,
+                        marginBottom: '0.5rem',
+                    }}
+                    aria-hidden="true"
+                />
+            )}
             <header 
                 ref={headerRef}
                 className={`backdrop-blur-xl transition-all duration-300 rounded-lg sm:rounded-xl md:rounded-2xl ${
@@ -697,67 +738,67 @@ const Header = () => {
                     }}
                 />
                 <div className='flex items-center justify-around px-2 py-2 relative z-10'>
-                    {listSidebar.map((item, index) => {
-                        const Icon = item.icon;
-                        const isExternalLink = item.href.startsWith('http');
-                        const isActive = pathname === item.href;
-                        const Component = isExternalLink ? 'a' : Link;
-                        const props = isExternalLink 
-                            ? { 
-                                href: item.href, 
-                                target: "_blank", 
-                                rel: "noopener noreferrer",
+                                    {listSidebar.map((item, index) => {
+                                        const Icon = item.icon;
+                                        const isExternalLink = item.href.startsWith('http');
+                                        const isActive = pathname === item.href;
+                                        const Component = isExternalLink ? 'a' : Link;
+                                        const props = isExternalLink 
+                                            ? { 
+                                                href: item.href, 
+                                                target: "_blank", 
+                                                rel: "noopener noreferrer",
                                 className: `group relative flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 min-w-0 flex-1 ${
-                                    isActive 
+                                                    isActive 
                                         ? 'text-theme-primary-500' 
                                         : mountedTheme && isDark
                                             ? 'text-gray-300'
                                             : 'text-gray-700'
-                                }`
-                              }
-                            : { 
-                                href: item.href,
+                                                }`
+                                              }
+                                            : { 
+                                                href: item.href,
                                 className: `group relative flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 min-w-0 flex-1 ${
-                                    isActive 
+                                                    isActive 
                                         ? 'text-theme-primary-500' 
                                         : mountedTheme && isDark
                                             ? 'text-gray-300'
                                             : 'text-gray-700'
-                                }`
-                              };
-                        
-                        return (
-                            <Component
-                                key={index}
-                                {...props}
-                            >
+                                                }`
+                                              };
+                                        
+                                        return (
+                                            <Component
+                                                key={index}
+                                                {...props}
+                                            >
                                 {/* Hover background effect */}
-                                {!isActive && (
-                                    <span 
+                                                {!isActive && (
+                                                    <span 
                                         className="absolute inset-0 rounded-lg opacity-0 group-active:opacity-100 transition-opacity duration-300"
-                                        style={{
+                                                        style={{
                                             background: mountedTheme && isDark
                                                 ? 'rgba(31, 193, 107, 0.1)'
                                                 : 'rgba(31, 193, 107, 0.08)',
-                                        }}
-                                    />
-                                )}
+                                                        }}
+                                                    />
+                                                )}
                                 {/* Active indicator - top liner */}
-                                {isActive && (
-                                    <span 
+                                                {isActive && (
+                                                    <span 
                                         className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/2 h-0.5 rounded-full"
-                                        style={{
+                                                        style={{
                                             background: 'linear-gradient(90deg, transparent, rgba(31, 193, 107, 0.8), transparent)',
-                                        }}
-                                    />
-                                )}
+                                                        }}
+                                                    />
+                                                )}
                                 <Icon className={`h-5 w-5 relative z-10 ${isActive ? 'scale-110' : ''} transition-transform duration-300`} />
                                 <span className="relative z-10 text-xs font-medium truncate w-full text-center">{item.name}</span>
-                            </Component>
-                        );
-                    })}
-                </div>
-            </nav>
+                                            </Component>
+                                        );
+                                    })}
+                                        </div>
+                                </nav>
             <ModalSignin isOpen={isSigninModalOpen} onClose={() => setIsSigninModalOpen(false)} />
         </>
     )
