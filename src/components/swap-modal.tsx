@@ -97,42 +97,42 @@ const SwapInterface = React.memo(({
             transition: 'transform 600ms cubic-bezier(0.4, 0, 0.2, 1), opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
-          <div className="flex items-start justify-between gap-2 flex-col">
-            <div className="flex items-center gap-2">
-              {getTokenIcon(fromToken)}
+            <div className="flex items-start justify-between gap-2 flex-col">
+              <div className="flex items-center gap-2">
+                {getTokenIcon(fromToken)}
               <span className={`font-semibold ${classes.bodyText} ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 {fromToken.toUpperCase()}
               </span>
+              </div>
             </div>
-          </div>
-          <div className="flex md:items-center justify-between gap-2 flex-col md:flex-row w-full">
+            <div className="flex md:items-center justify-between gap-2 flex-col md:flex-row w-full">
             <span className={`${classes.historyText} ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
               {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">
                 {fromToken === "solana" ? balance?.sol?.token_balance || "0" : balance?.usdt?.token_balance || "0"}
               </span>
             </span>
             <div className="flex items-center gap-2 w-full md:w-auto">
-              <input
-                type="text"
-                value={fromAmount}
-                onChange={(e) => handleFromAmountChange(e.target.value)}
+                <input
+                  type="text"
+                  value={fromAmount}
+                  onChange={(e) => handleFromAmountChange(e.target.value)}
                 className={`${classes.inputText} w-full md:w-auto h-9 sm:h-10 outline-none rounded-lg text-right px-3 ${isDark ? 'bg-black/30 text-white border-gray-600/30' : 'bg-white/50 text-gray-900 border-gray-300/30'} border backdrop-blur-sm placeholder:text-gray-400 placeholder:text-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 transition-all`}
-                placeholder="0.00"
-              />
-              
-              <Button
-                onClick={handleSetMaxAmount}
-                variant="outline"
-                size="sm"
+                  placeholder="0.00"
+                />
+                
+                <Button
+                  onClick={handleSetMaxAmount}
+                  variant="outline"
+                  size="sm"
                 className="text-xs px-3 py-1.5 h-9 sm:h-10 rounded-lg transition-all duration-300"
                 style={{
                   borderColor: isDark ? 'rgba(107, 114, 128, 0.3)' : 'rgba(156, 163, 175, 0.3)',
                   background: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.3)',
                   color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
                 }}
-              >
-                {t('swap.max')}
-              </Button>
+                >
+                  {t('swap.max')}
+                </Button>
             </div>
           </div>
         </div>
@@ -185,9 +185,9 @@ const SwapInterface = React.memo(({
             transition: 'transform 600ms cubic-bezier(0.4, 0, 0.2, 1), opacity 600ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {getTokenIcon(toToken)}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {getTokenIcon(toToken)}
               <span className={`font-semibold ${classes.bodyText} ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 {toToken.toUpperCase()}
               </span>
@@ -464,12 +464,12 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
     
     // Wait for animation to complete before swapping
     setTimeout(() => {
-      const tempToken = fromToken
-      const tempAmount = fromAmount || ""
-      setFromToken(toToken)
-      setToToken(tempToken)
-      setFromAmount(toAmount || "")
-      setToAmount(tempAmount)
+    const tempToken = fromToken
+    const tempAmount = fromAmount || ""
+    setFromToken(toToken)
+    setToToken(tempToken)
+    setFromAmount(toAmount || "")
+    setToAmount(tempAmount)
       
       // Reset animation state after swap completes
       setTimeout(() => {

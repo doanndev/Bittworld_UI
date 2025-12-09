@@ -538,7 +538,7 @@ export default function WalletPage() {
                                 </div>
                             </div>
                         )}
-                    </div>
+                                </div>
 
                     {/* Action Buttons Section (Phantom Style) */}
                     <div className="w-full mb-6 sm:mb-8">
@@ -547,7 +547,7 @@ export default function WalletPage() {
                                 {[1, 2, 3].map((i) => (
                                     <div key={i} className={`h-16 w-20 rounded-xl animate-pulse ${isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
                                 ))}
-                            </div>
+                                        </div>
                         ) : (
                             <div className="flex justify-center gap-3 sm:gap-4 md:gap-6">
                                 {/* Send Button */}
@@ -608,9 +608,9 @@ export default function WalletPage() {
                                         <ArrowDownToLine className={`w-5 h-5 sm:w-6 sm:h-6 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
                                     </div>
                                     <span className={`text-xs sm:text-sm font-semibold ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
-                                        {t('wallet.receive')}
+                                                        {t('wallet.receive')}
                                     </span>
-                                </button>
+                                                </button>
 
                                 {/* Swap Button */}
                                 <button
@@ -642,7 +642,7 @@ export default function WalletPage() {
                                         {t('swap.swap')}
                                     </span>
                                 </button>
-                            </div>
+                                </div>
                         )}
                     </div>
 
@@ -836,7 +836,7 @@ export default function WalletPage() {
                                                 }}
                                             >
                                                 <span className={mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}>
-                                                    {t('wallet.noTokens')}
+                                                {t('wallet.noTokens')}
                                                 </span>
                                             </div>
                                         ) : (
@@ -885,7 +885,7 @@ export default function WalletPage() {
                                                             </div>
                                                             <div className={`text-xs ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                                                                 {token.token_balance.toFixed(token.token_decimals)}
-                                                            </div>
+                                                                </div>
                                                         </div>
                                                     </div>
 
@@ -901,10 +901,10 @@ export default function WalletPage() {
                                                         <div>
                                                             <div className={`text-xs mb-1 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                                                                 {t('wallet.price')}
-                                                            </div>
+                                                        </div>
                                                             <div className={`text-sm font-medium ${mountedTheme && isDark ? 'text-theme-primary-300' : 'text-theme-primary-500'}`}>
                                                                 ${token.token_price_usd.toFixed(6)}
-                                                            </div>
+                                                        </div>
                                                         </div>
                                                         {(token.token_symbol === "SOL" || token.token_symbol === "USDT") && (
                                                             <button

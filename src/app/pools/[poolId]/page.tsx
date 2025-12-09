@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useTheme } from 'next-themes'
-import { ArrowLeft, Star, Users, TrendingUp, Calendar, Settings, Copy, Share2, MoreVertical, ChevronDown, X } from "lucide-react"
+import { ArrowLeft, Star, Users, TrendingUp, Calendar, Settings, Copy, Share2, MoreVertical, ChevronDown, X, MessageSquare, Package, Hash, CalendarX, Zap, Coins, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FileInput } from "@/components/ui/file-input"
 import { toast } from 'react-hot-toast'
@@ -881,9 +881,9 @@ export default function PoolDetail() {
                     <div className="space-y-4 sm:space-y-6">
                         {/* Overview Tab */}
                         {activeTab === 'overview' && (
-                            <div className="md:grid flex flex-col-reverse grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                            <div>
                                 {/* Pool Description */}
-                                <div className="lg:col-span-2">
+                                <div>
                                     <div 
                                         className="rounded-xl sm:rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 backdrop-blur-xl"
                                         style={{
@@ -900,226 +900,306 @@ export default function PoolDetail() {
                                     >
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="text-base sm:text-lg font-semibold">{t('pools.detailPage.aboutPool')}</h3>
+                                            <div className="flex items-center gap-2">
+                                                {!isCreator && (
+                                                    <Button
+                                                        onClick={() => setIsConfirmingStake(true)}
+                                                        className="
+                                                            bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                                            hover:from-theme-primary-400 hover:to-theme-primary-500
+                                                            text-white
+                                                            rounded-full
+                                                            font-semibold tracking-wide
+                                                            transition-all duration-300
+                                                            text-xs sm:text-sm
+                                                            px-4 py-2
+                                                        "
+                                                    >
+                                                        {t('pools.detailPage.stakeNow')}
+                                                    </Button>
+                                                )}
                                             {isCreator && (
+                                                    <>
                                                 <Button
+                                                            onClick={() => setIsConfirmingStake(true)}
+                                                            className="
+                                                                bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                                                hover:from-theme-primary-400 hover:to-theme-primary-500
+                                                                text-white
+                                                                rounded-full
+                                                                font-semibold tracking-wide
+                                                                transition-all duration-300
+                                                                text-xs sm:text-sm
+                                                                px-4 py-2
+                                                            "
+                                                        >
+                                                            {t('pools.detailPage.stakeNow')}
+                                                        </Button>
+                                                        <Button
                                                     onClick={handleEditClick}
-                                                    className="
-                                                        bg-transparent
-                                                        border border-theme-primary-500/50
-                                                        hover:bg-gradient-to-r hover:from-theme-primary-500/20 hover:to-theme-primary-400/20
-                                                        text-theme-primary-500
-                                                        hover:text-theme-primary-400
-                                                        rounded-full
-                                                        font-semibold tracking-wide
-                                                        transition-all duration-300
-                                                        text-xs sm:text-sm
-                                                        px-4 py-2
-                                                    "
+                                                            className="
+                                                                bg-transparent
+                                                                border border-theme-primary-500/50
+                                                                hover:bg-gradient-to-r hover:from-theme-primary-500/20 hover:to-theme-primary-400/20
+                                                                text-theme-primary-500
+                                                                hover:text-theme-primary-400
+                                                                rounded-full
+                                                                font-semibold tracking-wide
+                                                                transition-all duration-300
+                                                                text-xs sm:text-sm
+                                                                px-4 py-2
+                                                            "
                                                 >
                                                     <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                                                     {t('pools.detailPage.edit')}
                                                 </Button>
+                                                    </>
                                             )}
+                                            </div>
                                         </div>
 
-                                        <p className="leading-relaxed text-theme-primary-500 text-sm sm:text-base mb-4">
-                                            {t('pools.detailPage.description')} &ensp; <span className="font-mono italic text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{poolDetail.describe || "This is a community-driven liquidity pool focused on providing sustainable returns to its members through strategic token staking and yield farming opportunities."}</span>
-                                        </p>
+                                        {/* 3 Blocks Grid Layout */}
+                                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                                            {/* Block 1: Description & Creator Address */}
+                                            <div 
+                                                className="p-4 sm:p-5 rounded-xl sm:rounded-2xl"
+                                                style={{
+                                                    background: mountedTheme && isDark
+                                                        ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+                                                    border: mountedTheme && isDark
+                                                        ? '1px solid rgba(107, 114, 128, 0.2)'
+                                                        : '1px solid rgba(156, 163, 175, 0.2)',
+                                                }}
+                                            >
+                                                <div className="space-y-4">
+                                                    {/* Description */}
+                                                    <div className="flex items-start gap-3">
+                                                        <MessageSquare className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <div className="flex-1">
+                                                            <p className={`text-sm sm:text-base font-semibold mb-1 ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                            {t('pools.detailPage.description')}
+                                                            </p>
+                                                            <p className={`leading-relaxed text-sm sm:text-base ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                {poolDetail.describe || "This is a community-driven liquidity pool focused on providing sustainable returns to its members through strategic token staking and yield farming opportunities."}
+                                                            </p>
+                                                    </div>
+                                                            </div>
 
-                                        <div className="md:block hidden space-y-2 sm:space-y-3 text-sm sm:text-base">
-                                            <div className="flex flex-row justify-between sm:items-center gap-2 sm:gap-0 mb-3">
-                                                <span className="text-sm sm:text-base text-gray-500 dark:text-gray-400">{t('pools.detailPage.creatorAddress')}</span>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-mono text-yellow-500 italic text-sm sm:text-base">{truncateString(poolDetail.creatorAddress, 12)}</span>
-                                                    <Copy className="w-3 h-3 sm:w-4 sm:h-4 cursor-pointer" onClick={() => {
-                                                        navigator.clipboard.writeText(poolDetail.creatorAddress)
-                                                        toast.success(t('pools.detailPage.copiedToClipboard'))
-                                                    }} />
+                                                    {/* Creator Address */}
+                                                    <div className="flex items-center gap-3 pt-2 border-t"
+                                                        style={{
+                                                            borderColor: mountedTheme && isDark
+                                                                ? 'rgba(107, 114, 128, 0.2)'
+                                                                : 'rgba(156, 163, 175, 0.2)',
+                                                        }}
+                                                    >
+                                                        <Package className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <div className="flex-1 flex items-center justify-between gap-2">
+                                                            <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                                {t('pools.detailPage.creatorAddress')}
+                                                            </span>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className={`font-mono text-sm sm:text-base ${mountedTheme && isDark ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                                                                    {truncateString(poolDetail.creatorAddress, 12)}
+                                                                </span>
+                                                                <Copy 
+                                                                    className={`w-4 h-4 cursor-pointer transition-colors ${mountedTheme && isDark ? 'text-gray-400 hover:text-theme-primary-400' : 'text-gray-500 hover:text-theme-primary-500'}`}
+                                                                    onClick={() => {
+                                                                        navigator.clipboard.writeText(poolDetail.creatorAddress)
+                                                                        toast.success(t('pools.detailPage.copiedToClipboard'))
+                                                                    }} 
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="space-y-2 sm:space-y-3 text-sm sm:text-base">
-                                                <div className="flex flex-row justify-between sm:items-center gap-1 sm:gap-0">
-                                                    <span className="text-gray-500 dark:text-gray-400">{t('pools.detailPage.poolId')}</span>
-                                                    <span className="font-mono">{poolDetail.poolId}</span>
+
+                                            {/* Block 2: Pool Metadata */}
+                                            <div 
+                                                className="p-4 sm:p-5 rounded-xl sm:rounded-2xl"
+                                                style={{
+                                                    background: mountedTheme && isDark
+                                                        ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+                                                    border: mountedTheme && isDark
+                                                        ? '1px solid rgba(107, 114, 128, 0.2)'
+                                                        : '1px solid rgba(156, 163, 175, 0.2)',
+                                                }}
+                                            >
+                                                <h4 className={`text-sm sm:text-base font-semibold mb-4 ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                    Pool Metadata
+                                                </h4>
+                                                <div className="space-y-3 sm:space-y-4">
+                                                    {/* Pool ID */}
+                                                    <div className="flex items-center gap-3">
+                                                        <Hash className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <div className="flex-1 flex items-center justify-between gap-2">
+                                                            <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                {t('pools.detailPage.poolId')}
+                                                            </span>
+                                                            <span className={`font-mono text-sm sm:text-base font-bold ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                                {poolDetail.poolId}
+                                                            </span>
                                                 </div>
-                                                <div className="flex flex-row justify-between sm:items-center gap-1 sm:gap-0">
-                                                    <span className="text-gray-500 dark:text-gray-400">{t('pools.detailPage.creationDate')}</span>
-                                                    <span>{formatDate(poolDetail.creationDate)}</span>
+                                            </div>
+
+                                                    {/* Creation Date */}
+                                                    <div className="flex items-center gap-3">
+                                                        <Calendar className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <div className="flex-1 flex items-center justify-between gap-2">
+                                                            <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                {t('pools.detailPage.creationDate')}
+                                                            </span>
+                                                            <span className={`text-sm sm:text-base font-medium ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                                {formatDate(poolDetail.creationDate)}
+                                                            </span>
                                                 </div>
+                                            </div>
+
+                                                    {/* End Date */}
                                                 {poolDetail.endDate && (
-                                                    <div className="flex flex-row justify-between sm:items-center gap-1 sm:gap-0">
-                                                        <span className="text-gray-500 dark:text-gray-400">{t('pools.detailPage.endDate')}</span>
-                                                        <span>{formatDate(poolDetail.endDate)}</span>
+                                                        <div className="flex items-center gap-3">
+                                                            <CalendarX className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                            <div className="flex-1 flex items-center justify-between gap-2">
+                                                                <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                    {t('pools.detailPage.endDate')}
+                                                                </span>
+                                                                <span className={`text-sm sm:text-base font-medium ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                                    {formatDate(poolDetail.endDate)}
+                                                                </span>
+                                                            </div>
                                                     </div>
                                                 )}
-                                                <div className="flex flex-row justify-between sm:items-center gap-1 sm:gap-0">
-                                                    <span className="text-gray-500 dark:text-gray-400">{t('pools.detailPage.status')}</span>
-                                                    <span className={`px-2 sm:px-3 py-1 rounded text-xs uppercase font-semibold ${poolDetail.status === 'active' ? 'bg-green-100 text-green-800' :
-                                                        poolDetail.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                            'bg-red-100 text-red-800'
+
+                                                    {/* Status */}
+                                                    <div className="flex items-center gap-3">
+                                                        <Zap className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <div className="flex-1 flex items-center justify-between gap-2">
+                                                            <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                {t('pools.detailPage.status')}
+                                                            </span>
+                                                            <span className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm uppercase font-semibold ${
+                                                                poolDetail.status === 'active' 
+                                                                    ? (mountedTheme && isDark 
+                                                                        ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                                                                        : 'bg-green-100 text-green-800')
+                                                                    : poolDetail.status === 'pending'
+                                                                    ? (mountedTheme && isDark
+                                                                        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                                                                        : 'bg-yellow-100 text-yellow-800')
+                                                                    : (mountedTheme && isDark
+                                                                        ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                                                        : 'bg-red-100 text-red-800')
                                                         }`}>
                                                         {t(`pools.detailPage.${poolDetail.status}`)}
                                                     </span>
                                                 </div>
-                                                {poolDetail.transactionHash && (
-                                                    <div className="flex flex-row justify-between sm:items-center gap-1 sm:gap-0">
-                                                        <span className="text-gray-500 dark:text-gray-400">{t('pools.detailPage.transactionHash')}</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-mono text-yellow-500 italic text-xs">{truncateString(poolDetail.transactionHash, 16)}</span>
-                                                            <Copy className="w-3 h-3 cursor-pointer" onClick={() => {
-                                                                navigator.clipboard.writeText(poolDetail.transactionHash)
-                                                                toast.success(t('pools.detailPage.copiedToClipboard'))
-                                                            }} />
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {poolDetail.userStakeInfo && (
-                                                    <>
-                                                        <div className="flex flex-row justify-between sm:items-center gap-1 sm:gap-0">
-                                                            <span className="text-gray-500 dark:text-gray-400">{t('pools.detailPage.poolStake')}</span>
-                                                            <span className="font-mono text-[#53DAE6]">{formatNumber(poolDetail.userStakeInfo.totalStaked)}</span>
-                                                        </div>
-                                                        <div className="flex flex-row justify-between sm:items-center gap-1 sm:gap-0">
-                                                            <span className="text-gray-500 dark:text-gray-400">{t('pools.detailPage.stakeCount')}</span>
-                                                            <span>{poolDetail.userStakeInfo.stakeCount}</span>
-                                                        </div>
-                                                        <div className="flex flex-row justify-between sm:items-center gap-1 sm:gap-0">
-                                                            <span className="text-gray-500 dark:text-gray-400">{t('pools.detailPage.joinDate')}</span>
-                                                            <span className="text-gray-500 dark:text-gray-400 italic text-xs sm:text-sm">{formatDate(poolDetail.userStakeInfo.joinDate)}</span>
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Stake Section */}
-                                <div className="lg:col-span-1">
+                                            {/* Block 3: Stats Block - User Stake Info */}
+                                            {poolDetail.userStakeInfo ? (
                                     <div 
-                                        className="rounded-xl sm:rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 backdrop-blur-xl"
+                                                    className="p-4 sm:p-5 rounded-xl sm:rounded-2xl"
                                         style={{
                                             background: mountedTheme && isDark
-                                                ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
                                             border: mountedTheme && isDark
-                                                ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                : '1px solid rgba(156, 163, 175, 0.3)',
-                                            boxShadow: mountedTheme && isDark
-                                                ? '0 8px 32px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
-                                                : '0 8px 32px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
-                                        }}
-                                    >
-                                        <h3 className="text-base sm:text-lg font-semibold mb-4">{t('pools.detailPage.stakeInPool')}</h3>
-
-                                        {!isCreator ? (
+                                                            ? '1px solid rgba(107, 114, 128, 0.2)'
+                                                            : '1px solid rgba(156, 163, 175, 0.2)',
+                                                    }}
+                                                >
+                                                    <h4 className={`text-sm sm:text-base font-semibold mb-4 ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                        Your Stats
+                                                    </h4>
                                             <div className="space-y-4">
-                                                <div>
-                                                    <div className="flex flex-row justify-between gap-2 h-full">
-                                                        <div className="flex-1">
-                                                            <FloatLabelInput
-                                                                id="stake-amount"
-                                                            type="text"
-                                                                label={t('pools.detailPage.amountToStake')}
-                                                            value={formatInputNumber(stakeAmount)}
-                                                            onChange={(e) => handleInputChange(e.target.value)}
-                                                                className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
-                                                        />
-                                                        </div>
-                                                        <button 
-                                                            className="text-xs sm:text-sm bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 hover:from-theme-primary-400 hover:to-theme-primary-500 text-white px-3 sm:px-4 py-2 whitespace-nowrap rounded-full h-10 font-semibold tracking-wide transition-all duration-300 border-0 shadow-sm" 
-                                                            onClick={() => {
-                                                            setStakeAmount(balance?.bitt?.token_balance ?? 0)
-                                                            }}
-                                                        >
-                                                            {t('swap.max')} 
-                                                        </button>
-                                                    </div>
-                                                    <div className="flex flex-row justify-end mt-1">
-                                                        <p className="text-xs text-theme-primary-500 mt-1">
-                                                            {t('pools.detailPage.balanceBitt')}: {formatNumber(balance?.bitt?.token_balance ?? 0)}
-                                                        </p>
+                                                        {/* Total Staked */}
+                                                        <div className="flex items-center gap-3">
+                                                            <Coins className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                            <div className="flex-1">
+                                                                <p className={`text-xs sm:text-sm mb-1 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                                    {t('pools.detailPage.poolStake')}
+                                                                </p>
+                                                                <div 
+                                                                    className="inline-block px-3 sm:px-4 py-2 rounded-lg font-bold text-base sm:text-lg"
+                                                                    style={{
+                                                                        background: mountedTheme && isDark
+                                                                            ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.2) 0%, rgba(31, 193, 107, 0.15) 100%)'
+                                                                            : 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.1) 100%)',
+                                                                        border: mountedTheme && isDark
+                                                                            ? '1px solid rgba(31, 193, 107, 0.3)'
+                                                                            : '1px solid rgba(31, 193, 107, 0.2)',
+                                                                        color: mountedTheme && isDark ? '#53DAE6' : '#1FC16B',
+                                                                    }}
+                                                                >
+                                                                    {formatNumber(poolDetail.userStakeInfo.totalStaked)} TOKEN
+                                                                </div>
                                                     </div>
                                                 </div>
 
-                                                <Button
-                                                    onClick={handleStake}
-                                                    disabled={isStaking || stakePoolMutation.isPending}
-                                                    className="w-full 
-                                                        bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
-                                                        hover:from-theme-primary-400 hover:to-theme-primary-500
-                                                        rounded-full 
-                                                        text-white font-semibold tracking-wide
-                                                        transition-all duration-300
-                                                        border-0
-                                                        py-3 sm:py-2 text-sm sm:text-base"
-                                                >
-                                                    {isStaking || stakePoolMutation.isPending ? t('pools.detailPage.staking') : t('pools.detailPage.stakeNow')}
-                                                </Button>
-                                                <div className="text-[9px] sm:text-xs text-red-400 dark:text-red-300 italic mt-1">
-                                                    {t('pools.detailPage.virtualAssetsWarning')}
+                                                        {/* Stake Count */}
+                                                        <div className="flex items-center gap-3">
+                                                            <User className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                            <div className="flex-1 flex items-center justify-between gap-2">
+                                                                <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                    {t('pools.detailPage.stakeCount')}
+                                                                </span>
+                                                                <div 
+                                                                    className="px-3 sm:px-4 py-1.5 rounded-lg font-semibold text-sm sm:text-base"
+                                                                    style={{
+                                                                        background: mountedTheme && isDark
+                                                                            ? 'linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.1) 100%)'
+                                                                            : 'linear-gradient(135deg, rgba(31, 193, 107, 0.1) 0%, rgba(31, 193, 107, 0.05) 100%)',
+                                                                        border: mountedTheme && isDark
+                                                                            ? '1px solid rgba(31, 193, 107, 0.25)'
+                                                                            : '1px solid rgba(31, 193, 107, 0.15)',
+                                                                        color: mountedTheme && isDark ? '#53DAE6' : '#1FC16B',
+                                                                    }}
+                                                                >
+                                                                    {poolDetail.userStakeInfo.stakeCount}
                                                 </div>
                                             </div>
-                                        ) : (
-                                            <div className="text-center">
-                                                <p className="text-xs sm:text-sm md:text-base text-yellow-500 dark:text-yellow-400 italic mb-4">
-                                                    {t('pools.detailPage.youAreCreator')}
-                                                </p>
-                                                <div className="space-y-2 mb-4 text-xs sm:text-sm md:text-base">
-                                                    <div className="flex justify-between">
-                                                        <span className={`${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('pools.detailPage.yourStaked')}</span>
-                                                        <span className={`font-mono ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>{formatNumber(poolDetail.userStakeInfo?.totalStaked || 0)}</span>
                                                     </div>
-                                                    <div className="flex justify-between">
-                                                        <span className={`${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('pools.detailPage.stakedCount')}</span>
-                                                        <span className={mountedTheme && isDark ? 'text-white' : 'text-gray-900'}>{poolDetail.userStakeInfo?.stakeCount || 0}</span>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className="flex items-center gap-2 h-full">
-                                                        <div className="flex-1">
-                                                            <FloatLabelInput
-                                                                id="stake-amount-creator"
-                                                            type="text"
-                                                                label={t('pools.detailPage.amountToStake')}
-                                                            value={formatInputNumber(stakeAmount)}
-                                                            onChange={(e) => handleInputChange(e.target.value)}
-                                                                className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
-                                                        />
-                                                        </div>
-                                                        <button 
-                                                            className="text-xs sm:text-sm bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 hover:from-theme-primary-400 hover:to-theme-primary-500 text-white px-3 sm:px-4 py-2 whitespace-nowrap rounded-full h-10 font-semibold tracking-wide transition-all duration-300 border-0 shadow-sm" 
-                                                            onClick={() => {
-                                                            setStakeAmount(balance?.bitt?.token_balance ?? 0)
-                                                            }}
-                                                        >
-                                                            {t('swap.max')}
-                                                        </button>
-                                                    </div>
-                                                    <div className="flex flex-row justify-end mt-1">
-                                                        <p className="text-xs text-theme-primary-500 mt-1">
-                                                            {t('pools.detailPage.balanceBitt')}: {formatNumber(balance?.bitt?.token_balance ?? 0)}
-                                                        </p>
-                                                    </div>
-                                                </div>
 
-                                                <Button
-                                                    onClick={handleStake}
-                                                    disabled={isStaking || stakePoolMutation.isPending || !stakeAmount}
-                                                    className={`w-full 
-                                                        bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
-                                                        hover:from-theme-primary-400 hover:to-theme-primary-500
-                                                        rounded-full 
-                                                        text-white font-semibold tracking-wide
-                                                        transition-all duration-300
-                                                        border-0
-                                                        mt-4 py-3 sm:py-2 text-sm sm:text-base
-                                                        ${!stakeAmount ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                        {/* Join Date */}
+                                                        <div className="flex items-center gap-3">
+                                                            <Calendar className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                            <div className="flex-1 flex items-center justify-between gap-2">
+                                                                <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                                    {t('pools.detailPage.joinDate')}
+                                                                </span>
+                                                                <span className={`text-sm sm:text-base font-medium ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                                    {formatDate(poolDetail.userStakeInfo.joinDate)}
+                                                                </span>
+                                                    </div>
+                                                </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div 
+                                                    className="p-4 sm:p-5 rounded-xl sm:rounded-2xl"
+                                                    style={{
+                                                        background: mountedTheme && isDark
+                                                            ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%)'
+                                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
+                                                        border: mountedTheme && isDark
+                                                            ? '1px solid rgba(107, 114, 128, 0.2)'
+                                                            : '1px solid rgba(156, 163, 175, 0.2)',
+                                                    }}
                                                 >
-                                                    {isStaking || stakePoolMutation.isPending ? t('pools.detailPage.staking') : t('pools.detailPage.stakeNow')}
-                                                </Button>
+                                                    <h4 className={`text-sm sm:text-base font-semibold mb-4 ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                        Your Stats
+                                                    </h4>
+                                                    <p className={`text-sm ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                        {t('pools.detailPage.noStakeInfo') || 'You haven\'t staked in this pool yet.'}
+                                                    </p>
                                             </div>
                                         )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1603,26 +1683,89 @@ export default function PoolDetail() {
                     <div className="relative z-10">
                     <AlertDialogHeader>
                         <AlertDialogTitle className={`text-base sm:text-lg ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
-                            {t('pools.detailPage.confirmStake')}
+                            {t('pools.detailPage.stakeInPool')}
                         </AlertDialogTitle>
                         <AlertDialogDescription className={`text-sm ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                            {t('pools.detailPage.confirmStakeMessage').replace('{amount}', formatNumber(stakeAmount)).replace('{poolName}', poolDetail.name)}
-                            <div className="flex items-start gap-2 mt-2">
+                            {!isCreator && (
+                                <p className="mb-4">
+                                    {t('pools.detailPage.stakeInPool')}
+                                </p>
+                            )}
+                            {isCreator && (
+                                <div className="mb-4">
+                                    <p className="text-xs sm:text-sm md:text-base text-yellow-500 dark:text-yellow-400 italic mb-3">
+                                        {t('pools.detailPage.youAreCreator')}
+                                    </p>
+                                    <div className="space-y-2 text-xs sm:text-sm md:text-base">
+                                        <div className="flex justify-between">
+                                            <span className={`${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('pools.detailPage.yourStaked')}</span>
+                                            <span className={`font-mono ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>{formatNumber(poolDetail.userStakeInfo?.totalStaked || 0)}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className={`${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('pools.detailPage.stakedCount')}</span>
+                                            <span className={mountedTheme && isDark ? 'text-white' : 'text-gray-900'}>{poolDetail.userStakeInfo?.stakeCount || 0}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Stake Amount Input */}
+                            <div className="space-y-3 mt-4">
+                                <div>
+                                    <div className="flex flex-row justify-between gap-2 h-full">
+                                        <div className="flex-1">
+                                            <FloatLabelInput
+                                                id="stake-amount-dialog"
+                                                type="text"
+                                                label={t('pools.detailPage.amountToStake')}
+                                                value={formatInputNumber(stakeAmount)}
+                                                onChange={(e) => handleInputChange(e.target.value)}
+                                                className="dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 rounded-xl dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30"
+                                            />
+                                        </div>
+                                        <button 
+                                            className="text-xs sm:text-sm bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 hover:from-theme-primary-400 hover:to-theme-primary-500 text-white px-3 sm:px-4 py-2 whitespace-nowrap rounded-full h-10 font-semibold tracking-wide transition-all duration-300 border-0 shadow-sm" 
+                                            onClick={() => {
+                                                setStakeAmount(balance?.bitt?.token_balance ?? 0)
+                                            }}
+                                        >
+                                            {t('swap.max')} 
+                                        </button>
+                                    </div>
+                                    <div className="flex flex-row justify-end mt-1">
+                                        <p className={`text-xs ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`}>
+                                            {t('pools.detailPage.balanceBitt')}: {formatNumber(balance?.bitt?.token_balance ?? 0)}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Warning */}
+                                <div className="text-[9px] sm:text-xs text-red-400 dark:text-red-300 italic">
+                                    {t('pools.detailPage.virtualAssetsWarning')}
+                                </div>
+
+                                {/* Checkbox */}
+                                <div className="flex items-start gap-2 mt-3">
                                 <Checkbox
                                     id="pool-required"
                                     checked={required}
                                     onCheckedChange={(checked) => setRequired(checked === true)}
                                 />
-                                <div className="flex flex-col items-start gap-2 ">
-                                    <div className="text-[10px] text-red-500 dark:text-red-400 italic leading-[9px]">{t('pools.lockNote')}</div>
-                                    <div className="text-[10px] text-red-500 dark:text-red-400 italic leading-[9px]">{t('pools.required')}</div>
+                                    <div className="flex flex-col items-start gap-1">
+                                        <div className={`text-[10px] ${mountedTheme && isDark ? 'text-red-400' : 'text-red-500'} italic leading-[9px]`}>{t('pools.lockNote')}</div>
+                                        <div className={`text-[10px] ${mountedTheme && isDark ? 'text-red-400' : 'text-red-500'} italic leading-[9px]`}>{t('pools.required')}</div>
+                                    </div>
                                 </div>
                             </div>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                    <AlertDialogFooter className="flex-col sm:flex-row gap-2 mt-4">
                         <AlertDialogCancel 
-                            onClick={() => setIsConfirmingStake(false)} 
+                            onClick={() => {
+                                setIsConfirmingStake(false)
+                                setRequired(false)
+                                setStakeAmount(1000000)
+                            }} 
                             className="w-full sm:w-auto 
                                 bg-transparent 
                                 border border-gray-300 dark:border-gray-600
@@ -1636,7 +1779,7 @@ export default function PoolDetail() {
                             {t('pools.detailPage.cancel')}
                         </AlertDialogCancel>
                         <AlertDialogAction 
-                            disabled={!required} 
+                            disabled={!required || !stakeAmount || isStaking || stakePoolMutation.isPending} 
                             className="w-full sm:w-auto
                                 bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
                                 hover:from-theme-primary-400 hover:to-theme-primary-500
@@ -1647,13 +1790,14 @@ export default function PoolDetail() {
                                 border-0
                                 px-6 py-2" 
                             onClick={() => {
-                                setIsConfirmingStake(false)
-                                setIsStaking(true)
-                                const stakeData: StakePoolRequest = {
-                                    poolId: parseInt(poolId),
-                                    stakeAmount
-                                }
-                                stakePoolMutation.mutate(stakeData)
+                            setIsConfirmingStake(false)
+                            setIsStaking(true)
+                                setRequired(false)
+                            const stakeData: StakePoolRequest = {
+                                poolId: parseInt(poolId),
+                                stakeAmount
+                            }
+                            stakePoolMutation.mutate(stakeData)
                             }}
                         >
                             {isStaking || stakePoolMutation.isPending ? t('pools.detailPage.staking') : t('pools.detailPage.stakeNow')}
