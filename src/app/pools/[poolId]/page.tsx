@@ -975,7 +975,7 @@ export default function PoolDetail() {
                                                 <div className="space-y-4">
                                                     {/* Description */}
                                                     <div className="flex items-start gap-3">
-                                                        <MessageSquare className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 text-theme-primary-500" />
                                                         <div className="flex-1">
                                                             <p className={`text-sm sm:text-base font-semibold mb-1 ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
                                                             {t('pools.detailPage.description')}
@@ -994,7 +994,7 @@ export default function PoolDetail() {
                                                                 : 'rgba(156, 163, 175, 0.2)',
                                                         }}
                                                     >
-                                                        <Package className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <Package className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-theme-primary-500" />
                                                         <div className="flex-1 flex items-center justify-between gap-2">
                                                             <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
                                                                 {t('pools.detailPage.creatorAddress')}
@@ -1034,7 +1034,7 @@ export default function PoolDetail() {
                                                 <div className="space-y-3 sm:space-y-4">
                                                     {/* Pool ID */}
                                                     <div className="flex items-center gap-3">
-                                                        <Hash className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <Hash className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-theme-primary-500" />
                                                         <div className="flex-1 flex items-center justify-between gap-2">
                                                             <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                                                 {t('pools.detailPage.poolId')}
@@ -1047,7 +1047,7 @@ export default function PoolDetail() {
 
                                                     {/* Creation Date */}
                                                     <div className="flex items-center gap-3">
-                                                        <Calendar className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <Calendar className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-theme-primary-500" />
                                                         <div className="flex-1 flex items-center justify-between gap-2">
                                                             <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                                                 {t('pools.detailPage.creationDate')}
@@ -1061,7 +1061,7 @@ export default function PoolDetail() {
                                                     {/* End Date */}
                                                 {poolDetail.endDate && (
                                                         <div className="flex items-center gap-3">
-                                                            <CalendarX className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                            <CalendarX className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-theme-primary-500" />
                                                             <div className="flex-1 flex items-center justify-between gap-2">
                                                                 <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                                                     {t('pools.detailPage.endDate')}
@@ -1075,7 +1075,7 @@ export default function PoolDetail() {
 
                                                     {/* Status */}
                                                     <div className="flex items-center gap-3">
-                                                        <Zap className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                        <Zap className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-theme-primary-500" />
                                                         <div className="flex-1 flex items-center justify-between gap-2">
                                                             <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                                                 {t('pools.detailPage.status')}
@@ -1119,7 +1119,7 @@ export default function PoolDetail() {
                                             <div className="space-y-4">
                                                         {/* Total Staked */}
                                                         <div className="flex items-center gap-3">
-                                                            <Coins className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                            <Coins className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-theme-primary-500" />
                                                             <div className="flex-1">
                                                                 <p className={`text-xs sm:text-sm mb-1 ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                                                                     {t('pools.detailPage.poolStake')}
@@ -1143,7 +1143,7 @@ export default function PoolDetail() {
 
                                                         {/* Stake Count */}
                                                         <div className="flex items-center gap-3">
-                                                            <User className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                            <User className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-theme-primary-500" />
                                                             <div className="flex-1 flex items-center justify-between gap-2">
                                                                 <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                                                     {t('pools.detailPage.stakeCount')}
@@ -1167,7 +1167,7 @@ export default function PoolDetail() {
 
                                                         {/* Join Date */}
                                                         <div className="flex items-center gap-3">
-                                                            <Calendar className={`w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 ${mountedTheme && isDark ? 'text-theme-primary-400' : 'text-theme-primary-500'}`} />
+                                                            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 text-theme-primary-500" />
                                                             <div className="flex-1 flex items-center justify-between gap-2">
                                                                 <span className={`text-sm sm:text-base font-semibold ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                                                     {t('pools.detailPage.joinDate')}
