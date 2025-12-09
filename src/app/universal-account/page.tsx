@@ -149,7 +149,7 @@ const UniversalAccountContent = () => {
                                 style={{
                                     background: mountedTheme && isDark
                                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
-                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                     border: mountedTheme && isDark
                                         ? '1px solid rgba(31, 193, 107, 0.3)'
                                         : '1px solid rgba(31, 193, 107, 0.25)',
@@ -234,7 +234,7 @@ const UniversalAccountContent = () => {
                                     : 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.4) 100%)',
                                 border: mountedTheme && isDark
                                     ? '1px solid rgba(107, 114, 128, 0.2)'
-                                    : '1px solid rgba(156, 163, 175, 0.2)',
+                                    : '1px solid rgba(229, 231, 235, 0.5)',
                             }}
                         >
                             <span className={mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}>
@@ -250,7 +250,7 @@ const UniversalAccountContent = () => {
                     style={{
                         background: mountedTheme && isDark
                             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                            : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                         border: mountedTheme && isDark
                             ? '1px solid rgba(31, 193, 107, 0.3)'
                             : '1px solid rgba(31, 193, 107, 0.25)',
@@ -290,7 +290,7 @@ const UniversalAccountContent = () => {
                                         style={{
                                             borderBottom: mountedTheme && isDark
                                                 ? '1px solid rgba(107, 114, 128, 0.1)'
-                                                : '1px solid rgba(156, 163, 175, 0.1)',
+                                                : '1px solid rgba(229, 231, 235, 0.4)',
                                         }}
                                         onMouseEnter={(e) => {
                                             e.currentTarget.style.background = mountedTheme && isDark

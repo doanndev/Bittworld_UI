@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import "@/libs/fontawesome";
 import { LangProvider } from "@/lang/LangProvider";
 import { ThemeProvider } from "@/theme/ThemeProvider";
@@ -53,9 +54,10 @@ export default function ClientLayout({
         <ThemeProvider>
           <ThemedBackground>
             {!isLoginRoute && <Header />}
-            <main className="bg-transparent overflow-x-hidden flex-1 lg:pb-0 pb-20">
+            <main className="bg-transparent overflow-x-hidden flex-1 lg:pb-0 pb-20 flex flex-col">
               {children}
             </main>
+            {!isLoginRoute && <Footer />}
           </ThemedBackground>
           
           <Toaster 

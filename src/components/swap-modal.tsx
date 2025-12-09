@@ -68,7 +68,7 @@ const SwapInterface = React.memo(({
       style={{
         background: isDark
           ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+          : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
         border: isDark
           ? '1px solid rgba(107, 114, 128, 0.3)'
           : '1px solid rgba(156, 163, 175, 0.3)',
@@ -128,7 +128,7 @@ const SwapInterface = React.memo(({
                 style={{
                   borderColor: isDark ? 'rgba(107, 114, 128, 0.3)' : 'rgba(156, 163, 175, 0.3)',
                   background: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.3)',
-                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                  color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                 }}
                 >
                   {t('swap.max')}
@@ -268,7 +268,7 @@ const HistoryInterface = React.memo(({
       style={{
         background: isDark
           ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+          : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
         border: isDark
           ? '1px solid rgba(107, 114, 128, 0.3)'
           : '1px solid rgba(156, 163, 175, 0.3)',
@@ -619,13 +619,13 @@ const SwapModal = ({ isOpen, onClose, selectedToken }: { isOpen: boolean; onClos
           transform: 'translate(-50%, -50%)',
           background: mountedTheme && isDark
             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.75) 100%)'
-            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+            : 'linear-gradient(135deg, rgba(249, 250, 251, 0.95) 0%, rgba(243, 244, 246, 0.9) 100%)',
           border: mountedTheme && isDark
             ? '1px solid rgba(31, 193, 107, 0.4)'
             : '1px solid rgba(31, 193, 107, 0.3)',
           boxShadow: mountedTheme && isDark
             ? '0 0 0 1px rgba(31, 193, 107, 0.3), 0 0 30px rgba(31, 193, 107, 0.25), 0 0 60px rgba(31, 193, 107, 0.15), 0 20px 60px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 8px 32px -8px rgba(107, 114, 128, 0.15)'
-            : '0 0 0 1px rgba(31, 193, 107, 0.25), 0 0 30px rgba(31, 193, 107, 0.2), 0 0 60px rgba(31, 193, 107, 0.1), 0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 8px 32px -8px rgba(156, 163, 175, 0.1)',
+            : '0 0 0 1px rgba(31, 193, 107, 0.25), 0 0 30px rgba(31, 193, 107, 0.2), 0 0 60px rgba(31, 193, 107, 0.1), 0 20px 60px -12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(229, 231, 235, 0.3) inset, 0 8px 32px -8px rgba(0, 0, 0, 0.06)',
         }}
         onPointerDownOutside={(e) => e.preventDefault()}
       >

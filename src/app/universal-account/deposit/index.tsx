@@ -34,7 +34,7 @@ const DepositWallet: React.FC<DepositWalletProps> = ({ walletAddress }) => {
                 style={{
                     background: mountedTheme && isDark
                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                     border: mountedTheme && isDark
                         ? '1px solid rgba(31, 193, 107, 0.3)'
                         : '1px solid rgba(31, 193, 107, 0.25)',
@@ -88,7 +88,7 @@ const DepositWallet: React.FC<DepositWalletProps> = ({ walletAddress }) => {
                                 : 'rgba(255, 255, 255, 0.5)',
                             border: mountedTheme && isDark
                                 ? '1px solid rgba(107, 114, 128, 0.2)'
-                                : '1px solid rgba(156, 163, 175, 0.2)',
+                                : '1px solid rgba(229, 231, 235, 0.5)',
                         }}
                     >
                         <div className={`text-center rounded-lg p-2 text-xs sm:text-sm break-all flex-1 ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-900'}`}>

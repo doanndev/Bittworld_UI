@@ -77,7 +77,7 @@ const WalletCardSkeleton = ({ isDark }: { isDark: boolean }) => (
         style={{
             background: isDark
                 ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
             border: isDark
                 ? '1px solid rgba(107, 114, 128, 0.3)'
                 : '1px solid rgba(156, 163, 175, 0.3)',
@@ -154,7 +154,7 @@ const AssetsTableSkeleton = ({ isDark }: { isDark: boolean }) => (
         style={{
             background: isDark
                 ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
             border: isDark
                 ? '1px solid rgba(107, 114, 128, 0.3)'
                 : '1px solid rgba(156, 163, 175, 0.3)',
@@ -229,7 +229,7 @@ const AssetsMobileSkeleton = ({ isDark }: { isDark: boolean }) => (
                 style={{
                     background: isDark
                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                     border: isDark
                         ? '1px solid rgba(107, 114, 128, 0.3)'
                         : '1px solid rgba(156, 163, 175, 0.3)',
@@ -446,7 +446,7 @@ export default function WalletPage() {
                                 style={{
                                     background: mountedTheme && isDark
                                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                     border: mountedTheme && isDark
                                         ? '1px solid rgba(107, 114, 128, 0.3)'
                                         : '1px solid rgba(156, 163, 175, 0.3)',
@@ -461,7 +461,7 @@ export default function WalletPage() {
                                 style={{
                                     background: mountedTheme && isDark
                                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
                                     border: mountedTheme && isDark
                                         ? '1px solid rgba(31, 193, 107, 0.3)'
                                         : '1px solid rgba(31, 193, 107, 0.25)',
@@ -557,7 +557,7 @@ export default function WalletPage() {
                                     style={{
                                         background: mountedTheme && isDark
                                             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                            : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                         border: mountedTheme && isDark
                                             ? '1px solid rgba(107, 114, 128, 0.3)'
                                             : '1px solid rgba(156, 163, 175, 0.3)',
@@ -588,7 +588,7 @@ export default function WalletPage() {
                                     style={{
                                         background: mountedTheme && isDark
                                             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                            : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                         border: mountedTheme && isDark
                                             ? '1px solid rgba(107, 114, 128, 0.3)'
                                             : '1px solid rgba(156, 163, 175, 0.3)',
@@ -619,7 +619,7 @@ export default function WalletPage() {
                                     style={{
                                         background: mountedTheme && isDark
                                             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                            : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                         border: mountedTheme && isDark
                                             ? '1px solid rgba(107, 114, 128, 0.3)'
                                             : '1px solid rgba(156, 163, 175, 0.3)',
@@ -678,7 +678,7 @@ export default function WalletPage() {
                                         style={{
                                             background: mountedTheme && isDark
                                                 ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                                : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                             border: mountedTheme && isDark
                                                 ? '1px solid rgba(107, 114, 128, 0.3)'
                                                 : '1px solid rgba(156, 163, 175, 0.3)',
@@ -742,7 +742,7 @@ export default function WalletPage() {
                                                                     className={tableCellStyles}
                                                                     onClick={() => router.push(`/pools?address=${token.token_address}`)}
                                                                     style={{
-                                                                        color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                                        color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                                     }}
                                                                 >
                                                                     <div className="flex items-center gap-2">
@@ -769,7 +769,7 @@ export default function WalletPage() {
                                                                 <td 
                                                                     className={tableCellStyles}
                                                                     style={{
-                                                                        color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                                        color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                                     }}
                                                                 >
                                                                     {token.token_balance.toFixed(token.token_decimals)}
@@ -777,7 +777,7 @@ export default function WalletPage() {
                                                                 <td 
                                                                     className={tableCellStyles}
                                                                     style={{
-                                                                        color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                                        color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                                     }}
                                                                 >
                                                                     ${token.token_price_usd.toFixed(6)}
@@ -785,7 +785,7 @@ export default function WalletPage() {
                                                                 <td 
                                                                     className={tableCellStyles}
                                                                     style={{
-                                                                        color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                                        color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                                     }}
                                                                 >
                                                                     ${token.token_balance_usd.toFixed(6)}
@@ -829,7 +829,7 @@ export default function WalletPage() {
                                                 style={{
                                                     background: mountedTheme && isDark
                                                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                                     border: mountedTheme && isDark
                                                         ? '1px solid rgba(107, 114, 128, 0.3)'
                                                         : '1px solid rgba(156, 163, 175, 0.3)',
@@ -847,7 +847,7 @@ export default function WalletPage() {
                                                     style={{
                                                         background: mountedTheme && isDark
                                                             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                                            : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                                         border: mountedTheme && isDark
                                                             ? '1px solid rgba(107, 114, 128, 0.3)'
                                                             : '1px solid rgba(156, 163, 175, 0.3)',

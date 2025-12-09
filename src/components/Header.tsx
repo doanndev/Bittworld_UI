@@ -38,23 +38,21 @@ const Header = () => {
     const [isMobile, setIsMobile] = useState(false);
     const [isSigninModalOpen, setIsSigninModalOpen] = useState(false);
     const { theme, resolvedTheme, setTheme } = useTheme();
-    const [isDark, setIsDark] = useState(true); // Default to dark
+    const [isDark, setIsDark] = useState(false); // Default to light (dark mode code kept for future use)
     const [mountedTheme, setMountedTheme] = useState(false);
     const [phantomConnected, setPhantomConnected] = useState(false);
     const [phantomPublicKey, setPhantomPublicKey] = useState<string | null>(null);
-    const [isNavbarVisible, setIsNavbarVisible] = useState(true);
-    const [isFixed, setIsFixed] = useState(false);
     const [headerHeight, setHeaderHeight] = useState(0);
     const headerRef = React.useRef<HTMLElement>(null);
-    const isFixedRef = React.useRef(false);
 
     useEffect(() => {
         setMountedTheme(true);
     }, []);
 
     useEffect(() => {
-        const dark = resolvedTheme === 'dark' || (resolvedTheme === undefined && theme === 'dark');
-        setIsDark(dark);
+        // Force light mode - dark mode code kept for future use
+        // const dark = resolvedTheme === 'dark' || (resolvedTheme === undefined && theme === 'dark');
+        setIsDark(false);
     }, [theme, resolvedTheme]);
 
     const { data: walletInfor, refetch } = useQuery({
@@ -140,11 +138,6 @@ const Header = () => {
         }
     }, [isSearchModalOpen]);
 
-    // Update ref when isFixed changes
-    useEffect(() => {
-        isFixedRef.current = isFixed;
-    }, [isFixed]);
-
     // Update header height when it changes
     useEffect(() => {
         if (!mounted || !headerRef.current) return;
@@ -173,61 +166,6 @@ const Header = () => {
         };
     }, [mounted]);
 
-    // Handle scroll to detect when navbar goes out of viewport
-    useEffect(() => {
-        if (!mounted || !headerRef.current) return;
-
-        let lastScrollY = window.scrollY;
-        let ticking = false;
-
-        const handleScroll = () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    const currentScrollY = window.scrollY;
-                    const headerElement = headerRef.current;
-                    
-                    if (headerElement) {
-                        const rect = headerElement.getBoundingClientRect();
-                        const scrollDown = currentScrollY > lastScrollY;
-                        const scrollUp = currentScrollY < lastScrollY;
-                        const currentIsFixed = isFixedRef.current;
-                        
-                        // If navbar is scrolled out of viewport (above viewport) and scrolling down
-                        if (rect.bottom < 0 && scrollDown && currentScrollY > 100) {
-                            if (!currentIsFixed) {
-                                // Update height before setting fixed
-                                setHeaderHeight(headerElement.offsetHeight);
-                                setIsFixed(true);
-                                setIsNavbarVisible(false);
-                                // Show navbar after a short delay with animation
-                                setTimeout(() => {
-                                    setIsNavbarVisible(true);
-                                }, 150);
-                            }
-                        } 
-                        // If scrolling up, show navbar immediately
-                        else if (scrollUp && currentIsFixed) {
-                            setIsNavbarVisible(true);
-                            // If scrolled back to top, remove fixed
-                            if (currentScrollY <= 50) {
-                                setIsFixed(false);
-                            }
-                        }
-                    }
-                    
-                    lastScrollY = currentScrollY;
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [mounted]);
 
     const defaultAddress = '/pools';
 
@@ -261,36 +199,19 @@ const Header = () => {
     return (
         <>
             {/* NotifyProvider removed - using Toaster from ClientLayout */}
-            {/* Placeholder to prevent layout shift when header becomes fixed */}
-            {isFixed && (
-                <div 
-                    style={{ 
-                        height: `${headerHeight}px`,
-                        marginBottom: '0.5rem',
-                    }}
-                    aria-hidden="true"
-                />
-            )}
             <header 
                 ref={headerRef}
-                className={`backdrop-blur-xl transition-all duration-300 rounded-lg sm:rounded-xl md:rounded-2xl ${
-                    isFixed 
-                        ? `fixed top-2 sm:top-2 md:top-4 left-2 sm:left-4 md:left-6 lg:left-8 2xl:left-12 right-2 sm:right-4 md:right-6 lg:right-8 2xl:right-12 ${
-                            isNavbarVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
-                          }`
-                        : 'sticky top-2 sm:top-2 md:top-4 mx-2 sm:mx-4 md:mx-6 lg:mx-8 2xl:mx-12'
-                }`}
+                className="backdrop-blur-xl transition-all duration-300 rounded-lg sm:rounded-xl md:rounded-2xl fixed top-2 sm:top-2 md:top-4 left-2 sm:left-4 md:left-6 lg:left-8 2xl:left-12 right-2 sm:right-4 md:right-6 lg:right-8 2xl:right-12 z-[1000]"
                 style={{ 
-                    zIndex: 1000,
                     background: mountedTheme && isDark
                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.95) 0%, rgba(243, 244, 246, 0.9) 100%)',
                     border: mountedTheme && isDark
                         ? '1px solid rgba(107, 114, 128, 0.3)'
-                        : '1px solid rgba(156, 163, 175, 0.3)',
+                        : '1px solid rgba(229, 231, 235, 0.6)',
                     boxShadow: mountedTheme && isDark
                         ? '0 20px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 8px 32px -8px rgba(107, 114, 128, 0.15)'
-                        : '0 20px 60px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 8px 32px -8px rgba(156, 163, 175, 0.1)',
+                        : '0 4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(229, 231, 235, 0.5) inset, 0 2px 8px -2px rgba(0, 0, 0, 0.04)',
                 }}
             >
                 {/* Gradient overlay for extra glassmorphism effect */}
@@ -336,7 +257,7 @@ const Header = () => {
                                                 ? 'text-theme-primary-500 font-semibold' 
                                                 : mountedTheme && isDark
                                                     ? 'text-gray-300 hover:text-white'
-                                                    : 'text-gray-700 hover:text-gray-900'
+                                                    : 'text-slate-600 hover:text-slate-800'
                                         }`
                                       }
                                     : { 
@@ -346,7 +267,7 @@ const Header = () => {
                                                 ? 'text-theme-primary-500 font-semibold' 
                                                 : mountedTheme && isDark
                                                     ? 'text-gray-300 hover:text-white'
-                                                    : 'text-gray-700 hover:text-gray-900'
+                                                    : 'text-slate-600 hover:text-slate-800'
                                         }`
                                       };
                                 
@@ -362,7 +283,7 @@ const Header = () => {
                                                 style={{
                                                     background: mountedTheme && isDark
                                                         ? 'rgba(31, 193, 107, 0.1)'
-                                                        : 'rgba(31, 193, 107, 0.08)',
+                                                        : 'rgba(31, 193, 107, 0.06)',
                                                 }}
                                             />
                                         )}
@@ -490,7 +411,7 @@ const Header = () => {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.7) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.85) 100%)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.95) 0%, rgba(243, 244, 246, 0.9) 100%)',
                                                 border: mountedTheme && isDark
                                                     ? '1px solid rgba(31, 193, 107, 0.2)'
                                                     : '1px solid rgba(31, 193, 107, 0.15)',
@@ -520,12 +441,12 @@ const Header = () => {
                                                     >
                                                         {isAuthenticated && walletInfor && (
                                                             <div className='flex flex-col gap-1.5 relative z-10'>
-                                                                <span className={`text-sm ${mountedTheme && isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('totalValue')}</span>
-                                                                <span className={`text-xl font-bold ${mountedTheme && isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                                <span className={`text-sm ${mountedTheme && isDark ? 'text-gray-300' : 'text-slate-500'}`}>{t('totalValue')}</span>
+                                                                <span className={`text-xl font-bold ${mountedTheme && isDark ? 'text-white' : 'text-slate-800'}`}>
                                                                     {formatNumberWithSuffix3(walletInfor.solana_balance_usd)} USD
                                                                 </span>
                                                                 <div className={`flex items-center gap-1 ${mountedTheme && isDark ? 'text-[#8B5CF6]' : 'text-[#1FB86E]'} font-semibold`}>
-                                                                    <span className={`text-sm ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-700'}`}>≈ {walletInfor.solana_balance}</span>
+                                                                    <span className={`text-sm ${mountedTheme && isDark ? 'text-gray-400' : 'text-slate-600'}`}>≈ {walletInfor.solana_balance}</span>
                                                                     <span className="text-sm">SOL</span>
                                                                 </div>
                                                             </div>
@@ -567,7 +488,7 @@ const Header = () => {
                                                         <span className={`text-xs font-mono ${mountedTheme && isDark ? 'text-yellow-400' : 'text-amber-600'}`}>
                                                             {truncateString(walletInfor?.solana_address, 20)}
                                                         </span>
-                                                        <Copy className={`h-3.5 w-3.5 ${mountedTheme && isDark ? 'text-gray-400 group-hover:text-theme-primary-500' : 'text-gray-500 group-hover:text-theme-primary-600'} transition-colors`} />
+                                                        <Copy className={`h-3.5 w-3.5 ${mountedTheme && isDark ? 'text-gray-400 group-hover:text-theme-primary-500' : 'text-slate-400 group-hover:text-theme-primary-500'} transition-colors`} />
                                                     </div>
                                                     
                                                     {/* Deposit/Withdraw Buttons */}
@@ -711,18 +632,27 @@ const Header = () => {
                 </div>
             </header>
 
+            {/* Spacer div below header to create space when scrolling */}
+            <div 
+                style={{ 
+                    height: `${headerHeight || 80}px`,
+                    minHeight: '80px',
+                }}
+                aria-hidden="true"
+            />
+
             {/* Bottom Navigation Bar - Tablet and Mobile */}
             <nav className='lg:hidden fixed bottom-0 left-0 right-0 z-[999] backdrop-blur-xl transition-all duration-300'
                 style={{ 
                     background: mountedTheme && isDark
                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.95) 0%, rgba(243, 244, 246, 0.9) 100%)',
                     borderTop: mountedTheme && isDark
                         ? '1px solid rgba(107, 114, 128, 0.3)'
-                        : '1px solid rgba(156, 163, 175, 0.3)',
+                        : '1px solid rgba(229, 231, 235, 0.6)',
                     boxShadow: mountedTheme && isDark
                         ? '0 -20px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 -8px 32px -8px rgba(107, 114, 128, 0.15)'
-                        : '0 -20px 60px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 -8px 32px -8px rgba(156, 163, 175, 0.1)',
+                        : '0 -4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(229, 231, 235, 0.5) inset, 0 -2px 8px -2px rgba(0, 0, 0, 0.04)',
                 }}
             >
                 {/* Gradient overlay */}
@@ -750,7 +680,7 @@ const Header = () => {
                                         ? 'text-theme-primary-500' 
                                         : mountedTheme && isDark
                                             ? 'text-gray-300'
-                                            : 'text-gray-700'
+                                            : 'text-slate-600'
                                                 }`
                                               }
                                             : { 
@@ -760,7 +690,7 @@ const Header = () => {
                                         ? 'text-theme-primary-500' 
                                         : mountedTheme && isDark
                                             ? 'text-gray-300'
-                                            : 'text-gray-700'
+                                            : 'text-slate-600'
                                                 }`
                                               };
                                         

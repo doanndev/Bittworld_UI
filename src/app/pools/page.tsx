@@ -575,13 +575,13 @@ export default function LiquidityPools() {
                                 style={{
                                     background: mountedTheme && isDark
                                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                                        : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                     border: mountedTheme && isDark
                                         ? '1px solid rgba(107, 114, 128, 0.3)'
-                                        : '1px solid rgba(156, 163, 175, 0.3)',
+                                        : '1px solid rgba(229, 231, 235, 0.5)',
                                     boxShadow: mountedTheme && isDark
                                         ? '0 4px 12px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
-                                        : '0 4px 12px -4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
+                                        : '0 4px 12px -4px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(229, 231, 235, 0.4) inset',
                                 }}
                             >
                                 <button
@@ -598,11 +598,11 @@ export default function LiquidityPools() {
                                         border: viewStyle === 'table'
                                             ? (mountedTheme && isDark
                                                 ? '1px solid rgba(107, 114, 128, 0.4)'
-                                                : '1px solid rgba(156, 163, 175, 0.4)')
+                                                : '1px solid rgba(229, 231, 235, 0.6)')
                                             : '1px solid transparent',
                                         color: viewStyle === 'table'
                                             ? (mountedTheme && isDark ? 'white' : '#1f2937')
-                                            : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'),
+                                            : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(30, 41, 59, 0.7)'),
                                     }}
                                 >
                                     <ListIcon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -621,11 +621,11 @@ export default function LiquidityPools() {
                                         border: viewStyle === 'grid'
                                             ? (mountedTheme && isDark
                                                 ? '1px solid rgba(107, 114, 128, 0.4)'
-                                                : '1px solid rgba(156, 163, 175, 0.4)')
+                                                : '1px solid rgba(229, 231, 235, 0.6)')
                                             : '1px solid transparent',
                                         color: viewStyle === 'grid'
                                             ? (mountedTheme && isDark ? 'white' : '#1f2937')
-                                            : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)'),
+                                            : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(30, 41, 59, 0.7)'),
                                     }}
                                 >
                                     <LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -641,13 +641,13 @@ export default function LiquidityPools() {
                                     style={{
                                         background: mountedTheme && isDark
                                             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                                            : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                                         border: mountedTheme && isDark
                                             ? '1px solid rgba(107, 114, 128, 0.3)'
-                                            : '1px solid rgba(156, 163, 175, 0.3)',
+                                            : '1px solid rgba(229, 231, 235, 0.5)',
                                         boxShadow: mountedTheme && isDark
                                             ? '0 8px 24px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 2px 8px -2px rgba(107, 114, 128, 0.1)'
-                                            : '0 8px 24px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset, 0 2px 8px -2px rgba(156, 163, 175, 0.08)',
+                                            : '0 4px 16px -4px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(229, 231, 235, 0.4) inset, 0 2px 8px -2px rgba(0, 0, 0, 0.04)',
                                     }}
                                 >
                                     {/* Slide Indicator */}
@@ -687,22 +687,22 @@ export default function LiquidityPools() {
                                                 style={{
                                                     color: isActive
                                                         ? (mountedTheme && isDark ? 'white' : '#1f2937')
-                                                        : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.6)'),
+                                                        : (mountedTheme && isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(30, 41, 59, 0.7)'),
                                                     fontWeight: isActive ? '600' : '500',
                                                 }}
                                                 onClick={() => handleFilterChange(filter)}
                                                 onMouseEnter={(e) => {
                                                     if (!isActive) {
                                                         e.currentTarget.style.color = mountedTheme && isDark 
-                                                            ? 'rgba(255, 255, 255, 0.7)' 
-                                                            : 'rgba(0, 0, 0, 0.8)';
+                                                            ? 'rgba(249, 250, 251, 0.9)' 
+                                                            : 'rgba(30, 41, 59, 0.85)';
                                                     }
                                                 }}
                                                 onMouseLeave={(e) => {
                                                     if (!isActive) {
                                                         e.currentTarget.style.color = mountedTheme && isDark 
                                                             ? 'rgba(255, 255, 255, 0.5)' 
-                                                            : 'rgba(0, 0, 0, 0.6)';
+                                                            : 'rgba(30, 41, 59, 0.7)';
                                                     }
                                                 }}
                                             >
@@ -756,13 +756,13 @@ export default function LiquidityPools() {
                         style={{
                             background: mountedTheme && isDark
                                 ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.4) 100%)'
-                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                                : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
                             border: mountedTheme && isDark
                                 ? '1px solid rgba(107, 114, 128, 0.3)'
-                                : '1px solid rgba(156, 163, 175, 0.3)',
+                                : '1px solid rgba(229, 231, 235, 0.5)',
                             boxShadow: mountedTheme && isDark
                                 ? '0 8px 32px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(107, 114, 128, 0.1) inset'
-                                : '0 8px 32px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(156, 163, 175, 0.1) inset',
+                                : '0 4px 16px -4px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(229, 231, 235, 0.4) inset',
                         }}
                     >
                         <div className="overflow-x-auto scrollbar-thin max-h-[60vh] sm:max-h-[65vh] md:max-h-[70vh] scroll-smooth">
@@ -774,11 +774,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             &ensp;
@@ -788,11 +788,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             {t('pools.poolName')}
@@ -802,11 +802,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             {t('pools.uidLeader')}
@@ -816,11 +816,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             {t('pools.leaderAddress')}
@@ -830,11 +830,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             <span className="hidden sm:inline">{t('pools.members')}</span>
@@ -845,11 +845,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             {t('pools.round')}
@@ -859,11 +859,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             {t('pools.volume')}
@@ -873,11 +873,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             {t('pools.created')}
@@ -887,11 +887,11 @@ export default function LiquidityPools() {
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                                                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
-                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                                    : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
+                                                color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                 borderBottom: mountedTheme && isDark
                                                     ? '1px solid rgba(107, 114, 128, 0.3)'
-                                                    : '1px solid rgba(156, 163, 175, 0.3)',
+                                                    : '1px solid rgba(229, 231, 235, 0.5)',
                                             }}
                                         >
                                             {t('pools.action')}

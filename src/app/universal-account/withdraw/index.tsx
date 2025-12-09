@@ -320,7 +320,7 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
               style={{
                 background: mountedTheme && isDark
                   ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
-                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%)',
+                  : 'linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.85) 100%)',
                 border: mountedTheme && isDark
                   ? '1px solid rgba(31, 193, 107, 0.3)'
                   : '1px solid rgba(31, 193, 107, 0.25)',
@@ -337,7 +337,7 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
                   style={{
                     borderBottom: mountedTheme && isDark
                       ? '1px solid rgba(107, 114, 128, 0.1)'
-                      : '1px solid rgba(156, 163, 175, 0.1)',
+                      : '1px solid rgba(229, 231, 235, 0.4)',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = mountedTheme && isDark
@@ -371,7 +371,7 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
         style={{
           background: mountedTheme && isDark
             ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
-            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+            : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
           border: mountedTheme && isDark
             ? '1px solid rgba(31, 193, 107, 0.3)'
             : '1px solid rgba(31, 193, 107, 0.25)',
@@ -492,7 +492,7 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
             style={{
               background: mountedTheme && isDark
                 ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%)'
-                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.5) 100%)',
+                : 'linear-gradient(135deg, rgba(249, 250, 251, 0.85) 0%, rgba(243, 244, 246, 0.8) 100%)',
               border: mountedTheme && isDark
                 ? '1px solid rgba(31, 193, 107, 0.3)'
                 : '1px solid rgba(31, 193, 107, 0.25)',
@@ -533,7 +533,7 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
         className={`lg:max-w-auto min-w-[160px] py-2 md:py-2.5 px-4 md:px-6 lg:px-8 rounded-full text-[11px] md:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-105 active:scale-95 w-full md:w-auto ${(isDisabled.send || recipientWallet.length === 0 || !selectedToken || Number(amount) === 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         style={{
           background: (isDisabled.send || recipientWallet.length === 0 || !selectedToken || Number(amount) === 0)
-            ? (mountedTheme && isDark ? 'rgba(107, 114, 128, 0.3)' : 'rgba(156, 163, 175, 0.3)')
+            ? (mountedTheme && isDark ? 'rgba(107, 114, 128, 0.3)' : 'rgba(229, 231, 235, 0.5)')
             : 'linear-gradient(to right, #1FC16B, #17A85A)',
           color: 'white',
           boxShadow: (isDisabled.send || recipientWallet.length === 0 || !selectedToken || Number(amount) === 0)
