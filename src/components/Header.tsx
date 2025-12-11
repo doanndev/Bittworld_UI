@@ -207,11 +207,11 @@ const Header = () => {
                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%)'
                         : 'linear-gradient(135deg, rgba(249, 250, 251, 0.95) 0%, rgba(243, 244, 246, 0.9) 100%)',
                     border: mountedTheme && isDark
-                        ? '1px solid rgba(107, 114, 128, 0.3)'
-                        : '1px solid rgba(229, 231, 235, 0.6)',
+                        ? '0.2px solid rgba(31, 193, 107, 0.4)'
+                        : '0.2px solid rgba(31, 193, 107, 0.5)',
                     boxShadow: mountedTheme && isDark
-                        ? '0 20px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 8px 32px -8px rgba(107, 114, 128, 0.15)'
-                        : '0 4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(229, 231, 235, 0.5) inset, 0 2px 8px -2px rgba(0, 0, 0, 0.04)',
+                        ? '0 20px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 8px 32px -8px rgba(107, 114, 128, 0.15), 0 0 0 1px rgba(31, 193, 107, 0.2)'
+                        : '0 4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(229, 231, 235, 0.5) inset, 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(31, 193, 107, 0.3)',
                 }}
             >
                 {/* Gradient overlay for extra glassmorphism effect */}
@@ -634,6 +634,7 @@ const Header = () => {
 
             {/* Spacer div below header to create space when scrolling */}
             <div 
+            className='bg-transparent'
                 style={{ 
                     height: `${headerHeight || 80}px`,
                     minHeight: '80px',
@@ -648,11 +649,11 @@ const Header = () => {
                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%)'
                         : 'linear-gradient(135deg, rgba(249, 250, 251, 0.95) 0%, rgba(243, 244, 246, 0.9) 100%)',
                     borderTop: mountedTheme && isDark
-                        ? '1px solid rgba(107, 114, 128, 0.3)'
-                        : '1px solid rgba(229, 231, 235, 0.6)',
+                        ? '0.2px solid rgba(107, 114, 128, 0.5)'
+                        : '0.2px solid rgba(156, 163, 175, 0.8)',
                     boxShadow: mountedTheme && isDark
-                        ? '0 -20px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 -8px 32px -8px rgba(107, 114, 128, 0.15)'
-                        : '0 -4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(229, 231, 235, 0.5) inset, 0 -2px 8px -2px rgba(0, 0, 0, 0.04)',
+                        ? '0 -20px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(107, 114, 128, 0.1) inset, 0 -8px 32px -8px rgba(107, 114, 128, 0.15), 0 0 0 1px rgba(31, 193, 107, 0.1)'
+                        : '0 -4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(229, 231, 235, 0.5) inset, 0 -2px 8px -2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(31, 193, 107, 0.15)',
                 }}
             >
                 {/* Gradient overlay */}
