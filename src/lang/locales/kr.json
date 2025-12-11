@@ -1195,7 +1195,7 @@
     }
   },
   "pools": {
-    "title": "유동성 풀",
+    "title": "분산형 유동성 풀 참여",
     "searchPlaceholder": "풀 검색...",
     "createPoolBtn": "풀 생성",
     "detail": "풀 참여",
@@ -1308,6 +1308,7 @@
       "stakeCount": "스테이킹 횟수:",
       "yourStaked": "당신의 스테이킹:",
       "stakedCount": "스테이킹 횟수:",
+      "noStakeInfo": "스테이킹 정보 없음",
       "enterAmount": "수량 입력",
       "insufficient_token_balance": "토큰 잔액이 부족합니다. 현재: {current}, 필요: {required}",
       "value": "자산가치",

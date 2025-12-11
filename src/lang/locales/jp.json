@@ -1193,7 +1193,7 @@
     "enterValidNumbers": "有効な数字を入力してください"
   },
   "pools": {
-    "title": "流動性プール",
+    "title": "分散型流動性プールへの参加",
     "searchPlaceholder": "プールを検索...",
     "createPoolBtn": "プール作成",
     "detail": "プール詳細",
@@ -1289,6 +1289,7 @@
       "stakeCount": "ステーク回数:",
       "yourStaked": "あなたのステーク:",
       "stakedCount": "ステーク回数:",
+      "noStakeInfo": "ステーク情報なし",
       "enterAmount": "数量を入力",
       "insufficient_token_balance": "トークン残高が不足しています。現在: {current}, 必要: {required}"
     }

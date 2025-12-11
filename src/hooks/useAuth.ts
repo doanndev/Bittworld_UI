@@ -10,9 +10,9 @@ const isValidToken = (token: string | null) => {
     const currentTime = Math.floor(Date.now() / 1000);
     
     // Kiểm tra expiration time
-    // if (decoded.exp && decoded.exp < currentTime) {
-    //   return false;
-    // }
+    if (decoded.exp && decoded.exp < currentTime) {
+      return false;
+    }
     
     return true;
   } catch (error) {

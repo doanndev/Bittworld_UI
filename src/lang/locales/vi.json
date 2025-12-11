@@ -1344,6 +1344,7 @@
       "stakeCount": "Số lần Stake:",
       "yourStaked": "Bạn đã Stake:",
       "stakedCount": "Số lần đã Stake:",
+      "noStakeInfo": "Không có thông tin stake",
       "enterAmount": "Nhập số lượng",
       "insufficient_token_balance": "Số dư token không đủ. Hiện tại: {current}, Cần: {required}"
     }

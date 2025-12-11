@@ -75,6 +75,7 @@ export default function WithdrawWallet({ walletInfor }: { walletInfor: any }) {
   // Set default selected token when available tokens are loaded
   useEffect(() => {
     if (availableTokens?.tokens && availableTokens.tokens.length > 0 && !selectedToken) {
+      console.log(availableTokens);
       setSelectedToken(availableTokens.tokens[0]);
     }
   }, [availableTokens, selectedToken]);

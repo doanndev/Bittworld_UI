@@ -1203,7 +1203,7 @@
     "loginWithGoogle": "Login with"
   },
   "pools": {
-    "title": "Liquidity Pools",
+    "title": "Join the future of decentralized liquidity Pools",
     "tab": "Pools",
     "searchPlaceholder": "Search pool...",
     "createPoolBtn": "Create pool",
@@ -1320,6 +1320,7 @@
       "stakeCount": "Stake Count:",
       "yourStaked": "Your Staked:",
       "stakedCount": "Staked Count:",
+      "noStakeInfo": "No stake information available",
       "enterAmount": "Enter amount",
       "insufficient_token_balance": "Insufficient token balance. Current: {current}, Required: {required}",
       "value": "My asset",

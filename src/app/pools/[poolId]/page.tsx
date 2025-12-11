@@ -1160,7 +1160,7 @@ export default function PoolDetail() {
                                                                         color: mountedTheme && isDark ? '#53DAE6' : '#1FC16B',
                                                                     }}
                                                                 >
-                                                                    {poolDetail.userStakeInfo.stakeCount}
+                                                                    {poolDetail.userStakeInfo?.stakeCount ?? 0}
                                                 </div>
                                             </div>
                                                     </div>

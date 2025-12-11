@@ -457,8 +457,8 @@ const Header = () => {
                                                     <div 
                                                         className='flex items-center gap-2 w-full p-2.5 rounded-lg cursor-pointer transition-all duration-300 group'
                                                         onClick={() => {
-                                                            navigator.clipboard.writeText(walletInfor?.solana_address);
-                                                            toast.success(t('universal_account.deposit_wallet.copy_success'));
+                                                        navigator.clipboard.writeText(walletInfor?.solana_address);
+                                                        toast.success(t('universal_account.deposit_wallet.copy_success'));
                                                         }}
                                                         style={{
                                                             background: mountedTheme && isDark
@@ -574,8 +574,8 @@ const Header = () => {
                                             <DropdownMenuItem 
                                                 className="cursor-pointer rounded-lg transition-all duration-300 mt-1"
                                                 onClick={() => {
-                                                    logout();
-                                                    refetch();
+                                                logout();
+                                                refetch();
                                                 }}
                                                 style={{
                                                     background: 'transparent',

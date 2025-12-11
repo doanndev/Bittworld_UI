@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useTheme } from 'next-themes'
 import { useRouter } from "next/navigation"
-import { Search, Star, Settings, ChevronDown, Copy, Upload, X, LayoutGrid, ListIcon } from "lucide-react"
+import { Search, Star, Settings, ChevronDown, Copy, Upload, X, LayoutGrid, ListIcon, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from 'react-hot-toast'
 import { truncateString } from "@/utils/format"
@@ -233,6 +233,45 @@ export default function LiquidityPools() {
             })
             setImagePreview(null)
             handleCloseModal();
+        },
+        onError: (error: any) => {
+            console.error('Create pool error:', error);
+            const errorData = error.response?.data;
+            let errorMessage = '';
+            
+            // Handle different error formats
+            if (errorData?.message) {
+                if (Array.isArray(errorData.message)) {
+                    // If message is an array, join them
+                    errorMessage = errorData.message.join(', ');
+                } else if (typeof errorData.message === 'string') {
+                    errorMessage = errorData.message;
+                }
+            } else if (errorData?.error) {
+                errorMessage = errorData.error;
+            } else if (error.message) {
+                errorMessage = error.message;
+            } else {
+                errorMessage = t('pools.poolCreateFailed') || 'Failed to create pool';
+            }
+            
+            // Check if it's an insufficient balance error
+            if (errorMessage.includes('Insufficient token') && errorMessage.includes('Current:') && errorMessage.includes('Required:')) {
+                // Extract current and required values from the error message
+                const currentMatch = errorMessage.match(/Current:\s*(\d+)/);
+                const requiredMatch = errorMessage.match(/Required:\s*(\d+)/);
+
+                if (currentMatch && requiredMatch) {
+                    const current = currentMatch[1];
+                    const required = requiredMatch[1];
+                    const message = t('pools.insufficientTokenBalance', { current, required });
+                    toast.error(message);
+                    return;
+                }
+            }
+            
+            // Display the error message
+            toast.error(errorMessage);
         }
     });
 
@@ -402,7 +441,7 @@ export default function LiquidityPools() {
             return
         }
 
-        if (createForm.amount < 500000) {
+        if (createForm.amount < 1000) {
             toast.error(t('pools.minAmountRequired'))
             return
         }
@@ -432,20 +471,10 @@ export default function LiquidityPools() {
             };
             await createPoolMutation.mutateAsync(poolData);
         } catch (error: any) {
-            console.error('Create pool error:', error);
-            const errorMessage = error.response?.data?.message;
-            // Check if it's an insufficient balance error
-            if (errorMessage && errorMessage.includes('Insufficient token') && errorMessage.includes('Current:') && errorMessage.includes('Required:')) {
-                // Extract current and required values from the error message
-                const currentMatch = errorMessage.match(/Current:\s*(\d+)/);
-                const requiredMatch = errorMessage.match(/Required:\s*(\d+)/);
-
-                if (currentMatch && requiredMatch) {
-                    const current = currentMatch[1];
-                    const required = requiredMatch[1];
-                    const message = t('pools.insufficientTokenBalance', { current, required });
-                    toast.error(message);
-                }
+            // Error handling is done in mutation's onError callback
+            // This catch block is for any other errors (like image fetching)
+            if (error.message && !error.response) {
+                toast.error(error.message);
             }
         } finally {
             setIsSubmitting(false)
@@ -534,23 +563,74 @@ export default function LiquidityPools() {
     const getColorRanking = (index: number) => {
         if (activeFilter === 'ranking' && index === 0) {
             // 1st place: Cyan/Blue gradient phù hợp với blockchain theme
-            return "bg-gradient-to-r from-[#15DFFD] via-[#02B7D2] to-[#00A8CC]";
+            return "";
         } else if (activeFilter === 'ranking' && index === 1) {
             // 2nd place: Silver gradient phù hợp với blockchain theme
-            return "bg-gradient-to-r from-[#C0C0C0] via-[#A8A8A8] to-[#808080]";
+            return "";
         } else if (activeFilter === 'ranking' && index === 2) {
             // 3rd place: Purple gradient phù hợp với blockchain theme
-            return "bg-gradient-to-r from-[#8833EE] via-[#761BB3] to-[#5A0F9C]";
+            return "";
         }
         return "";
     }
     const getImgRanking = (index: number) => {
         if (activeFilter === 'ranking' && index === 0) {
-            return <img src={"/firsth.png"} alt="ranking" className="w-8 h-10 sm:w-9 sm:h-11 md:w-10 md:h-12" />
+            return (
+                <img 
+                    src="/firsth.png" 
+                    alt="1st place" 
+                    className="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 object-contain"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.parentElement?.appendChild(
+                            Object.assign(document.createElement('div'), {
+                                className: 'w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 flex items-center justify-center text-sm sm:text-base md:text-lg font-semibold bg-gradient-to-r from-[#15DFFD] via-[#02B7D2] to-[#00A8CC] rounded text-white',
+                                textContent: '1'
+                            })
+                        );
+                    }}
+                />
+            );
         } else if (activeFilter === 'ranking' && index === 1) {
-            return <img src={"/sectionth.png"} alt="ranking" className="w-8 h-10 sm:w-9 sm:h-11 md:w-10 md:h-12" />
+            return (
+                <img 
+                    src="/sectionth.png" 
+                    alt="2nd place" 
+                    className="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 object-contain"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.parentElement?.appendChild(
+                            Object.assign(document.createElement('div'), {
+                                className: 'w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 flex items-center justify-center text-sm sm:text-base md:text-lg font-semibold bg-gradient-to-r from-[#C0C0C0] via-[#A8A8A8] to-[#808080] rounded text-white',
+                                textContent: '2'
+                            })
+                        );
+                    }}
+                />
+            );
         } else if (activeFilter === 'ranking' && index === 2) {
-            return <img src={"/threeth.png"} alt="ranking" className="w-8 h-10 sm:w-9 sm:h-11 md:w-10 md:h-12" />
+            return (
+                <img 
+                    src="/threeth.png" 
+                    alt="3rd place" 
+                    className="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 object-contain"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.parentElement?.appendChild(
+                            Object.assign(document.createElement('div'), {
+                                className: 'w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 flex items-center justify-center text-sm sm:text-base md:text-lg font-semibold bg-gradient-to-r from-[#8833EE] via-[#761BB3] to-[#5A0F9C] rounded text-white',
+                                textContent: '3'
+                            })
+                        );
+                    }}
+                />
+            );
         } else {
             return <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-12 flex items-center justify-center text-[10px] sm:text-xs md:text-sm font-semibold">{index + 1}</div>
         }
@@ -558,12 +638,188 @@ export default function LiquidityPools() {
 
     return (
         <div className="flex-1 bg-transparent dark:bg-transparent text-gray-900 dark:text-white mx-10">
+            {/* Hero Section - Full Width */}
+            <section className="relative w-screen overflow-hidden pt-10" style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}>
+                {/* Gradient Background */}
+                <div 
+                    className="absolute inset-0"
+                    style={{
+                        background: mountedTheme && isDark
+                            ? `linear-gradient(135deg, rgba(31, 193, 107, 0.15) 0%, rgba(31, 193, 107, 0.08) 50%, rgba(31, 193, 107, 0.12) 100%),
+                               radial-gradient(ellipse at top, rgba(31, 193, 107, 0.2) 0%, transparent 70%)`
+                            : `linear-gradient(135deg, rgba(31, 193, 107, 0.12) 0%, rgba(31, 193, 107, 0.06) 50%, rgba(31, 193, 107, 0.1) 100%),
+                               radial-gradient(ellipse at top, rgba(31, 193, 107, 0.15) 0%, transparent 70%)`,
+                    }}
+                />
+
+                {/* Thin Grid Pattern */}
+                <div 
+                    className="absolute inset-0 opacity-30"
+                    style={{
+                        backgroundImage: `linear-gradient(${mountedTheme && isDark ? 'rgba(31, 193, 107, 0.1)' : 'rgba(31, 193, 107, 0.15)'} 1px, transparent 1px),
+                                        linear-gradient(90deg, ${mountedTheme && isDark ? 'rgba(31, 193, 107, 0.1)' : 'rgba(31, 193, 107, 0.15)'} 1px, transparent 1px)`,
+                        backgroundSize: '80px 80px',
+                    }}
+                />
+
+                {/* Particle Effect - Thin Streak Falling Particles */}
+                <div className="absolute inset-0 overflow-hidden">
+                    {Array.from({ length: 12 }).map((_, i) => {
+                        const left = Math.random() * 100;
+                        const delay = Math.random() * 5;
+                        const duration = Math.random() * 3 + 4; // 4-7s
+                        const length = Math.random() * 60 + 30; // 30-90px (x1.5)
+                        const opacity = Math.random() * 0.4 + 0.3; // 0.3-0.7
+                        const width = Math.random() * 1 + 0.5; // 0.5-1.5px
+                        
+                        return (
+                            <div
+                                key={i}
+                                className="absolute pointer-events-none"
+                                style={{
+                                    left: `${left}%`,
+                                    top: '-10%',
+                                    width: `${width}px`,
+                                    height: `${length}px`,
+                                    background: `linear-gradient(to bottom, 
+                                        ${mountedTheme && isDark 
+                                            ? 'rgba(31, 193, 107, 0.6)' 
+                                            : 'rgba(31, 193, 107, 0.7)'} 0%, 
+                                        transparent 100%)`,
+                                    animation: `fall ${duration}s linear infinite`,
+                                    animationDelay: `${delay}s`,
+                                    opacity: opacity,
+                                    transform: 'translateX(-50%)',
+                                }}
+                            />
+                        );
+                    })}
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 px-4 sm:px-6 md:px-8 lg:px-6 py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28">
+                    <div className="2xl:container mx-auto text-center">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-5 lg:mb-6 leading-tight font-bold"
+                            style={{
+                                background: 'linear-gradient(135deg, #1FC16B 0%, #53DAE6 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                            }}
+                        >
+                            BITTWORLD POOL
+                        </h1>
+                        <p className={`text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 px-2 ${
+                            mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'
+                        }`}>
+                            {t('pools.title') || 'Join the future of decentralized liquidity pools'}
+                        </p>
+                        
+                        {/* CTA Buttons */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-10 px-4">
+                            {/* Stake Now Button */}
+                                <Button
+                                onClick={() => {
+                                    const poolsSection = document.getElementById('pools-section');
+                                    if (poolsSection) {
+                                        poolsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    }
+                                }}
+                                className="w-full sm:w-auto
+                                    bg-gradient-to-r from-theme-primary-500 to-theme-primary-400 
+                                    hover:from-theme-primary-400 hover:to-theme-primary-500
+                                    rounded-full 
+                                    text-white font-semibold tracking-wide
+                                    transition-all duration-300
+                                    border-0
+                                    px-6 py-3 sm:px-10 sm:py-4 md:px-12 md:py-5 lg:px-12 lg:py-6
+                                    text-base sm:text-lg md:text-xl
+                                    flex items-center justify-center gap-2
+                                    shadow-lg hover:shadow-xl
+                                    hover:scale-105 active:scale-100
+                                    min-w-[140px] sm:min-w-[160px] md:min-w-[180px]"
+                            >
+                                {t('pools.detailPage.stakeNow') || 'Stake Now'}
+                                <ArrowDown className="w-5 h-5 sm:w-6 sm:h-6 animate-bounce flex-shrink-0" />
+                                </Button>
+                        </div>
+
+                        {/* Social Links - Minimal Futuristic Style */}
+                        <div className="hidden sm:flex flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8 px-4">
+                            <a
+                                href="https://www.bittworld.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="relative text-xs sm:text-sm md:text-base font-medium transition-all duration-300 group"
+                                style={{
+                                    color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
+                                }}
+                            >
+                                <span className="relative z-10">BITTWORLD CEX</span>
+                                <span 
+                                    className="absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-300 group-hover:w-full"
+                                    style={{
+                                        background: 'linear-gradient(90deg, #1FC16B 0%, #53DAE6 100%)',
+                                    }}
+                                />
+                            </a>
+                            <a
+                                href="https://x.com/BittWorld776"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="relative text-xs sm:text-sm md:text-base font-medium transition-all duration-300 group"
+                                style={{
+                                    color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)',
+                                }}
+                            >
+                                <span className="relative z-10">BITTWORLD TWITTER</span>
+                                <span 
+                                    className="absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-300 group-hover:w-full"
+                                    style={{
+                                        background: 'linear-gradient(90deg, #1FC16B 0%, #53DAE6 100%)',
+                                    }}
+                                />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mask Fade - Smooth Gradient Transition with Noise Overlay */}
+                <div 
+                    className="absolute bottom-0 left-0 right-0 h-40 sm:h-48 lg:h-56 pointer-events-none"
+                    style={{
+                        background: mountedTheme && isDark
+                            ? `linear-gradient(to bottom, 
+                                transparent 0%, 
+                                rgba(31, 193, 107, 0.05) 30%,
+                                rgba(31, 193, 107, 0.02) 60%,
+                                rgba(0, 0, 0, 0.3) 85%,
+                                rgba(0, 0, 0, 0.6) 100%)`
+                            : `linear-gradient(to bottom, 
+                                transparent 0%, 
+                                rgba(31, 193, 107, 0.03) 30%,
+                                rgba(31, 193, 107, 0.01) 60%,
+                                rgba(248, 250, 252, 0.4) 85%,
+                                rgba(248, 250, 252, 0.8) 100%)`,
+                    }}
+                />
+                {/* Noise Overlay for Smooth Transition */}
+                <div 
+                    className="absolute bottom-0 left-0 right-0 h-32 sm:h-40 md:h-48 lg:h-56 pointer-events-none opacity-30 mix-blend-overlay"
+                    style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E")`,
+                        backgroundSize: '200px 200px',
+                        maskImage: 'linear-gradient(to bottom, transparent 0%, black 50%, black 100%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 50%, black 100%)',
+                    }}
+                />
+            </section>
+
             {/* Main Content */}
             <main className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-10">
                 <div className="2xl:container mx-auto ">
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-theme-primary-500 mb-6 sm:mb-8 lg:mb-12 m-8">BITTWORLD POOL</h1>
-
-
+                    {/* Pools Section - Scroll Target */}
+                    <div id="pools-section" className="scroll-mt-20">
                     {/* Search and Actions - Responsive */}
                     <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-4 mb-6">
                         {/* Left Section: View Toggle, Filter, Search */}
@@ -678,7 +934,7 @@ export default function LiquidityPools() {
                                         const isActive = activeFilter === filter;
                                         
                                         return (
-                                            <Button
+                                <Button
                                                 key={filter}
                                                 ref={(el) => {
                                                     filterRefs.current[index] = el;
@@ -707,23 +963,23 @@ export default function LiquidityPools() {
                                                 }}
                                             >
                                                 {labels[filter]}
-                                            </Button>
+                                </Button>
                                         );
                                     })}
-                                </div>
+                            </div>
                                 
                                 {/* Search Input */}
                                 <div className="relative w-full sm:w-auto sm:flex-1 md:flex-initial">
-                                    <input
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={(e) => {
-                                            setSearchQuery(e.target.value);
-                                        }}
-                                        placeholder={t('pools.searchPlaceholder')}
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                    }}
+                                    placeholder={t('pools.searchPlaceholder')}
                                         className="w-full sm:w-full md:w-[11vw] lg:w-[15vw] xl:w-[17vw] rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none dark:bg-gray-800/50 bg-gray-50/80 backdrop-blur-sm dark:border-white/20 border-gray-300/50 dark:text-white text-gray-900 tracking-wide shadow-sm focus:border-theme-primary-500/50 focus:ring-1 focus:ring-theme-primary-500/30 placeholder:text-gray-500 dark:placeholder:text-gray-400 placeholder:text-xs transition-all duration-200"
-                                    />
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                />
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
                                 </div>
                             </div>
                         </div>
@@ -945,7 +1201,7 @@ export default function LiquidityPools() {
                                             <td 
                                                 className="px-1 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm"
                                             >
-                                                <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-3">
+                                                <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-3 w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10">
                                                     {getImgRanking(index)}
                                                 </div>
                                             </td>
@@ -1237,15 +1493,15 @@ export default function LiquidityPools() {
                                             </div>
                                             
                                             {/* Action Button */}
-                                            <Button
-                                                size="sm"
+                                                <Button
+                                                    size="sm"
                                                 className="w-full bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white 
                                                     hover:bg-gradient-to-r hover:from-theme-primary-400 hover:to-theme-primary-500 hover:text-white 
                                                     text-xs py-2 rounded-lg transition-all duration-300"
                                                 onClick={() => router.push(`/pools/${pool.poolId}`)}
-                                            >
-                                                {t('pools.detail')}
-                                            </Button>
+                                                >
+                                                    {t('pools.detail')}
+                                                </Button>
                         </div>
                     </div>
                                 );
@@ -1273,6 +1529,8 @@ export default function LiquidityPools() {
                             </p>
                         </div>
                     )}
+                    </div>
+                    {/* End Pools Section */}
                 </div>
             </main>
 
