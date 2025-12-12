@@ -579,14 +579,14 @@ export default function LiquidityPools() {
                 <img 
                     src="/firsth.png" 
                     alt="1st place" 
-                    className="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 object-contain"
+                    className="w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 lg:w-14 lg:h-16 object-contain"
                     style={{ maxWidth: '100%', height: 'auto' }}
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         target.parentElement?.appendChild(
                             Object.assign(document.createElement('div'), {
-                                className: 'w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 flex items-center justify-center text-sm sm:text-base md:text-lg font-semibold bg-gradient-to-r from-[#15DFFD] via-[#02B7D2] to-[#00A8CC] rounded text-white',
+                                className: 'w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 lg:w-14 lg:h-16 flex items-center justify-center text-xs sm:text-sm md:text-base font-semibold bg-gradient-to-r from-[#15DFFD] via-[#02B7D2] to-[#00A8CC] rounded text-white',
                                 textContent: '1'
                             })
                         );
@@ -598,14 +598,14 @@ export default function LiquidityPools() {
                 <img 
                     src="/sectionth.png" 
                     alt="2nd place" 
-                    className="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 object-contain"
+                    className="w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 lg:w-14 lg:h-16 object-contain"
                     style={{ maxWidth: '100%', height: 'auto' }}
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         target.parentElement?.appendChild(
                             Object.assign(document.createElement('div'), {
-                                className: 'w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 flex items-center justify-center text-sm sm:text-base md:text-lg font-semibold bg-gradient-to-r from-[#C0C0C0] via-[#A8A8A8] to-[#808080] rounded text-white',
+                                className: 'w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 lg:w-14 lg:h-16 flex items-center justify-center text-xs sm:text-sm md:text-base font-semibold bg-gradient-to-r from-[#C0C0C0] via-[#A8A8A8] to-[#808080] rounded text-white',
                                 textContent: '2'
                             })
                         );
@@ -617,14 +617,14 @@ export default function LiquidityPools() {
                 <img 
                     src="/threeth.png" 
                     alt="3rd place" 
-                    className="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 object-contain"
+                    className="w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 lg:w-14 lg:h-16 object-contain"
                     style={{ maxWidth: '100%', height: 'auto' }}
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         target.parentElement?.appendChild(
                             Object.assign(document.createElement('div'), {
-                                className: 'w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 lg:w-18 lg:h-24 flex items-center justify-center text-sm sm:text-base md:text-lg font-semibold bg-gradient-to-r from-[#8833EE] via-[#761BB3] to-[#5A0F9C] rounded text-white',
+                                className: 'w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 lg:w-14 lg:h-16 flex items-center justify-center text-xs sm:text-sm md:text-base font-semibold bg-gradient-to-r from-[#8833EE] via-[#761BB3] to-[#5A0F9C] rounded text-white',
                                 textContent: '3'
                             })
                         );
