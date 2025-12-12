@@ -370,3 +370,29 @@ input[type=number] {
     opacity: 0;
   }
 }
+
+/* Mobile optimization for screens < 425px */
+@media (max-width: 424px) {
+  /* Reduce main content padding */
+  main.pools-main,
+  main[class*="px-"] {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+  
+  /* Reduce container padding */
+  .pools-container {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+  
+  /* Reduce grid gap */
+  .pools-grid {
+    gap: 0.5rem !important;
+  }
+  
+  /* Reduce card padding */
+  .pools-card {
+    padding: 0.75rem !important;
+  }
+}

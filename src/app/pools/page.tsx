@@ -632,7 +632,7 @@ export default function LiquidityPools() {
                 />
             );
         } else {
-            return <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-12 flex items-center justify-center text-[10px] sm:text-xs md:text-sm font-semibold">{index + 1}</div>
+            return <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-12 flex items-center justify-center text-xs sm:text-xs md:text-sm font-semibold">{index + 1}</div>
         }
     }
 
@@ -697,7 +697,7 @@ export default function LiquidityPools() {
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 px-4 sm:px-6 md:px-8 lg:px-6 py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28">
+                <div className="relative z-10 px-4 sm:px-6 md:px-8 lg:px-6 py-6 sm:py-16 md:py-20 lg:py-24 xl:py-28">
                     <div className="2xl:container mx-auto text-center">
                         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-5 lg:mb-6 leading-tight font-bold"
                             style={{
@@ -709,14 +709,14 @@ export default function LiquidityPools() {
                         >
                             BITTWORLD POOL
                         </h1>
-                        <p className={`text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 px-2 ${
+                        <p className={`text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-4 sm:mb-8 md:mb-10 px-2 ${
                             mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'
                         }`}>
                             {t('pools.title') || 'Join the future of decentralized liquidity pools'}
                         </p>
                         
                         {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-10 px-4">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-8 md:mb-10 px-4">
                             {/* Stake Now Button */}
                                 <Button
                                 onClick={() => {
@@ -732,15 +732,15 @@ export default function LiquidityPools() {
                                     text-white font-semibold tracking-wide
                                     transition-all duration-300
                                     border-0
-                                    px-6 py-3 sm:px-10 sm:py-4 md:px-12 md:py-5 lg:px-12 lg:py-6
-                                    text-base sm:text-lg md:text-xl
+                                    px-8 py-4 sm:px-10 sm:py-4 md:px-12 md:py-5 lg:px-12 lg:py-6
+                                    text-lg sm:text-lg md:text-xl
                                     flex items-center justify-center gap-2
                                     shadow-lg hover:shadow-xl
                                     hover:scale-105 active:scale-100
                                     min-w-[140px] sm:min-w-[160px] md:min-w-[180px]"
                             >
                                 {t('pools.detailPage.stakeNow') || 'Stake Now'}
-                                <ArrowDown className="w-5 h-5 sm:w-6 sm:h-6 animate-bounce flex-shrink-0" />
+                                <ArrowDown className="w-6 h-6 sm:w-6 sm:h-6 animate-bounce flex-shrink-0" />
                                 </Button>
                         </div>
 
@@ -816,14 +816,14 @@ export default function LiquidityPools() {
             </section>
 
             {/* Main Content */}
-            <main className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-10">
-                <div className="2xl:container mx-auto ">
+            <main className="px-0 sm:px-4 lg:px-6 py-2 sm:py-6 lg:py-10 pools-main">
+                <div className="2xl:container mx-auto pools-container">
                     {/* Pools Section - Scroll Target */}
                     <div id="pools-section" className="scroll-mt-20">
                     {/* Search and Actions - Responsive */}
-                    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-4 mb-6">
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 md:gap-4 mb-4">
                         {/* Left Section: View Toggle, Filter, Search */}
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 flex-1">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-4 flex-1">
                             {/* View Style Toggle - Hidden on mobile/tablet */}
                             {!isMobileOrTablet && (
                             <div 
@@ -890,7 +890,7 @@ export default function LiquidityPools() {
                             )}
 
                             {/* Filter and Search Container */}
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
                                 {/* Filter Buttons */}
                                 <div 
                                     className="relative inline-flex items-center gap-0.5 p-1 rounded-xl backdrop-blur-xl w-full sm:w-auto justify-center sm:justify-start"
@@ -939,7 +939,7 @@ export default function LiquidityPools() {
                                                 ref={(el) => {
                                                     filterRefs.current[index] = el;
                                                 }}
-                                                className="relative z-10 text-xs sm:text-sm font-medium px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 h-auto rounded-lg transition-all duration-300 bg-transparent border-0 whitespace-nowrap"
+                                                className="relative z-10 text-sm sm:text-sm font-medium px-3 sm:px-3 md:px-4 py-2.5 sm:py-2 h-auto rounded-lg transition-all duration-300 bg-transparent border-0 whitespace-nowrap"
                                                 style={{
                                                     color: isActive
                                                         ? (mountedTheme && isDark ? 'white' : '#1f2937')
@@ -994,8 +994,8 @@ export default function LiquidityPools() {
                                     text-white font-semibold tracking-wide
                                     transition-all duration-300
                                     border-0
-                                    text-xs sm:text-sm
-                                    px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 h-auto"
+                                    text-sm sm:text-sm
+                                    px-6 sm:px-5 md:px-6 py-3 sm:py-2.5 h-auto"
                                 onClick={() => setIsCreateModalOpen(true)}
                             >
                                 {t('pools.createPoolBtn')}
@@ -1026,7 +1026,7 @@ export default function LiquidityPools() {
                                 <thead className="sticky top-0 z-10">
                                     <tr>
                                         <th 
-                                            className="px-1 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold w-[4%] sm:w-[3%] md:w-[2%]"
+                                            className="px-1 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-xs sm:text-xs md:text-sm font-semibold w-[4%] sm:w-[3%] md:w-[2%]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -1040,7 +1040,7 @@ export default function LiquidityPools() {
                                             &ensp;
                                         </th>
                                         <th 
-                                            className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold min-w-[140px] sm:min-w-[180px]"
+                                            className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-xs sm:text-xs md:text-sm font-semibold min-w-[140px] sm:min-w-[180px]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -1054,7 +1054,7 @@ export default function LiquidityPools() {
                                             {t('pools.poolName')}
                                         </th>
                                         <th 
-                                            className="hidden md:table-cell px-2 md:px-3 lg:px-4 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold"
+                                            className="hidden md:table-cell px-2 md:px-3 lg:px-4 py-1.5 sm:py-2 md:py-3 text-left text-xs sm:text-xs md:text-sm font-semibold"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -1068,7 +1068,7 @@ export default function LiquidityPools() {
                                             {t('pools.uidLeader')}
                                         </th>
                                         <th 
-                                            className="hidden lg:table-cell px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold"
+                                            className="hidden lg:table-cell px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-xs sm:text-xs md:text-sm font-semibold"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -1082,7 +1082,7 @@ export default function LiquidityPools() {
                                             {t('pools.leaderAddress')}
                                         </th>
                                         <th 
-                                            className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold w-[10%] sm:w-[8%]"
+                                            className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-xs sm:text-xs md:text-sm font-semibold w-[10%] sm:w-[8%]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -1097,7 +1097,7 @@ export default function LiquidityPools() {
                                             <span className="sm:hidden">#</span>
                                         </th>
                                         <th 
-                                            className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold w-[12%]"
+                                            className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-left text-xs sm:text-xs md:text-sm font-semibold w-[12%]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -1139,7 +1139,7 @@ export default function LiquidityPools() {
                                             {t('pools.created')}
                                         </th>
                                         <th 
-                                            className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-[10px] sm:text-xs md:text-sm font-semibold w-[12%] sm:w-[10%]"
+                                            className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left text-xs sm:text-xs md:text-sm font-semibold w-[12%] sm:w-[10%]"
                                             style={{
                                                 background: mountedTheme && isDark
                                                     ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%)'
@@ -1199,14 +1199,14 @@ export default function LiquidityPools() {
                                             }}
                                         >
                                             <td 
-                                                className="px-1 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm"
+                                                className="px-1 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-xs sm:text-xs md:text-sm"
                                             >
                                                 <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-3 w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10">
                                                     {getImgRanking(index)}
                                                 </div>
                                             </td>
                                             <td 
-                                                className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm"
+                                                className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-xs sm:text-xs md:text-sm"
                                             >
                                                 <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
                                                     <div 
@@ -1235,7 +1235,7 @@ export default function LiquidityPools() {
                                                     </div>
                                                     <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                                                         <div 
-                                                            className="font-bold text-xs sm:text-sm md:text-base truncate"
+                                                            className="font-bold text-sm sm:text-sm md:text-base truncate"
                                                             style={{
                                                                 color: '#1FC16B',
                                                             }}
@@ -1243,7 +1243,7 @@ export default function LiquidityPools() {
                                                             {pool.name}
                                                         </div>
                                                         <div 
-                                                            className="text-[10px] sm:text-xs font-medium hidden sm:block"
+                                                            className="text-xs sm:text-xs font-medium hidden sm:block"
                                                             style={{
                                                                 color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                                                             }}
@@ -1251,7 +1251,7 @@ export default function LiquidityPools() {
                                                             {pool.memberCount} {t('pools.members')}
                                                         </div>
                                                         {/* Mobile: Show round and volume info */}
-                                                        <div className="flex items-center gap-2 sm:hidden text-[9px]">
+                                                        <div className="flex items-center gap-2 sm:hidden text-xs">
                                                             <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
                                                                 {t('pools.round')}: <span className="font-semibold font-mono">{formatNumber(pool.roundVolume)}</span>
                                                             </span>
@@ -1287,7 +1287,7 @@ export default function LiquidityPools() {
                                                 </div>
                                             </td>
                                             <td 
-                                                className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm font-semibold"
+                                                className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-xs sm:text-xs md:text-sm font-semibold"
                                                 style={{
                                                     color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                                                 }}
@@ -1295,7 +1295,7 @@ export default function LiquidityPools() {
                                                 {pool.memberCount}
                                             </td>
                                             <td 
-                                                className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm font-mono font-semibold"
+                                                className="hidden sm:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-xs sm:text-xs md:text-sm font-mono font-semibold"
                                                 style={{
                                                     color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                                                 }}
@@ -1303,7 +1303,7 @@ export default function LiquidityPools() {
                                                 {formatNumber(pool.roundVolume)}
                                             </td>
                                             <td 
-                                                className="hidden md:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm font-semibold"
+                                                className="hidden md:table-cell px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-xs sm:text-xs md:text-sm font-semibold"
                                                 style={{
                                                     color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                                                 }}
@@ -1311,7 +1311,7 @@ export default function LiquidityPools() {
                                                 {formatNumber(pool.totalVolume)}
                                             </td>
                                             <td 
-                                                className="hidden lg:table-cell px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm font-medium"
+                                                className="hidden lg:table-cell px-3 md:px-4 py-1.5 sm:py-2 md:py-3 text-xs sm:text-xs md:text-sm font-medium"
                                                 style={{
                                                     color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
                                                 }}
@@ -1319,13 +1319,13 @@ export default function LiquidityPools() {
                                                 {formatDate(pool.creationDate)}
                                             </td>
                                             <td 
-                                                className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-[10px] sm:text-xs md:text-sm"
+                                                className="px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-xs sm:text-xs md:text-sm"
                                             >
                                                 <Button
                                                     size="sm"
                                                     className="bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white 
                                                         hover:bg-gradient-to-r hover:from-theme-primary-400 hover:to-theme-primary-500 hover:text-white 
-                                                        text-[10px] sm:text-xs px-1.5 sm:px-2 md:px-3 lg:px-4 py-0.5 sm:py-1 rounded-md sm:rounded-lg transition-all duration-300 whitespace-nowrap"
+                                                        text-sm sm:text-xs px-3 sm:px-2 md:px-3 lg:px-4 py-2 sm:py-1 rounded-md sm:rounded-lg transition-all duration-300 whitespace-nowrap"
                                                     onClick={() => router.push(`/pools/${pool.poolId}`)}
                                                 >
                                                     <span className="hidden sm:inline">{t('pools.detail')}</span>
@@ -1343,7 +1343,7 @@ export default function LiquidityPools() {
                     
                     {/* Grid View */}
                     {viewStyle === 'grid' && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6 pools-grid">
                             {filteredPools.map((pool: AirdropPool, index: number) => {
                                 const rankingColor = getColorRanking(index);
                                 const hasRankingColor = rankingColor !== "";
@@ -1374,7 +1374,7 @@ export default function LiquidityPools() {
                                                     : '0 4px 12px -4px rgba(0, 0, 0, 0.1)'),
                                         }}
                                     >
-                                        <div className="p-4 sm:p-5 space-y-4">
+                                        <div className="p-3 sm:p-5 space-y-4 pools-card">
                                             {/* Header with Logo and Name */}
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -1404,7 +1404,7 @@ export default function LiquidityPools() {
                                                     </div>
                                                     <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                                                         <div 
-                                                            className="font-bold text-sm sm:text-base truncate"
+                                                            className="font-bold text-base sm:text-base truncate"
                                                             style={{
                                                                 color: '#1FC16B',
                                                             }}
@@ -1412,7 +1412,7 @@ export default function LiquidityPools() {
                                                             {pool.name}
                                                 </div>
                                                         <div 
-                                                            className="text-xs font-medium"
+                                                            className="text-sm font-medium"
                                                             style={{
                                                                 color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)',
                                                             }}
@@ -1421,13 +1421,16 @@ export default function LiquidityPools() {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {/* Ranking Badge */}
+                                                {activeFilter === 'ranking' && (
+                                                    <div className="flex-shrink-0">
+                                                        {getImgRanking(index)}
+                                                    </div>
+                                                )}
                                             </div>
                                             
-                                            {/* Ranking Badge */}
-                                            {activeFilter === 'ranking' && getImgRanking(index)}
-                                            
                                             {/* Pool Info */}
-                                            <div className="space-y-2 text-xs">
+                                            <div className="space-y-2 text-sm">
                                                 <div className="flex justify-between items-center">
                                                     <span style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.7)' }}>
                                                         {t('pools.uidLeader')}:
@@ -1445,7 +1448,7 @@ export default function LiquidityPools() {
                                                     </span>
                                                     <div className="flex items-center gap-1">
                                                         <span 
-                                                            className="font-mono italic text-xs"
+                                                            className="font-mono italic text-sm"
                                                             style={{ color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)' }}
                                                         >
                                                             {truncateString(pool.creatorAddress, 8)}
@@ -1497,7 +1500,7 @@ export default function LiquidityPools() {
                                                     size="sm"
                                                 className="w-full bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white 
                                                     hover:bg-gradient-to-r hover:from-theme-primary-400 hover:to-theme-primary-500 hover:text-white 
-                                                    text-xs py-2 rounded-lg transition-all duration-300"
+                                                    text-base sm:text-sm py-3 sm:py-2 rounded-lg transition-all duration-300"
                                                 onClick={() => router.push(`/pools/${pool.poolId}`)}
                                                 >
                                                     {t('pools.detail')}
