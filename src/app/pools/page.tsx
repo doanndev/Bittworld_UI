@@ -637,7 +637,7 @@ export default function LiquidityPools() {
     }
 
     return (
-        <div className="flex-1 bg-transparent dark:bg-transparent text-gray-900 dark:text-white mx-10">
+        <div className="flex-1 bg-transparent dark:bg-transparent text-gray-900 dark:text-white mx-2">
             {/* Hero Section - Full Width */}
             <section className="relative w-screen overflow-hidden pt-10" style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}>
                 {/* Gradient Background */}
