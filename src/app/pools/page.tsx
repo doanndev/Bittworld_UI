@@ -699,15 +699,30 @@ export default function LiquidityPools() {
                 {/* Content */}
                 <div className="relative z-10 px-4 sm:px-6 md:px-8 lg:px-6 py-6 sm:py-16 md:py-20 lg:py-24 xl:py-28">
                     <div className="2xl:container mx-auto text-center">
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-5 lg:mb-6 leading-tight font-bold"
+                        <h1
+                            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 md:mb-5 lg:mb-6 leading-tight"
                             style={{
                                 background: 'linear-gradient(135deg, #1FC16B 0%, #53DAE6 100%)',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 backgroundClip: 'text',
+                                fontFamily: 'sans-serif',
+                                fontWeight: 900,
+                                fontVariationSettings: '"wght" 1000',
+                                letterSpacing: '-0.02em',
                             }}
                         >
-                            BITTWORLD POOL
+                            <span
+                                style={{
+                                    fontFamily: 'sans-serif',
+                                    fontWeight: 900,
+                                    fontVariationSettings: '"wght" 1000',
+                                    WebkitTextStroke: '1px #1FC16B',
+                                    textShadow: '0 3px 12px rgba(31,193,107,0.25), 0 1px 0 #1FC16B'
+                                }}
+                            >
+                                BITTWORLD POOL
+                            </span>
                         </h1>
                         <p className={`text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-4 sm:mb-8 md:mb-10 px-2 ${
                             mountedTheme && isDark ? 'text-gray-300' : 'text-gray-700'
