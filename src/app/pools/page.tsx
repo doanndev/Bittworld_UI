@@ -1340,7 +1340,7 @@ export default function LiquidityPools() {
                                                     size="sm"
                                                     className="bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white 
                                                         hover:bg-gradient-to-r hover:from-theme-primary-400 hover:to-theme-primary-500 hover:text-white 
-                                                        text-sm sm:text-xs px-3 sm:px-2 md:px-3 lg:px-4 py-2 sm:py-1 rounded-md sm:rounded-lg transition-all duration-300 whitespace-nowrap"
+                                                        text-base sm:text-sm px-3 sm:px-2 md:px-3 lg:px-4 py-2 sm:py-1 rounded-md sm:rounded-lg transition-all duration-300 whitespace-nowrap font-black"
                                                     onClick={() => router.push(`/pools/${pool.poolId}`)}
                                                 >
                                                     <span className="hidden sm:inline">{t('pools.detail')}</span>
@@ -1515,7 +1515,7 @@ export default function LiquidityPools() {
                                                     size="sm"
                                                 className="w-full bg-transparent border border-theme-primary-500 text-theme-primary-500 dark:text-white 
                                                     hover:bg-gradient-to-r hover:from-theme-primary-400 hover:to-theme-primary-500 hover:text-white 
-                                                    text-base sm:text-sm py-3 sm:py-2 rounded-lg transition-all duration-300"
+                                                    text-lg sm:text-base py-3 sm:py-2 rounded-lg transition-all duration-300 font-black"
                                                 onClick={() => router.push(`/pools/${pool.poolId}`)}
                                                 >
                                                     {t('pools.detail')}
