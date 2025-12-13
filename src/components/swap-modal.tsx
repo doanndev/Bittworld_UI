@@ -17,6 +17,7 @@ import {
 } from '@/ui/dialog'
 import { toast } from 'react-hot-toast'
 import { useTheme } from 'next-themes'
+import { formatSolBalance } from '@/utils/format'
 
 // Extracted SwapInterface as a separate component
 const SwapInterface = React.memo(({ 
@@ -108,7 +109,7 @@ const SwapInterface = React.memo(({
             <div className="flex md:items-center justify-between gap-2 flex-col md:flex-row w-full">
             <span className={`${classes.historyText} ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
               {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">
-                {fromToken === "solana" ? balance?.sol?.token_balance || "0" : balance?.usdt?.token_balance || "0"}
+                {fromToken === "solana" ? formatSolBalance(balance?.sol?.token_balance) || "0" : balance?.usdt?.token_balance || "0"}
               </span>
             </span>
             <div className="flex items-center gap-2 w-full md:w-auto">
@@ -196,7 +197,7 @@ const SwapInterface = React.memo(({
           <div className="flex items-center justify-between mt-3">
             <span className={`${classes.historyText} ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
               {t('swap.balance')}: <span className="text-theme-primary-500 font-semibold">
-                {toToken === "usdt" ? balance?.usdt?.token_balance || "0" : balance?.sol?.token_balance || "0"}
+                {toToken === "usdt" ? balance?.usdt?.token_balance || "0" : formatSolBalance(balance?.sol?.token_balance) || "0"}
               </span>
             </span>
             <span className={`${classes.inputText} font-semibold h-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>

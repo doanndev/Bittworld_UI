@@ -15,7 +15,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter, usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { getBalanceInfo, getInforWallet } from '@/services/api/TelegramWalletService';
-import { formatNumberWithSuffix3, truncateString } from '@/utils/format';
+import { formatNumberWithSuffix3, truncateString, formatSolBalance } from '@/utils/format';
 import notify from './notify'
 // Removed NotifyProvider import - using Toaster from ClientLayout
 import SearchModal from './search-modal';
@@ -335,7 +335,7 @@ const Header = () => {
                                     }}
                                 />
                                 <span className="relative z-10 hidden sm:inline">{t("myWallet")}</span>
-                                <span className="relative z-10 opacity-90">{walletInfor.solana_balance} SOL</span>
+                                <span className="relative z-10 opacity-90">{formatSolBalance(walletInfor.solana_balance)} SOL</span>
                                 <span className="relative z-10 opacity-90 hidden md:inline">{'$' + formatNumberWithSuffix3(walletInfor.solana_balance_usd)}</span>
                             </button>
                         )}
@@ -443,7 +443,7 @@ const Header = () => {
                                                                     {formatNumberWithSuffix3(walletInfor.solana_balance_usd)} USD
                                                                 </span>
                                                                 <div className={`flex items-center gap-1 ${mountedTheme && isDark ? 'text-[#8B5CF6]' : 'text-[#1FB86E]'} font-semibold`}>
-                                                                    <span className={`text-sm ${mountedTheme && isDark ? 'text-gray-400' : 'text-slate-600'}`}>≈ {walletInfor.solana_balance}</span>
+                                                                    <span className={`text-sm ${mountedTheme && isDark ? 'text-gray-400' : 'text-slate-600'}`}>≈ {formatSolBalance(walletInfor.solana_balance)}</span>
                                                                     <span className="text-sm">SOL</span>
                                                                 </div>
                                                             </div>
@@ -660,7 +660,7 @@ const Header = () => {
                     }}
                 />
                 <div className='flex items-center justify-around px-2 py-2 relative z-10'>
-                                    {listSidebar.map((item, index) => {
+                                    {listSidebar.filter(item => item.name !== "BITTWORLD TWITTER").map((item, index) => {
                                         const Icon = item.icon;
                                         const isExternalLink = item.href.startsWith('http');
                                         const isActive = pathname === item.href;

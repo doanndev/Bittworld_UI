@@ -1,6 +1,6 @@
 "use client"
 import { getInforWallet, getListBuyToken, getBalanceInfo } from "@/services/api/TelegramWalletService";
-import { formatNumberWithSuffix3, truncateString } from "@/utils/format";
+import { formatNumberWithSuffix3, truncateString, formatSolBalance } from "@/utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { Copy, Check, ChevronDown, ArrowUpFromLine, ArrowDownToLine, ArrowLeftRight } from "lucide-react";
 import React, { useState, useRef, useEffect, useCallback } from "react";
@@ -772,7 +772,7 @@ export default function WalletPage() {
                                                                         color: mountedTheme && isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 41, 59, 0.85)',
                                                                     }}
                                                                 >
-                                                                    {token.token_balance.toFixed(token.token_decimals)}
+                                                                    {token.token_symbol === "SOL" ? formatSolBalance(token.token_balance) : token.token_balance.toFixed(token.token_decimals)}
                                                                 </td>
                                                                 <td 
                                                                     className={tableCellStyles}
@@ -884,7 +884,7 @@ export default function WalletPage() {
                                                                 ${token.token_balance_usd.toFixed(2)}
                                                             </div>
                                                             <div className={`text-xs ${mountedTheme && isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                                {token.token_balance.toFixed(token.token_decimals)}
+                                                                {token.token_symbol === "SOL" ? formatSolBalance(token.token_balance) : token.token_balance.toFixed(token.token_decimals)}
                                                                 </div>
                                                         </div>
                                                     </div>

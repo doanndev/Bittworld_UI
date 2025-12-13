@@ -3,7 +3,7 @@ import React from 'react'
 import { ArrowDownLeft, ArrowDownToLine, ArrowUpFromLine, ArrowUpRight } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getInforWallet } from '@/services/api/TelegramWalletService'
-import { formatNumberWithSuffix, formatNumberWithSuffix3 } from '@/utils/format'
+import { formatNumberWithSuffix, formatNumberWithSuffix3, formatSolBalance } from '@/utils/format'
 import { useRouter } from 'next/navigation'
 import { useLang } from '@/lang/useLang'
 import { useAuth } from '@/hooks/useAuth';
@@ -100,7 +100,7 @@ const OverView = () => {
                                 </div>
                             </div>
                             <div className='absolute bottom-2 left-0 w-[48%] z-20 flex flex-col items-left px-3 gap-1'>
-                                <div className="dark:text-neutral-100 text-theme-black-300 text-sm 2xl:text-base font-bold ">${walletInfor?.solana_balance?.toFixed(3) || '0.000'} SOL</div>
+                                <div className="dark:text-neutral-100 text-theme-black-300 text-sm 2xl:text-base font-bold ">{formatSolBalance(walletInfor?.solana_balance)} SOL</div>
                                 <div className="text-cyan-400 text-sm 2xl:text-base">
                                     ${formatNumberWithSuffix3(walletInfor?.solana_balance_usd?.toFixed(2) || '0.00')} USD <span className='dark:dark:text-neutral-100 text-theme-black-300'>24H</span>
                                 </div>
@@ -198,7 +198,7 @@ const OverView = () => {
                     </svg>
                     {isAuthenticated &&
                         <div className='absolute bottom-2 left-0 w-[48%] z-20 flex flex-col items-left px-3 gap-1'>
-                            <div className="dark:text-neutral-100 text-theme-black-300 text-sm 2xl:text-base font-bold ">${walletInfor?.solana_balance?.toFixed(3) || '0.000'} SOL</div>
+                            <div className="dark:text-neutral-100 text-theme-black-300 text-sm 2xl:text-base font-bold ">{formatSolBalance(walletInfor?.solana_balance)} SOL</div>
                             <div className="text-cyan-400 text-sm 2xl:text-base">
                                 ${formatNumberWithSuffix3(walletInfor?.solana_balance_usd?.toFixed(2) || '0.00')} USD <span className='dark:dark:text-neutral-100 text-theme-black-300'>24H</span>
                             </div>

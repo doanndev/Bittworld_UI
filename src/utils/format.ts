@@ -158,3 +158,35 @@ export const formatNumberWithSuffix3Hidden = (input: number | string): string =>
   }
   return formatNumber(num);
 };
+
+/**
+ * Format SOL balance: Round to 5 decimal places if it exceeds 5 decimals, otherwise keep as is
+ * @param input - SOL balance as number or string
+ * @returns Formatted string with up to 5 decimal places
+ */
+export const formatSolBalance = (input: number | string | null | undefined): string => {
+  if (input === null || input === undefined || input === '') {
+    return '0';
+  }
+  
+  const num = typeof input === 'string' ? parseFloat(input) : input;
+  
+  if (isNaN(num)) {
+    return '0';
+  }
+
+  // Convert to string to check decimal places
+  const numStr = num.toString();
+  const parts = numStr.split('.');
+  
+  // If no decimal part or decimal part <= 5 digits, return as is (but formatted)
+  if (parts.length === 1 || parts[1].length <= 5) {
+    // Use toFixed to ensure proper formatting, then remove trailing zeros
+    const formatted = num.toFixed(5);
+    return parseFloat(formatted).toString();
+  }
+  
+  // If decimal part > 5 digits, round to 5 decimal places
+  const rounded = Math.round(num * 100000) / 100000;
+  return rounded.toString();
+};
