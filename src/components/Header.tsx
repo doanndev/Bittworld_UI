@@ -44,6 +44,8 @@ const Header = () => {
     const [phantomPublicKey, setPhantomPublicKey] = useState<string | null>(null);
     const [headerHeight, setHeaderHeight] = useState(0);
     const headerRef = React.useRef<HTMLElement>(null);
+    const [isCompactNav, setIsCompactNav] = useState(false);
+    const [showUsd, setShowUsd] = useState(true);
 
     useEffect(() => {
         setMountedTheme(true);
@@ -112,6 +114,8 @@ const Header = () => {
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 1024); // 1024px is the lg breakpoint
+            // show bottom (compact) nav when width is below 1119px
+            setIsCompactNav(window.innerWidth < 1119);
         };
 
         checkMobile();
@@ -120,6 +124,18 @@ const Header = () => {
         return () => {
             window.removeEventListener('resize', checkMobile);
         };
+    }, []);
+
+    // hide USD balance at widths 1399px and below
+    useEffect(() => {
+        const updateShowUsd = () => {
+            const w = window.innerWidth;
+            setShowUsd(w > 1399);
+        };
+
+        updateShowUsd();
+        window.addEventListener('resize', updateShowUsd);
+        return () => window.removeEventListener('resize', updateShowUsd);
     }, []);
 
     const [tokens, setTokens] = useState<any[]>([]);
@@ -238,8 +254,9 @@ const Header = () => {
                     </div>
 
                     {/* Center section: Navigation - Hidden on tablet/mobile */}
-                    <div className='hidden lg:flex items-center justify-center flex-1 min-w-0 mx-4 lg:mx-8'>
-                        <nav className='flex items-center gap-2 xl:gap-3 flex-wrap justify-center'>
+                    {!isCompactNav && (
+                        <div className='hidden lg:flex items-center justify-center flex-1 min-w-0 mx-4 lg:mx-8'>
+                            <nav className='flex items-center gap-2 xl:gap-3 justify-center '>
                             {listSidebar.map((item, index) => {
                                 const isExternalLink = item.href.startsWith('http');
                                 const isActive = pathname === item.href;
@@ -297,8 +314,9 @@ const Header = () => {
                                     </Component>
                                 );
                             })}
-                        </nav>
-                    </div>
+                            </nav>
+                        </div>
+                    )}
 
                     {/* Right section: Buttons */}
                     <div className='flex items-center gap-1.5 sm:gap-2 md:gap-3 2xl:gap-6 flex-shrink-0 justify-end'>
@@ -336,7 +354,9 @@ const Header = () => {
                                 />
                                 <span className="relative z-10 hidden sm:inline">{t("myWallet")}</span>
                                 <span className="relative z-10 opacity-90">{formatSolBalance(walletInfor.solana_balance)} SOL</span>
-                                <span className="relative z-10 opacity-90 hidden md:inline">{'$' + formatNumberWithSuffix3(walletInfor.solana_balance_usd)}</span>
+                                {showUsd && (
+                                    <span className="relative z-10 opacity-90 hidden md:inline">{'$' + formatNumberWithSuffix3(walletInfor.solana_balance_usd)}</span>
+                                )}
                             </button>
                         )}
 
@@ -640,7 +660,8 @@ const Header = () => {
             />
 
             {/* Bottom Navigation Bar - Tablet and Mobile */}
-            <nav className='lg:hidden fixed bottom-0 left-0 right-0 z-[999] backdrop-blur-xl transition-all duration-300'
+            {isCompactNav && (
+            <nav className='fixed bottom-0 left-0 right-0 z-[999] backdrop-blur-xl transition-all duration-300'
                 style={{ 
                     background: mountedTheme && isDark
                         ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%)'
@@ -720,7 +741,8 @@ const Header = () => {
                                         );
                                     })}
                                         </div>
-                                </nav>
+                                                        </nav>
+                                    )}
             <ModalSignin isOpen={isSigninModalOpen} onClose={() => setIsSigninModalOpen(false)} />
         </>
     )
