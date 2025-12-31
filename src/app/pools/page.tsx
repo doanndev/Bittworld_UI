@@ -27,6 +27,7 @@ import {
 import { Checkbox } from "@/ui/checkbox"
 import { cn } from "@/lib/utils"
 import React from "react"
+import NewYearPopup from "@/components/NewYearPopup"
 
 // Float Label Input Component
 interface FloatLabelInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -1871,6 +1872,9 @@ export default function LiquidityPools() {
                     </div>
                 </DialogContent>
             </Dialog>
+            
+            {/* New Year 2026 Popup */}
+            <NewYearPopup />
         </div>
     )
 }
